@@ -3,16 +3,15 @@ rm(list=ls(all=TRUE))
 #library
 source("functions/list_library.R")
 (.packages())
+
 #function for model simplification "ana"
 source("functions/model_simplification.R")
 
 iem<-read.table("Data/r.iem2.txt",header=T,colClasses=c("ring"="factor","plot"="factor","time"="factor"))
-head(iem)
 
 #unify date for each time
 iem$date<-as.Date(dmy(as.character(iem$date)))
 iem$date<-ave(iem$date,iem$time,FUN=mean) #same time = same date
-levels(factor(iem$date))
 
 #remove coverage columns
 iem <- iem[,-c(5,6)]
@@ -20,30 +19,9 @@ iem <- iem[,-c(5,6)]
 #save
 save(iem,file="output/data/iem.R")
 
-
-######
-#####
-#p contrast between pre and post-co2
-#####
-max(p)
-plot(p)
-iem2<-subset(iem,p<max(p))###exclude outlire
-attach(iem2)
-iem2$time <-as.factor(iem2$time)
-iem2$ring <-as.factor(iem2$ring)
-iem2$plot <-as.factor(iem2$plot)
-levels(time)
-boxplot(p~co2:time,data=iem2)
-range(iem2$p)
-par(mfrow=c(1,3))
-boxplot(p~co2:time,data=iem2)
-boxplot(log(p)~co2:time,data=iem2)
-boxplot(sqrt(p)~co2:time,data=iem2)
-
-model1<-lme(log(p)~time*co2,random=~1|ring/plot,data=iem2)
-summary(model1)
-anova(model1,type="marginal")
-
+##############
+# Phosphate #
+##############
 ####main effect at post-co2
 iem3<-subset(iem2,as.numeric(time)>=5&as.numeric(time)<=8)
 iem3$time
