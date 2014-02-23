@@ -16,86 +16,15 @@ iem$date<-ave(iem$date,iem$time,FUN=mean) #same time = same date
 #remove coverage columns
 iem <- iem[,-c(5,6)]
 
+# reorder time
+iem$time <- factor(iem$time, levels = c(as.character(1:10)))
+
 #save
 save(iem,file="output/data/iem.R")
 
 ##############
 # Phosphate #
 ##############
-####main effect at post-co2
-iem3<-subset(iem2,as.numeric(time)>=5&as.numeric(time)<=8)
-iem3$time
-iem3$ring
-iem2$plot
-model1<-lme(log(p)~co2,random=~1|ring/plot,data=iem3)
-summary(model1)
-anova(model1,type="marginal")
-summary(model1)
-model2<-lme(log(p)~co2,random=~1|ring/plot,data=iem3)
-model2.2<-update(model2,corr=corCompSymm(form=~1|ring/plot))
-model2.3<-update(model2,correlation=corARMA(q=2))
-model2.4<-update(model2,correlation=corAR1()) 
-model2.5<-update(model2,correlation=corARMA(q=1))
-anova(model2,model2.2,model2.3,model2.4,model2.5)
-
-r1<-0.6732021
-r2<-0.4937012
-f<-2.5548*r2/r1
-f
-with(iem3,tapply(log(p),list(time,co2),mean))
-boxplot(log(p)~co2*time,data=iem3)
-
-
-#####
-##p temporal variation between each month. Then, eCO2 effect was tested for each month by contrast
-#####
-plot(iem$p,ylim=c(0,0.1))
-
-iem2<-subset(iem,p<0.04)###exclude outlires
-attach(iem2)
-iem2$time <-as.factor(iem2$time)
-iem2$ring <-as.factor(iem2$ring)
-iem2$plot <-as.factor(iem2$plot)
-levels(time)
-range(iem2$p)
-par(mfrow=c(2,2))
-boxplot(p~time:co2,iem2)
-boxplot(log(p)~time:co2,iem2)
-boxplot(sqrt(p)~time:co2,iem2)
-boxplot(p^(1/3)~time:co2,iem2)
-#log looks the best
-model1<-lme(log(p)~time*co2,random=~1|ring/plot,data=iem2)
-summary(model1)
-anova(model1,type="marginal") ##there is a significant interactive effect
-##auto-correlation
-model2<-lme(log(p)~co2*time,random=~1|ring/plot,data=iem2)
-model2.2<-update(model2,corr=corCompSymm(form=~1|ring/plot))
-model2.3<-update(model2,correlation=corARMA(q=2))
-model2.4<-update(model2,correlation=corAR1()) 
-model2.5<-update(model2,correlation=corARMA(q=1))
-anova(model2,model2.2,model2.3,model2.4,model2.5)
-#model2.3 looks best
-anova(model2.3)
-model3<-update(model2.3,method="ML")
-model4<-update(model3,~.-co2:time)
-anova(model3,model4)
-#model3 is better
-model5<-update(model3,method="REML")
-summary(model5)
-anova(model5,type="marginal")
-
-##test for each month by contrast
-library(contrast)
-levels(co2)
-
-levels(iem2$time)
-contrast(model5,
-          a=list(time=levels(iem2$time),co2="amb"),
-          b=list(time=levels(iem2$time),co2="elev"))
-###
-
-plot(model2.5,resid(.,type="p")~fitted(.)|ring:plot) ###check model
-qqnorm(model2.5,~resid(.)|ring:plot)
 
 #####
 #pre co2
@@ -347,22 +276,22 @@ anova(model5)
 par(mfrow=c(1,3))
 range(nh)
 plot(iem$nh)
-iem3<-subset(iem,nh<0.8)###exclude outlires
+postco2<-subset(iem,nh<0.8)###exclude outlires
 par(mfrow=c(2,2))
-boxplot(nh~co2*time,data=iem3)
-boxplot(log(nh)~co2*time,data=iem3)
-boxplot(sqrt(nh)~co2*time,data=iem3)
-boxplot(nh^(1/3)~co2*time,data=iem3)
+boxplot(nh~co2*time,data=postco2)
+boxplot(log(nh)~co2*time,data=postco2)
+boxplot(sqrt(nh)~co2*time,data=postco2)
+boxplot(nh^(1/3)~co2*time,data=postco2)
 
-with(iem3,plot(tapply(nh,list(time,co2),mean),tapply(nh,list(time,co2),var)))
-with(iem3,plot(tapply(log(nh),list(time,co2),mean),tapply(log(nh),list(time,co2),var)))
-with(iem3,plot(tapply(sqrt(nh),list(time,co2),mean),tapply(sqrt(nh),list(time,co2),var)))
-with(iem3,plot(tapply(nh^(1/3),list(time,co2),mean),tapply(nh^(1/3),list(time,co2),var)))
+with(postco2,plot(tapply(nh,list(time,co2),mean),tapply(nh,list(time,co2),var)))
+with(postco2,plot(tapply(log(nh),list(time,co2),mean),tapply(log(nh),list(time,co2),var)))
+with(postco2,plot(tapply(sqrt(nh),list(time,co2),mean),tapply(sqrt(nh),list(time,co2),var)))
+with(postco2,plot(tapply(nh^(1/3),list(time,co2),mean),tapply(nh^(1/3),list(time,co2),var)))
 
 ###########homogeneity of variance may not be met
 contrasts(time)<-NULL
 options(contrasts=c("contr.treatment","contr.poly"))
-model1<-lme(log(nh)~co2*time,random=~1|ring/plot,data=iem3)
+model1<-lme(log(nh)~co2*time,random=~1|ring/plot,data=postco2)
 anova(model3,type="marginal")
 model2<-update(model1,method="ML")
 model3<-update(model2,~.-time:co2)
