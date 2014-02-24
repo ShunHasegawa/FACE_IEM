@@ -26,13 +26,15 @@ save(iem,file="output/data/iem.R")
 # Phosphate #
 ##############
 
-#####
-#pre co2
-#####
+# pre co2 #
+
 levels(iem2$time)
-iem2$time2<-ifelse(iem2$time %in% c("1","2","3","4"),"pre","post")
+iem2$time2 <- ifelse(iem2$time %in% c("1","2","3","4"),"pre","post")
+
+
 model1<-lme(log(p)~time*co2,random=~1|ring/plot,subset=time2=="pre",data=iem2)
-anova(model1,type="marginal") 
+anova(model1) 
+
 ##auto-correlation
 model2<-lme(log(p)~co2*time,random=~1|ring/plot,subset=time2=="pre",data=iem2)
 model2.2<-update(model2,corr=corCompSymm(form=~1|ring/plot))
@@ -40,43 +42,38 @@ model2.3<-update(model2,correlation=corARMA(q=2))
 model2.4<-update(model2,correlation=corAR1()) 
 model2.5<-update(model2,correlation=corARMA(q=1))
 anova(model2,model2.2,model2.3,model2.4,model2.5)
+
 #model2.3 looks best
 anova(model2.3)
-model3<-update(model2.3,method="ML")
-model4<-update(model3,~.-co2:time)
-model5<-update(model4,~.-co2)
-anova(model3,model4,model5)
-anova(model5)
-model6<-update(model5,method="REML")
-anova(model6)
+m1 <- ana(model2.3)
+fnl.anova <- m1$anova.reml
+fnl.anova
 
+# only post co2 #
+model1 <- lme(log(p)~time*co2,random=~1|ring/plot,subset=time2=="post",data=iem2)
+anova(model1) ##there is a significant interactive effect
 
-#####
-#only post co2
-#####
-model1<-lme(log(p)~time*co2,random=~1|ring/plot,subset=time2=="post",data=iem2)
-anova(model1,type="marginal") ##there is a significant interactive effect
 ##auto-correlation
-model2<-lme(log(p)~co2*time,random=~1|ring/plot,subset=time2=="post",data=iem2)
-model2.2<-update(model2,corr=corCompSymm(form=~1|ring/plot))
-model2.3<-update(model2,correlation=corARMA(q=2))
-model2.4<-update(model2,correlation=corAR1()) 
-model2.5<-update(model2,correlation=corARMA(q=1))
-anova(model2,model2.2,model2.3,model2.4,model2.5)
-#model2 looks best
-anova(model2)
-model3<-update(model2,method="ML")
-model4<-update(model3,~.-co2:time)
-anova(model3,model4)
-#model3 is better
-summary(model2)
-anova(model2,type="marginal")
+model2.2<-update(model1,corr=corCompSymm(form=~1|ring/plot))
+model2.3<-update(model1,correlation=corARMA(q=2))
+model2.4<-update(model1,correlation=corAR1()) 
+model2.5<-update(model1,correlation=corARMA(q=1))
+anova(model1,model2.2,model2.3,model2.4,model2.5)
+#model1 looks best
+anova(model1)
+m1 <- ana(model1)
+fnl.model <- m1$model.reml
+fnl.anova <- m1$anova.reml
+fnl.anova
 
+# contrast and look at each month
 levels(iem2$time)[5:10]
-contrast(model2,
+contrast(fnl.model,
          a=list(time=levels(iem2$time)[5:10],co2="amb"),
          b=list(time=levels(iem2$time)[5:10],co2="elev"))
 
+
+#
 time3<-iem2$time
 levels(time3)[5:8]<-"gr"
 levels(time3)[6:7]<-"wint"
@@ -166,74 +163,26 @@ summary(model1)
 ##not significant as it does not take monthx*co2 interaction into account
 
 
-#############################################################
-#############################################################no contrast between pre and post-co2
-detach(iem2)
-
-length(time)
-boxplot(no~co2*time)
-boxplot(no~co2)
-boxplot(no~co2*time)
-boxplot(log(no)~co2*time)
-boxplot(no^(1/3)~co2*time)
-
-range(no)
-
-boxplot(no~time)
-plot(tapply(no,time,mean),tapply(no,time,var))
-plot(tapply(log(no),time,mean),tapply(log(no),time,var))
-plot(tapply(sqrt(no),time,mean),tapply(sqrt(no),time,var))
-plot(tapply(no^(1/3),time,mean),tapply(no^(1/3),time,var))
+###########
+# Nitrate #
+###########
+# contrast between pre and post-co2
 
 par(mfrow=c(2,2))
-plot(tapply(no,list(time,co2),mean),tapply(no,list(time,co2),var))
-plot(tapply(log(no),list(time,co2),mean),tapply(log(no),list(time,co2),var))
-plot(tapply(sqrt(no),list(time,co2),mean),tapply(sqrt(no),list(time,co2),var))
-plot(tapply(no^(1/3),list(time,co2),mean),tapply(no^(1/3),list(time,co2),var))
+boxplot(no~co2*time, data = iem)
+boxplot(no~co2*time, data = iem)
+boxplot(log(no)~co2*time, data = iem)
+boxplot(no^(1/3)~co2*time, data = iem)
 
-####power(1/3) looks better
-model1<-lme((no)^(1/3)~time*co2,random=~1|ring/plot,data=iem)
-summary(model1)
-anova(model1,type="marginal") 
-model2<-update(model1,method="ML")
-model3<-update(model2,~.-time:co2)
-anova(model2,model3)
-anova(model3,type="marginal")
-model4<-update(model3,~.-co2)
-anova(model3,model4)
-model5<-update(model4,method="REML")
-anova(model5,type="marginal")
+# power(1/3) looks better
+#pre co2
+iem$time2 <- factor(ifelse(iem$time %in% as.character(c(1:4)), "pre", "post"))
 
-plot(model5,resid(.,type="p")~fitted(.)|ring:plot) ###check model
-qqnorm(model5,~resid(.)|ring:plot)
+model1 <- lme((no)^(1/3) ~ time * co2, random = ~1|ring/plot, subset = time2 == "pre", data = iem)
+m1 <- ana(model1) 
+anova(m1$model.reml)
 
-#compare auto-correlation
-model2<-lme(no^(1/3)~time*co2,random=~1|ring/plot,data=iem)
-model2.2<-update(model2,corr=corCompSymm(form=~1|ring/plot))
-model2.3<-update(model2,correlation=corARMA(q=2))
-model2.4<-update(model2,correlation=corAR1()) 
-model2.5<-update(model2,correlation=corARMA(q=1))
-anova(model2,model2.2,model2.3,model2.4,model2.5)
-#model2.3 looks best
-anova(model2.3)
-mod3<-update(model2.3,method="ML")
-mod4<-update(mod3,~.-time:co2)
-anova(mod3,mod4)
-mod5<-update(mod4,~.-co2)
-anova(mod4,mod5)
 
-mod6<-update(mod5,method="REML")
-summary(mod6)
-
-TukeyHSD(aov(mod6))
-
-####################################pre co2
-time2<-iem$time
-levels(time2)[1:4]<-"pre"
-levels(time2)[2:7]<-"post"
-levels(time2)
-model1<-lme((no)^(1/3)~time*co2,random=~1|ring/plot,subset=time2=="pre",data=iem)
-anova(model1,type="marginal") 
 ##auto-correlation
 model2<-lme((no)^(1/3)~co2*time,random=~1|ring/plot,subset=time2=="pre",data=iem)
 model2.2<-update(model2,corr=corCompSymm(form=~1|ring/plot))
@@ -241,54 +190,44 @@ model2.3<-update(model2,correlation=corARMA(q=2))
 model2.4<-update(model2,correlation=corAR1()) 
 model2.5<-update(model2,correlation=corARMA(q=1))
 anova(model2,model2.2,model2.3,model2.4,model2.5)
-#model2.3 looks best
-anova(model2.3)
-model3<-update(model2.3,method="ML")
-model4<-update(model3,~.-co2:time)
-model5<-update(model4,~.-co2)
-anova(model3,model4,model5)
-anova(model5)
-model6<-update(model5,method="REML")
-anova(model6)
-####################################only post co2
-model1<-lme((no)^(1/3)~time*co2,random=~1|ring/plot,subset=time2=="post",data=iem)
-anova(model1,type="marginal")
+
+# model2.3 looks best
+m1 <- ana(model2.3)
+m1$model.reml
+
+anova(m1$model.reml)
+
+# post co2 with Sep data as baseline
+model1<-lme((no)^(1/3)~time*co2,random=~1|ring/plot,subset = time %in% as.character(c(4:10)),data=iem)
+anova(model1)
+m1 <- ana(model1)
+m1
+anova(m1$model.reml)
+
 ##auto-correlation
-model2<-lme((no)^(1/3)~co2*time,random=~1|ring/plot,subset=time2=="post",data=iem)
-model2.2<-update(model2,corr=corCompSymm(form=~1|ring/plot))
-model2.3<-update(model2,correlation=corARMA(q=2))
-model2.4<-update(model2,correlation=corAR1()) 
-model2.5<-update(model2,correlation=corARMA(q=1))
-anova(model2,model2.2,model2.3,model2.4,model2.5)
+model2.2<-update(model1,corr=corCompSymm(form=~1|ring/plot))
+model2.3<-update(model1,correlation=corARMA(q=2))
+model2.4<-update(model1,correlation=corAR1()) 
+model2.5<-update(model1,correlation=corARMA(q=1))
+anova(model1,model2.2,model2.3,model2.4,model2.5)
 #model2.4 looks best
 anova(model2.4)
-model3<-update(model2.4,method="ML")
-model4<-update(model3,~.-co2:time)
-model5<-update(model4,~.-co2)
-anova(model3,model4,model5)
-#model5
-anova(model5)
-model6<-update(model5,method="REML")
-anova(model5)
+ana(model2.4)
 
-###################################################
-###################################################nh contrast
+############
+# Ammonium #
+############
 par(mfrow=c(1,3))
-range(nh)
-plot(iem$nh)
-postco2<-subset(iem,nh<0.8)###exclude outlires
+range(iem$nh)
+par(mfrow=c(1,1))
+
 par(mfrow=c(2,2))
-boxplot(nh~co2*time,data=postco2)
-boxplot(log(nh)~co2*time,data=postco2)
-boxplot(sqrt(nh)~co2*time,data=postco2)
-boxplot(nh^(1/3)~co2*time,data=postco2)
+boxplot(nh~co2*time,data = iem, subset = nh < 0.8 & as.numeric(time) > 2)
+boxplot(log(nh)~co2*time,data = iem, subset = nh < 0.8 & as.numeric(time) > 2)
+boxplot(sqrt(nh)~co2*time,data = iem, subset = nh < 0.8 & as.numeric(time) > 2)
+boxplot(nh^(1/3)~co2*time,data = iem, subset = nh < 0.8 & as.numeric(time) > 2)
 
-with(postco2,plot(tapply(nh,list(time,co2),mean),tapply(nh,list(time,co2),var)))
-with(postco2,plot(tapply(log(nh),list(time,co2),mean),tapply(log(nh),list(time,co2),var)))
-with(postco2,plot(tapply(sqrt(nh),list(time,co2),mean),tapply(sqrt(nh),list(time,co2),var)))
-with(postco2,plot(tapply(nh^(1/3),list(time,co2),mean),tapply(nh^(1/3),list(time,co2),var)))
-
-###########homogeneity of variance may not be met
+# homogeneity of variance may not be met, but may be log looking better
 contrasts(time)<-NULL
 options(contrasts=c("contr.treatment","contr.poly"))
 model1<-lme(log(nh)~co2*time,random=~1|ring/plot,data=postco2)
@@ -305,50 +244,38 @@ anova(model5,type="marginal")
 plot(model5,resid(.,type="p")~fitted(.)|ring:plot) ###check model
 qqnorm(model5,~resid(.)|ring:plot)
 
-#############################
-####################################pre co2
-time2<-iem$time
-levels(time2)[1:4]<-"pre"
-levels(time2)[2:7]<-"post"
-levels(time2)
-model1<-lme(log(nh)~time*co2,random=~1|ring/plot,subset=time2=="pre",data=iem)
-anova(model1,type="marginal") 
+
+## pre co2 ##
+summary(iem)
+
+model1<-lme(log(nh)~time*co2,random=~1|ring/plot,subset= time %in% c(1:4) ,data=iem)
+nova(model1) 
+
 ##auto-correlation
-model2<-lme(log(nh)~co2*time,random=~1|ring/plot,subset=time2=="pre",data=iem)
-model2.2<-update(model2,corr=corCompSymm(form=~1|ring/plot))
-model2.3<-update(model2,correlation=corARMA(q=2))
-model2.4<-update(model2,correlation=corAR1()) 
-model2.5<-update(model2,correlation=corARMA(q=1))
-anova(model2,model2.2,model2.3,model2.4,model2.5)
+model2.2<-update(model1,corr=corCompSymm(form=~1|ring/plot))
+model2.3<-update(model1,correlation=corARMA(q=2))
+model2.4<-update(model1,correlation=corAR1()) 
+model2.5<-update(model1,correlation=corARMA(q=1))
+anova(model1,model2.2,model2.3,model2.4,model2.5)
+
 #model2.5 looks best
-anova(model2.5)
-model3<-update(model2.5,method="ML")
-model4<-update(model3,~.-co2:time)
-model5<-update(model4,~.-co2)
-anova(model3,model4,model5)
-anova(model5)
-model6<-update(model5,method="REML")
-anova(model6)
-####################################only post co2
-model1<-lme(log(nh)~time*co2,random=~1|ring/plot,subset=time2=="post",data=iem)
-anova(model1,type="marginal")
-##auto-correlation
-model2<-lme(log(nh)~co2*time,random=~1|ring/plot,subset=time2=="post",data=iem)
-model2.2<-update(model2,corr=corCompSymm(form=~1|ring/plot))
-model2.3<-update(model2,correlation=corARMA(q=2))
-model2.4<-update(model2,correlation=corAR1()) 
-model2.5<-update(model2,correlation=corARMA(q=1))
-anova(model2,model2.2,model2.3,model2.4,model2.5)
-#model2 looks best
-anova(model2)
-model3<-update(model2.2,method="ML")
-model4<-update(model3,~.-co2:time)
-model5<-update(model4,~.-co2)
-anova(model3,model4,model5)
-#model5
-anova(model5)
-model6<-update(model5,method="REML")
-anova(model6)
+m1 <- ana(model2.5)
+m1$anova.reml
+
+## post co2 ##
+model1<-lme(log(nh)~time*co2,random=~1|ring/plot,subset=time %in% c(4:10),data=iem)
+anova(model1)
+
+# auto-correlation
+model2.2<-update(model1,corr=corCompSymm(form=~1|ring/plot))
+model2.3<-update(model1,correlation=corARMA(q=2))
+model2.4<-update(model1,correlation=corAR1()) 
+model2.5<-update(model1,correlation=corARMA(q=1))
+anova(model1,model2.2,model2.3,model2.4,model2.5)
+
+#model1 looks best
+m1 <- ana(model1)
+m1$anova.reml
 
 
 ##############################scatter plot
