@@ -249,7 +249,7 @@ qqnorm(model5,~resid(.)|ring:plot)
 summary(iem)
 
 model1<-lme(log(nh)~time*co2,random=~1|ring/plot,subset= time %in% c(1:4) ,data=iem)
-nova(model1) 
+anova(model1) 
 
 ##auto-correlation
 model2.2<-update(model1,corr=corCompSymm(form=~1|ring/plot))
@@ -544,3 +544,69 @@ anova(mod9)
 mod10<-update(mod9,method="REML")
 anova(mod9)
 
+
+
+###############################
+# with soil moisture and temp #
+###############################
+# combine soil moisture data during incubation
+# incubation start date
+
+strt.d <- c(as.Date("2012-06-06"), unique(iem$date)[1:9])
+iem$srt.day <- rep(strt.d, each = 48)
+some(iem)
+
+# soil data
+load("C:/Users/30034013/SkyDrive/Documents/PhD.HIE/R/soil.variable/Data/output/ring.means.Rdata")
+head(ring.means)
+
+# soil data is from 20th sept 2013 so extract iem data after this
+iem.sep <- subset(iem, srt.day > as.Date("2012-09-20"))
+iem.sip <- droplevels(iem.sep)
+
+# ring mean of iem
+iem.ring <- with(iem.sep, aggregate(iem.sep[c("no", "nh", "p")], 
+                                    list(time = time, date = date, srt.day = srt.day, ring = ring, co2 = co2), 
+                                    mean, na.rm = TRUE))
+
+head(ring.means)
+# mean soil variable for each incubation period
+inc.soil.temp.moist.mean <- function(strtD, endD){
+  a <- subset(ring.means, ring.means$Date >= strtD & ring.means$Date <= endD)
+  d <- with(a, aggregate(a[c("moist", "temp")], list(ring = ring), mean, na.rm = TRUE))
+  return(d)
+}
+
+SrD <- unique(iem.ring$srt.day)
+enD <- unique(iem.ring$date)
+  
+soilva.ls <- lapply(1:6, function(x) inc.soil.temp.moist.mean(SrD[x], enD[x]))
+soilvas <- rbind.fill(soilva.ls)
+soilvas$date <- rep(enD, each = 6)
+
+# marge
+iem.ring.soil <- merge(iem.ring, soilvas, by = c("ring", "date"))
+iem.ring.soil
+
+#
+boxplot(iem.ring.soil$p~time:co2, data = iem.ring.soil)
+boxplot(log(p)~time:co2, data = iem.ring.soil)
+
+m1 <- lme(log(p) ~ time * co2 + moist + temp, random = ~1|ring, data = iem.ring.soil)
+anova(m1)
+
+plot(p ~ moist, data = iem.ring.soil)
+plot(no ~ moist, data = iem.ring.soil)
+plot(nh ~ moist, data = iem.ring.soil)
+plot(p ~ temp, data = iem.ring.soil)
+plot(no ~ temp, data = iem.ring.soil)
+plot(nh ~ temp, data = iem.ring.soil)
+
+boxplot(iem.ring.soil$nh~time:co2, data = iem.ring.soil)
+boxplot(nh ~ time:co2, data = iem.ring.soil)
+m1 <- lme(nh ~ time * co2 + moist + temp, random = ~1|ring, data = iem.ring.soil)
+anova(m1)
+a <stepAIC(update(m1, method = "ML"))
+
+ana(m1)
+summary(ana(m1)$model.reml)
