@@ -10,8 +10,11 @@ source("functions/functions.R")
 fls <- dir(path = "Data/AQ2/NO3_NeedToBeCorrected/", pattern = ".csv$")
 
 res <- read.csv(paste("Data/AQ2/NO3_NeedToBeCorrected/", fls[1], sep = ""), header = TRUE)
-
 write.csv(Crrtct.ccv.df(res), paste("Data/AQ2/ReadyToProcess/", "Corrected_", fls[1], sep =""), row.names = TRUE)
+
+res <- read.csv(paste("Data/AQ2/NO3_NeedToBeCorrected/", fls[2], sep = ""), header = TRUE)
+write.csv(Crrtct.ccv.df(res), paste("Data/AQ2/ReadyToProcess/", "Corrected_", fls[2], sep =""), row.names = TRUE)
+
 
 
 ####################
