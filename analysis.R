@@ -7,6 +7,9 @@ source("functions/list_library.R")
 #function for model simplification "ana"
 source("functions/model_simplification.R")
 
+source("functions/functions.R")
+
+
 iem<-read.table("Data/r.iem2.txt",header=T,colClasses=c("ring"="factor","plot"="factor","time"="factor"))
 
 #unify date for each time
@@ -17,7 +20,8 @@ iem$date<-ave(iem$date,iem$time,FUN=mean) #same time = same date
 iem <- iem[,-c(5,6)]
 
 # reorder time
-iem$time <- factor(iem$time, levels = c(as.character(1:10)))
+levels(iem$time)
+iem$time <- factor(iem$time, levels = c(as.character(1:length(levels(iem$time)))))
 
 #save
 save(iem,file="output/data/iem.R")
@@ -25,6 +29,7 @@ save(iem,file="output/data/iem.R")
 ##############
 # Phosphate #
 ##############
+boxplot()
 
 # pre co2 #
 
