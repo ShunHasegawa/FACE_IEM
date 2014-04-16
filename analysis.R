@@ -5,25 +5,21 @@ source("functions/list_library.R")
 (.packages())
 
 #function for model simplification "ana"
-source("functions/model_simplification.R")
-
 source("functions/functions.R")
 
-iem<-read.table("Data/r.iem2.txt",header=T,colClasses=c("ring"="factor","plot"="factor","time"="factor"))
+iem <- read.csv("Data/FACE_IEM.csv", colClasses=c("ring"="factor","plot"="factor","time"="factor",
+                                                  "coverage" = "NULL", "actual.cov" = "NULL"))
 
 #unify date for each time
 iem$date<-as.Date(dmy(as.character(iem$date)))
 iem$date<-ave(iem$date,iem$time,FUN=mean) #same time = same date
-
-#remove coverage columns
-iem <- iem[,-c(5,6)]
 
 # reorder time
 levels(iem$time)
 iem$time <- factor(iem$time, levels = c(as.character(1:length(levels(iem$time)))))
 
 #save
-save(iem,file="output/data/iem.R")
+save(iem,file="output/data/FACE_IEM.Rdata")
 
 ##############
 # Phosphate #
