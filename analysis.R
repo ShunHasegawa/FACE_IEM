@@ -1,6 +1,18 @@
 rm(list=ls(all=TRUE))
 
-#function for model simplification "ana"
+library(car)
+library(gmodels)
+library(lme4)
+library(lubridate)
+library(MASS)
+library(nlme)
+library(packrat)
+library(plyr)
+library(reshape)
+library(xlsx)
+library(contrast)
+library(effects)
+
 source("functions/functions.R")
 
 iem <- read.csv("Data/FACE_IEM.csv", colClasses=c("ring"="factor","plot"="factor","time"="factor",
@@ -20,13 +32,11 @@ save(iem,file="output/data/FACE_IEM.Rdata")
 ##############
 # Phosphate #
 ##############
-boxplot()
-
 # pre co2 #
 
 levels(iem2$time)
+iem2<-subset(iem,p<max(p))
 iem2$time2 <- ifelse(iem2$time %in% c("1","2","3","4"),"pre","post")
-
 
 model1<-lme(log(p)~time*co2,random=~1|ring/plot,subset=time2=="pre",data=iem2)
 anova(model1) 
@@ -63,10 +73,10 @@ fnl.anova <- m1$anova.reml
 fnl.anova
 
 # contrast and look at each month
-levels(iem2$time)[5:10]
+levels(iem2$time)[5:14]
 contrast(fnl.model,
-         a=list(time=levels(iem2$time)[5:10],co2="amb"),
-         b=list(time=levels(iem2$time)[5:10],co2="elev"))
+         a=list(time=levels(iem2$time)[5:14],co2="amb"),
+         b=list(time=levels(iem2$time)[5:14],co2="elev"))
 
 
 #
