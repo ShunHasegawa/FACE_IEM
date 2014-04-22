@@ -141,7 +141,7 @@ m2 <- ana(m1)
 m3 <- m2$model.reml
 summary(m3)
 #contrast
-ordered(as.numeric(iem2$time)))
+ordered(as.numeric(iem2$time))
 
 contrast(m1,a=list(time=c("5","6","7","8","9"),co2="amb"),
             b=list(time=c("5","6","7","8","9"),co2="elev"))
