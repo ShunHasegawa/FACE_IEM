@@ -1,6 +1,3 @@
-#####
-#summary table
-#####
 names(iem)
 summary(iem)
 boxplot(iem$p)

@@ -1,8 +1,6 @@
-######
-#save as excel
-#####
-
-#function which creates summary table
+#########################
+# creates summary table #
+#########################
 CreateTable <- function(dataset,fac,nutrient){
   #dataset=iem2 for ring summary, ring.mean for co2 summary, fac=ring or co2, nutrient=no/nh/p
   a <- dataset[c("date",fac,nutrient)] #extract required columns
