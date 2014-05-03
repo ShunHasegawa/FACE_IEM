@@ -13,8 +13,11 @@ library(xlsx)
 library(contrast)
 library(effects)
 
-source("functions/functions.R")
+source("R/functions.R")
 
+################
+# Process  data#
+################
 iem <- read.csv("Data/FACE_IEM.csv", colClasses=c("ring"="factor","plot"="factor","time"="factor",
                                                   "coverage" = "NULL", "actual.cov" = "NULL"))
 
@@ -26,8 +29,20 @@ iem$date<-ave(iem$date,iem$time,FUN=mean) #same time = same date
 levels(iem$time)
 iem$time <- factor(iem$time, levels = c(as.character(1:length(levels(iem$time)))))
 
+# change the unit from ug to ng
+iem[, c("no", "nh", "p")] <- iem[, c("no", "nh", "p")] * 1000
+
+# add id for later analysis
+iem$id <- iem$ring:iem$plot
+
 #save
-save(iem,file="output/data/FACE_IEM.Rdata")
+save(iem,file="output/data/FACE_IEM.RData")
+
+#################
+# Summary table #
+#################
+
+
 
 ##############
 # Phosphate #
