@@ -1,34 +1,28 @@
+# melt dataset
 names(iem)
-summary(iem)
-boxplot(iem$p)
+iemMlt <- melt(iem, id = c("time", "date", "ring", "plot", "co2", "id"))
 
-#remove P outlier
-iem2<-iem
-iem2$p[which(iem2$p==max(iem2$p))]<-NA
-summary(iem2)
+# Ring summary table & mean
+RngSmmryTbl <- dlply(iemMlt, .(variable), function(x) CreateTable(x, fac = "ring"))
+RngMean <- ddply(iemMlt, .(time, date, co2, ring, variable), summarise, value = mean(value, na.rm = TRUE)) 
 
-#ring mean
-names(iem2)
-ring.mean<-with(iem2,aggregate(iem2[,c(6:8)],list(time=time,date=date,ring=ring,co2=co2),mean,na.rm=TRUE))
-summary(ring.mean)
-contents(ring.mean)
-head(ring.mean)
-#write.table(ring.mean,"ring.mean.csv",sep=",")
+# treat summary table $ mean
+TrtSmmryTbl <- dlply(RngMean, .(variable), function(x) CreateTable(x, fac = "co2"))
 
-#co2 mean
-names(ring.mean)
-summary(ring.mean)
-str(ring.mean)
-contents(ring.mean)
-treat.mean<-summaryBy(no+nh+p~time+date+co2,FUN=c(mean,function(x) ci(x)[4],length),
-                      fun.names=c("mean","SE","Sample_size"),data=ring.mean)
-head(treat.mean)
-contents(treat.mean)
-#write.table(treat.mean,"IEM.co2.mean&SE.csv",sep=",")
+## create xcel workbook ##
+wb <- createWorkbook()
 
-#in excel (raw data + co2 mean)
-# write.xlsx(iem2,"C:/Users/sh3410/Dropbox/Shun_Data/IEM/FACE_IEM_Summary.xlsx",sheetName="raw",append=FALSE) #store in deopbox
-#write.xlsx(treat.mean,"C:/Users/sh3410/Dropbox/Shun_Data/IEM/FACE_IEM_Summary.xlsx",sheetName="CO2_mean",append=TRUE) 
+# worksheet for rowdata
+sheet <- createSheet(wb,sheetName="row_data")
+addDataFrame(iem, sheet, showNA=TRUE, row.names=FALSE, characterNA="NA")
 
-#save summary table as an excel sheet
-source("functions/summary_table_excel.R")
+# worksheets for ring summary
+shnames <- paste("Ring_mean.",c("Nitrate", "Ammonium","Phosphate", sep=""))
+l_ply(1:3, function(x) crSheet(sheetname = shnames[x], dataset = RngSmmryTbl[[x]]))
+
+# worksheets for temp trt summary
+shnames <- paste("Temp_mean.", c("Nitrate", "Ammonium","Phosphate"), sep = "")
+l_ply(1:3, function(x) crSheet(sheetname = shnames[x], dataset = TrtSmmryTbl[[x]]))
+
+#save file
+saveWorkbook(wb,"Output/Table/FACE_IEM.xlsx")
