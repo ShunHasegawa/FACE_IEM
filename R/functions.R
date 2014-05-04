@@ -108,7 +108,7 @@ cmbn.fls <- function(file){
 ##########################
 # Create a summary table #
 ##########################
-CreateTable <- function(dataset, fac){
+CreateTable <- function(dataset, fac, ...){
   a <- dataset[c("date", fac, "value")] #extract required columns
   colnames(a) <- c("date","variable","value") #change column names for cast
   means <- cast(a, date~variable, mean, na.rm = TRUE) 
@@ -119,7 +119,7 @@ CreateTable <- function(dataset, fac){
   mer <- Reduce(function(...) merge(..., by = "date"), list(means, ses, samples)) #merge datasets
   mer <- mer[,c(1, order(names(mer)[-grep("date|N", names(mer))])+1, grep("N", names(mer)))] #re-order columns
   mer$date <- as.character(mer$date) # date is turned into character for knitr output 
-  return(mer)
+  return(format(mer, ...))
 }
 
 #function which creates excel worksheets
