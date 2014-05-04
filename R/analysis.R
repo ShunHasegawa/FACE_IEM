@@ -22,13 +22,14 @@ source("R/functions.R")
 iem <- read.csv("Data/FACE_IEM.csv", colClasses=c("ring"="factor","plot"="factor","time"="factor",
                                                   "coverage" = "NULL", "actual.cov" = "NULL"))
 
-#unify date for each time
-iem$date<-as.Date(dmy(as.character(iem$date)))
-iem$date<-ave(iem$date,iem$time,FUN=mean) #same time = same date
-
 # reorder time
 levels(iem$time)
 iem$time <- factor(iem$time, levels = c(as.character(1:length(levels(iem$time)))))
+
+#unify date for each time
+iem$insertion <- as.Date(dmy(iem$insertion))
+iem$sampling <- as.Date(dmy(iem$sampling))
+iem$date <- as.Date(ave(apply(cbind(iem$insertion, iem$sampling), 1, mean), iem$time), origin = origin) # same date for same time
 
 # change the unit from ug to ng
 iem[, c("no", "nh", "p")] <- iem[, c("no", "nh", "p")] * 1000
