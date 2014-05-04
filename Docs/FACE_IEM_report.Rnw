@@ -16,8 +16,52 @@ opts_knit$set(root.dir=normalizePath('../'))
 @
 
 <<readFiles, include=FALSE>>=
+library(car)
+library(gmodels)
+library(lme4)
+library(lubridate)
+library(MASS)
+library(nlme)
+library(packrat)
+library(plyr)
+library(reshape)
+library(xlsx)
+library(contrast)
+library(effects)
+library(ggplot2)
+library(xtable)
 
-
+source("R//functions.R")
+load("output/data/FACE_IEM.RData")
+source("R/SummaryExlTable.R")
+source("R/Figs.R")
 @
+
+\maketitle
+\clearpage
+\tableofcontents
+\clearpage
+
+%%%
+%%%
+%%%
+
+\section{IEM-adsorbed nutrients}
+
+%%%%%%%%%%%
+% Nitrate %
+%%%%%%%%%%%
+\Sexpr{knit_child('FACE_IEM_nitrat.Rnw')}
+
+%%%%%%%%%%%%
+% Ammonium %
+%%%%%%%%%%%%
+%\Sexpr{knit_child('')}
+
+%%%%%%%%%%%%%
+% Phosphate %
+%%%%%%%%%%%%%
+%\Sexpr{knit_child('')}
+
 
 \end{document}

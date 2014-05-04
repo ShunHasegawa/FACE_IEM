@@ -1,0 +1,70 @@
+\Sexpr{set_parent('FACE_IEM_report.Rnw')}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% source files & libraries & setup options                                  %%
+%% need to be loaded here if one wants to compile this child document to PDF %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Nitrate}
+
+<<ReadScript, echo=FALSE, cache=FALSE>>=
+read_chunk('R/Stats_NO.R')
+@
+
+
+%%% CO2 trt %%%
+\subsubsection{CO2 trt}
+
+\begin{figure}[!h]\label{figure:CO2IEM_Nitrate}
+
+\begin{center}
+
+<<Figco2Nitrate, echo=FALSE, fig.height=3, fig.width=6>>=
+TrtFg[[1]]
+@
+
+\caption{IEM-adsorbed nitrate at CO2 treatments}
+\end{center}
+\end{figure}
+
+<<Tableco2Nitrate, echo=FALSE, results='asis'>>=
+printTbl(TrtSmmryTbl[[1]], 
+         caption = "CO2 trt mean of IEM-adsorbed nitrate",
+         label = "table:FACE_IEM_CO2_nitrate")
+@
+
+%% Stats %%
+\paragraph{Stats}
+\noindent
+
+<<StatNitratePreCO2, echo=TRUE, results='markup'>>=
+@
+<<NOPreIml, echo=TRUE, results='markup'>>=
+@
+
+%%% Ring %%%
+\clearpage
+\subsubsection{Ring}
+
+\begin{figure}[!h]\label{figure:RingIEM_nitrate}
+\begin{center}
+
+<<FigChNitrate, echo=FALSE, fig.height=3, fig.width=6>>=
+RngFg[[1]]
+@
+\caption{IEM-adsorbed nitrate in each ring}
+\end{center}
+\end{figure}
+
+<<TableRingNitrate, echo=FALSE, results='asis'>>=
+printTbl(RngSmmryTbl[[1]][, 1:13], 
+         caption = "Ring mean of IEM-adsorbed nitrate",
+         label = "table:FACE_IEM_ring_nitrate",
+         size = "small")
+printTbl(RngSmmryTbl[[1]][, c(1, 14:19)], 
+         caption = NULL,
+         label = NULL,
+         size = "small")
+@
+?print
+ncol(RngSmmryTbl[[1]][, 1:13])
