@@ -1,0 +1,77 @@
+\Sexpr{set_parent('FACE_IEM_report.Rnw')}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% source files & libraries & setup options                                  %%
+%% need to be loaded here if one wants to compile this child document to PDF %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Ammonium}
+
+%%% CO2 trt %%%
+\subsubsection{CO2 trt}
+
+\begin{figure}[!h]\label{figure:CO2IEM_Ammonium}
+
+\begin{center}
+
+<<Figco2Ammonium, echo=FALSE, fig.height=3, fig.width=6>>=
+TrtFg[[2]]
+@
+
+\caption{IEM-adsorbed Ammonium at CO2 treatments}
+\end{center}
+\end{figure}
+
+<<Tableco2Ammonium, echo=FALSE, results='asis'>>=
+printTbl(TrtSmmryTbl[[2]], 
+         caption = "CO2 trt mean of IEM-adsorbed Ammonium",
+         label = "table:FACE_IEM_CO2_Ammonium")
+@
+
+%% Stats %%
+<<ReadScriptNH, echo=FALSE, cache=FALSE, include=FALSE>>=
+read_chunk('R/Stats_NH.R')
+#source("R/Stats_NO.R")
+@
+
+\paragraph{Stats}
+\paragraph{Pre-CO2}
+\noindent
+
+<<StatAmmoniumPreCO2, echo=TRUE, results='markup'>>=
+@
+
+%<<StatAmmoniumPreCO2Smmry, echo=TRUE, results='markup'>>=
+%@
+
+\paragraph{Stats}
+\paragraph{Post-CO2}
+\noindent
+
+<<StatAmmoniumPostCO2, echo=TRUE, results='markup'>>=
+@
+
+%<<StatAmmoniumPostCO2Smmry, echo=TRUE, results='markup'>>=
+%@
+
+%%% Ring %%%
+\clearpage
+\subsubsection{Ring}
+
+\begin{figure}[!h]\label{figure:RingIEM_Ammonium}
+\begin{center}
+
+<<FigChAmmonium, echo=FALSE, fig.height=3, fig.width=6>>=
+RngFg[[2]]
+@
+
+\caption{IEM-adsorbed Ammonium in each ring}
+\end{center}
+\end{figure}
+
+<<TableRingAmmonium, echo=FALSE, results='asis'>>=
+printRngTbl(RngSmmryTbl[[2]], 
+            caption = "Ring mean of IEM-adsorbed Ammonium", 
+            label = "table:FACE_IEM_ring_Ammonium",
+            size = "small")
+@
