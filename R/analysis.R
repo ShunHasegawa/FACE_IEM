@@ -41,7 +41,7 @@ save(iem,file="output/data/FACE_IEM.RData")
 #################
 # Summary table #
 #################
-
+source("R/SummaryExlTable.R")
 
 
 ##############
