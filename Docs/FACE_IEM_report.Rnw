@@ -62,6 +62,7 @@ source("R/Figs.R")
 %%%%%%%%%%%%%
 % Phosphate %
 %%%%%%%%%%%%%
+\clearpage
 \Sexpr{knit_child('FACE_IEM_phosphate.Rnw')}
 
 \end{document}
