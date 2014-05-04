@@ -100,6 +100,8 @@ cntrst<- contrast(Fml_post,
                   b = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "elev"))
 FACE_IEM_PostCO2_P_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], digit = 2)
 
+FACE_IEM_PostCO2_P_CntrstDf
+
 # model diagnosis
 plot(Fml_post)
 qqnorm(Fml_post, ~ resid(.)|id)
