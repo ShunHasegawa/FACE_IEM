@@ -31,14 +31,14 @@ printTbl(TrtSmmryTbl[[3]],
 %% Stats %%
 <<ReadScriptP, echo=FALSE, cache=FALSE, include=FALSE>>=
 read_chunk('R/Stats_P.R')
-#source("R/Stats_P.R")
+source("R/Stats_P.R")
 @
 
 \paragraph{Stats}
 \paragraph{Pre-CO2}
 \noindent
 
-<<StatPhosphatePreCO2, echo=TRUE, results='markup'>>=
+<<StatPhosphatePreCO2>>=
 @
 
 %<<StatPhosphatePreCO2Smmry, echo=TRUE, results='markup'>>=
@@ -48,7 +48,7 @@ read_chunk('R/Stats_P.R')
 \paragraph{Post-CO2}
 \noindent
 
-<<StatPhosphatePostCO2, echo=TRUE, results='markup'>>=
+<<StatPhosphatePostCO2'>>=
 @
 
 %<<StatPhosphatePostCO2Smmry, echo=TRUE, results='markup'>>=

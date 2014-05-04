@@ -31,28 +31,28 @@ printTbl(TrtSmmryTbl[[1]],
 %% Stats %%
 <<ReadScriptNO, echo=FALSE, cache=FALSE, include=FALSE>>=
 read_chunk('R/Stats_NO.R')
-#source("R/Stats_NO.R")
+source("R/Stats_NO.R")
 @
 
 \paragraph{Stats}
 \paragraph{Pre-CO2}
 \noindent
 
-<<StatNitratePreCO2, echo=TRUE, results='markup'>>=
-@
-
-%<<StatNitratePreCO2Smmry, echo=TRUE, results='markup'>>=
+%<<StatNitratePreCO2, echo=TRUE, results='markup'>>=
 %@
+
+<<StatNitratePreCO2Smmry, echo=TRUE, results='markup'>>=
+@
 
 \paragraph{Stats}
 \paragraph{Post-CO2}
 \noindent
 
-<<StatNitratePostCO2, echo=TRUE, results='markup'>>=
-@
-
-%<<StatNitratePostCO2Smmry, echo=TRUE, results='markup'>>=
+%<<StatNitratePostCO2, echo=TRUE, results='markup'>>=
 %@
+
+<<StatNitratePostCO2Smmry, echo=TRUE, results='markup'>>=
+@
 
 %%% Ring %%%
 \clearpage
