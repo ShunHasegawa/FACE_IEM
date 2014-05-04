@@ -1,10 +1,20 @@
 # melt dataset
-names(iem)
-iemMlt <- melt(iem, id = c("time", "date","insertion", "sampling", "ring", "plot", "co2", "id"))
+iemMlt <- melt(iem, id = names(iem)[which(!(names(iem) %in% c("no", "nh", "p")))])
+
+# remove outlier
+iemRmOl <- iem
+
+# P
+boxplot(iem$p)
+iemRmOl$p[which(iemRmOl$p == max(iemRmOl$p))] <- NA
+
+# nh
+boxplot(iem$nh)
+iemRmOl$nh[which(iemRmOl$nh > 800)] <- NA
 
 # Ring summary table & mean
-RngSmmryTbl <- dlply(iemMlt, .(variable), function(x) CreateTable(x, fac = "ring", digit = 1, nsmall = 2))
-RngMean <- ddply(iemMlt, .(time, date, co2, ring, variable), summarise, value = mean(value, na.rm = TRUE)) 
+RngSmmryTbl <- dlply(iemRmOl, .(variable), function(x) CreateTable(x, fac = "ring", digit = 1, nsmall = 2))
+RngMean <- ddply(iemRmOl, .(time, date, co2, ring, variable), summarise, value = mean(value, na.rm = TRUE)) 
 
 # treat summary table $ mean
 TrtSmmryTbl <- dlply(RngMean, .(variable), function(x) CreateTable(x, fac = "co2",  digit = 1, nsmall =2))
