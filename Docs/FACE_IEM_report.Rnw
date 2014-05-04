@@ -65,4 +65,10 @@ source("R/Figs.R")
 \clearpage
 \Sexpr{knit_child('FACE_IEM_phosphate.Rnw')}
 
+%%%%%%%%%%%%%%%%
+% List of figs %
+%%%%%%%%%%%%%%%%
+\clearpage
+\listoffigures
+
 \end{document}
