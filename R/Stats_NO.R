@@ -107,7 +107,7 @@ qqnorm(Fml_post, ~ resid(.)|id)
 qqnorm(residuals.lm(Fml_post))
 qqline(residuals.lm(Fml_post))
 
-## ---- StatNitratePreCO2Smmry ---- 
+## ---- StatNitratePostCO2Smmry ---- 
 # The starting model is:
 Iml_post$call
 anova(Iml_post)
