@@ -149,18 +149,19 @@ Crt_SmryDF <- function(data, val = "value"){
 # plot mean and se #
 ####################
 PltMean <- function(data){
+  
   vars <- c(substitute(nutrients),
             substitute(NO[3]^"-"-N), 
             substitute(NH[4]^"+"-N),
             substitute(PO[4]^"3-"-P))
   # subsitute returens argument as it is without calculation (similar to expression())
   
-  yvars <- lapply(vars, function(x) bquote(Soil-extractable~.(x)))
+  yvars <- lapply(vars, function(x) bquote(IEM-adsorbed~.(x)))
   # bquote allows one to call an object and return expression
   
   ylabs <- lapply(yvars, function(x) {
     c(expression(), 
-      bquote(atop(paste(.(x)), paste((mg~DS_kg^-1)))))         
+      bquote(atop(paste(.(x)), paste((ng~cm^"-1"~d^"-1")))))         
   })
   
   # atop: put the 1st argument on top of the 2nd
@@ -170,30 +171,32 @@ PltMean <- function(data){
                         ifelse(unique(data$variable) == "nh", ylabs[[3]],
                                ylabs[[4]])))
   
-  colfactor <- ifelse(any(names(data) == "chamber"), "chamber", "temp")
+  colfactor <- ifelse(any(names(data) == "ring"), "ring", "co2")
   
   p <- ggplot(data, aes_string(x = "date", y = "Mean", col = colfactor))
   
   p2 <- p + geom_line(size = 1) + 
     geom_errorbar(aes_string(ymin = "Mean - SE", ymax = "Mean + SE", col = colfactor), width = 5) + 
-    labs(x = "Time", y = ylab)
+    labs(x = "Time", y = ylab) +
+    geom_vline(xintercept = as.numeric(as.Date("2012-09-18")), linetype = "dashed", col = "black")
   
   # change colors, linetype and associated legend according to plotting groups (chamber or treatment)
-  if(colfactor == "temp") p3  <- p2 +  
-    scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) else
+  if(colfactor == "co2") 
+    p3  <- p2 +  
+    scale_color_manual(values = c("blue", "red"), expression(CO[2]~trt), labels = c("Ambient", expression(eCO[2]))) else
       p3 <- p2 + 
-    scale_color_manual(values = palette(), "Chamber", labels = paste("Ch", c(1:12), sep = "_")) +
-    scale_linetype_manual(values = rep(c("solid", "dashed"), 6), "Chamber", labels = paste("Chamber", c(1:12), sep = "_")) +
-    guides(color = guide_legend(keyheight = 0.7))
+    scale_color_manual(values = palette(), "Ring", labels = paste("Ring", c(1:6), sep = "_")) +
+    scale_linetype_manual(values = c("solid", "dashed", "dashed", "solid", "solid", "dashed"), 
+                          "Ring", labels = paste("Ring", c(1:6), sep = "_"))
   
-  # add asterisk on P graphs at temperature treatments
-  if(colfactor == "chamber" | !any(unique(data$variable) == "po")) p3 else{
+  # add asterisk on P graphs at co2 treatments
+  if(colfactor == "ring" | !any(unique(data$variable) == "po")) p3 else{
     newDF <- subset(data, time %in% c(2, 6)) # the times where "*" is placed
     ant_pos <- ddply(newDF, .(date, variable), summarise, Mean = max(Mean + SE)) #y position of "*"
     ant_pos <- subset(ant_pos, variable == "po") # only applied to PO data
     ant_pos$lab <- "*"
-    ant_pos$temp <- factor("amb", levels=c("amb", "elve")) 
-    # the original data frame uses "temp", so it needs to have "temp" as well in ggplot2
+    ant_pos$co2 <- factor("amb", levels=c("amb", "elev")) 
+    # the original data frame uses "co2", so it needs to have "temp" as well in ggplot2
     # but it doesn't really do anything    
     p3 +  geom_text(data = ant_pos, aes(x =date, y = Mean, label= lab), col = "black", vjust = 0)
   }
