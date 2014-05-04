@@ -282,8 +282,9 @@ printTbl <- function(tbl, caption, label, ...){
   print(xtable(tbl,
                caption = caption, 
                label = label, 
-               align = rep("l", 8)),
+               align = rep("l", ncol(tbl) + 1)),
         caption.placement = "top", 
         include.rownames = FALSE,
         table.placement = "H", ...)
 }
+
