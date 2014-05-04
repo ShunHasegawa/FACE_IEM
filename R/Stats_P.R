@@ -85,11 +85,10 @@ summary(Fml_post)
 plot(allEffects(Fml_post))
 
 # contrast
-?levels
 cntrst<- contrast(Fml_post, 
                   a = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "amb"),
                   b = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "elev"))
-WTC_IEM_Nitrate_CntrstDf <- cntrstTbl(cntrst, iem)
+FACE_IEM_PostCO2_P_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], digit = 2)
 
 # model diagnosis
 plot(Fml_post)
