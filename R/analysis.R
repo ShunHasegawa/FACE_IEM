@@ -14,7 +14,7 @@ library(contrast)
 library(effects)
 library(ggplot2)
 
-source("R/functions.R")
+source("R//functions.R")
 
 ################
 # Process  data#
@@ -44,7 +44,6 @@ save(iem,file="output/data/FACE_IEM.RData")
 # Summary table #
 #################
 source("R/SummaryExlTable.R")
-
 
 ########
 # Figs #
