@@ -7,11 +7,6 @@
 
 \subsection{Nitrate}
 
-<<ReadScript, echo=FALSE, cache=FALSE>>=
-read_chunk('R/Stats_NO.R')
-@
-
-
 %%% CO2 trt %%%
 \subsubsection{CO2 trt}
 
@@ -34,6 +29,11 @@ printTbl(TrtSmmryTbl[[1]],
 @
 
 %% Stats %%
+<<ReadScript, echo=FALSE, cache=FALSE, include=FALSE>>=
+read_chunk('R/Stats_NO.R')
+#source("R/Stats_NO.R")
+@
+
 \paragraph{Stats}
 \paragraph{Pre-CO2}
 \noindent
@@ -41,12 +41,19 @@ printTbl(TrtSmmryTbl[[1]],
 <<StatNitratePreCO2, echo=TRUE, results='markup'>>=
 @
 
+%<<StatNitratePreCO2Smmry, echo=TRUE, results='markup'>>=
+%@
+
 \paragraph{Stats}
 \paragraph{Post-CO2}
 \noindent
 
 <<StatNitratePostCO2, echo=TRUE, results='markup'>>=
 @
+
+%<<StatNitratePostCO2Smmry, echo=TRUE, results='markup'>>=
+%@
+
 
 %%% Ring %%%
 \clearpage
