@@ -2,7 +2,7 @@ range(iem$nh)
 
 ### Pre-CO2 ###
 bxplts(value= "nh", data= subset(iem, pre))
- # remove two high values
+ # remove two high values(outlier?)
 
 nhRmOl <- subset(iem, nh < 800)
 bxplts(value= "nh", data= subset(nhRmOl, pre))
