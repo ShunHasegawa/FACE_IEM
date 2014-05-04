@@ -1,0 +1,77 @@
+\Sexpr{set_parent('FACE_IEM_report.Rnw')}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% source files & libraries & setup options                                  %%
+%% need to be loaded here if one wants to compile this child document to PDF %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Phosphate}
+
+%%% CO2 trt %%%
+\subsubsection{CO2 trt}
+
+\begin{figure}[!h]\label{figure:CO2IEM_Phosphate}
+
+\begin{center}
+
+<<Figco2Phosphate, echo=FALSE, fig.height=3, fig.width=6>>=
+TrtFg[[3]]
+@
+
+\caption{IEM-adsorbed Phosphate at CO2 treatments}
+\end{center}
+\end{figure}
+
+<<Tableco2Phosphate, echo=FALSE, results='asis'>>=
+printTbl(TrtSmmryTbl[[3]], 
+         caption = "CO2 trt mean of IEM-adsorbed Phosphate",
+         label = "table:FACE_IEM_CO2_Phosphate")
+@
+
+%% Stats %%
+<<ReadScriptP, echo=FALSE, cache=FALSE, include=FALSE>>=
+read_chunk('R/Stats_P.R')
+#source("R/Stats_P.R")
+@
+
+\paragraph{Stats}
+\paragraph{Pre-CO2}
+\noindent
+
+<<StatPhosphatePreCO2, echo=TRUE, results='markup'>>=
+@
+
+%<<StatPhosphatePreCO2Smmry, echo=TRUE, results='markup'>>=
+%@
+
+\paragraph{Stats}
+\paragraph{Post-CO2}
+\noindent
+
+<<StatPhosphatePostCO2, echo=TRUE, results='markup'>>=
+@
+
+%<<StatPhosphatePostCO2Smmry, echo=TRUE, results='markup'>>=
+%@
+
+%%% Ring %%%
+\clearpage
+\subsubsection{Ring}
+
+\begin{figure}[!h]\label{figure:RingIEM_Phosphate}
+\begin{center}
+
+<<FigChPhosphate, echo=FALSE, fig.height=3, fig.width=6>>=
+RngFg[[3]]
+@
+
+\caption{IEM-adsorbed Phosphate in each ring}
+\end{center}
+\end{figure}
+
+<<TableRingPhosphate, echo=FALSE, results='asis'>>=
+printRngTbl(RngSmmryTbl[[3]], 
+            caption = "Ring mean of IEM-adsorbed Phosphate", 
+            label = "table:FACE_IEM_ring_Phosphate",
+            size = "small")
+@

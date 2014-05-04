@@ -56,12 +56,12 @@ source("R/Figs.R")
 %%%%%%%%%%%%
 % Ammonium %
 %%%%%%%%%%%%
-%\Sexpr{knit_child('')}
+\clearpage
+\Sexpr{knit_child('FACE_IEM_ammonium.Rnw')}
 
 %%%%%%%%%%%%%
 % Phosphate %
 %%%%%%%%%%%%%
-%\Sexpr{knit_child('')}
-
+\Sexpr{knit_child('FACE_IEM_phosphate.Rnw')}
 
 \end{document}
