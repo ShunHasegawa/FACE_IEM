@@ -31,7 +31,7 @@ printTbl(TrtSmmryTbl[[2]],
 %% Stats %%
 <<ReadScriptNH, echo=FALSE, cache=FALSE, include=FALSE>>=
 read_chunk('R/Stats_NH.R')
-#source("R/Stats_NO.R")
+#source("R/Stats_NH.R")
 @
 
 \paragraph{Stats}
