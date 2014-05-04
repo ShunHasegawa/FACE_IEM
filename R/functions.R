@@ -180,7 +180,7 @@ PltMean <- function(data){
     labs(x = "Time", y = ylab) +
     geom_vline(xintercept = as.numeric(as.Date("2012-09-18")), linetype = "dashed", col = "black")
   
-  # change colors, linetype and associated legend according to plotting groups (chamber or treatment)
+  # change colors, linetype and associated legend according to plotting groups (ring or treatment)
   if(colfactor == "co2") 
     p3  <- p2 +  
     scale_color_manual(values = c("blue", "red"), expression(CO[2]~trt), labels = c("Ambient", expression(eCO[2]))) else
@@ -223,11 +223,11 @@ ggsavePP <- function(filename, plot, width, height){
 #############################################
 
 atcr.cmpr <- function(model, rndmFac){
-  if(rndmFac == "chamber/location"){
-    model2 <- update(model,corr=corCompSymm(form=~1|chamber/location)) 
+  if(rndmFac == "ring/plot"){
+    model2 <- update(model,corr=corCompSymm(form=~1|ring/plot)) 
   } else {
-    if(rndmFac == "chamber"){
-      model2 <- update(model,corr=corCompSymm(form=~1|chamber))
+    if(rndmFac == "ring"){
+      model2 <- update(model,corr=corCompSymm(form=~1|ring))
     } else {
       model2 <- update(model,corr=corCompSymm(form=~1|id))
     }
