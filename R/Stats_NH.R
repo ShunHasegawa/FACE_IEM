@@ -106,17 +106,17 @@ qqline(residuals.lm(Fml_post))
 ## ---- StatAmmoniumPreCO2Smmry ---- 
 # The starting model is:
 Iml_pre$call
-anova(Iml_pre)
+xtable(anova(Iml_pre))
 
 # The final model is:
 Fml_pre$call
-anova(Fml_pre)
+xtable(anova(Fml_pre))
 
 ## ---- StatAmmoniumPostCO2Smmry ---- 
 # The starting model is:
 Iml_post$call
-anova(Iml_post)
+xtable(anova(Iml_post))
 
 # The final model is:
 Fml_post$call
-anova(Fml_post)
+xtable(anova(Fml_post))
