@@ -115,13 +115,16 @@ anova(Iml_pre)
 
 # The final model is:
 Fml_pre$call
-anova(Fml_pre)
+print(anova(Fml_pre))
 
 ## ---- StatPhosphatePostCO2Smmry ---- 
 # The starting model is:
 Iml_post$call
-anova(Iml_post)
+print(anova(Iml_post))
 
 # The final model is:
 Fml_post$call
-anova(Fml_post)
+print(anova(Fml_post))
+
+print(FACE_IEM_PostCO2_P_CntrstDf)
+
