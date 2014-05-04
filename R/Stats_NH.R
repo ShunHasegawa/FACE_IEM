@@ -1,3 +1,5 @@
+## ---- StatAmmoniumPreCO2 ---- 
+
 range(iem$nh)
 
 ###########
@@ -53,6 +55,8 @@ qqnorm(residuals.lm(Fml_pre))
 qqline(residuals.lm(Fml_pre))
   # as expected,, not great...
 
+## ---- StatAmmoniumPostCO2 ---- 
+
 ############
 # Post-CO2 #
 ############
@@ -99,3 +103,20 @@ qqnorm(Fml_post, ~ resid(.)|id)
 qqnorm(residuals.lm(Fml_post))
 qqline(residuals.lm(Fml_post))
 
+## ---- StatAmmoniumPreCO2Smmry ---- 
+# The starting model is:
+Iml_pre$call
+anova(Iml_pre)
+
+# The final model is:
+Fml_pre$call
+anova(Fml_pre)
+
+## ---- StatAmmoniumPostCO2Smmry ---- 
+# The starting model is:
+Iml_post$call
+anova(Iml_post)
+
+# The final model is:
+Fml_post$call
+anova(Fml_post)
