@@ -38,21 +38,21 @@ source("R/Stats_P.R")
 \paragraph{Pre-CO2}
 \noindent
 
-%<<StatPhosphatePreCO2, echo=TRUE, results='markup'>>=
-%@
-
-<<StatPhosphatePreCO2Smmry, echo=TRUE, results='markup'>>=
+<<StatPhosphatePreCO2, echo=TRUE, results='markup'>>=
 @
+
+%<<StatPhosphatePreCO2Smmry, echo=TRUE, results='markup'>>=
+%@
 
 \paragraph{Stats}
 \paragraph{Post-CO2}
 \noindent
 
-%<<StatPhosphatePostCO2, echo=TRUE, results='markup'>>=
-%@
-
-<<StatPhosphatePostCO2Smmry, echo=TRUE, results='markup'>>=
+<<StatPhosphatePostCO2, echo=TRUE, results='markup'>>=
 @
+
+%<<StatPhosphatePostCO2Smmry, echo=TRUE, results='markup'>>=
+%@
 
 %%% Ring %%%
 \clearpage
