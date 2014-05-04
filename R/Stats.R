@@ -4,6 +4,11 @@
 iem$pre <- ifelse(iem$time %in% c(1:4), TRUE, FALSE )
 iem$post <- ifelse(!(iem$time %in% c(1:3)), TRUE, FALSE )
 
+###########
+# Nitrate #
+###########
+source("R/Stats_NO.R")
+
 #############
 # Phosphate #
 #############
