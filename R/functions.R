@@ -196,7 +196,7 @@ PltMean <- function(data){
     ant_pos <- subset(ant_pos, variable == "po") # only applied to PO data
     ant_pos$lab <- "*"
     ant_pos$co2 <- factor("amb", levels=c("amb", "elev")) 
-    # the original data frame uses "co2", so it needs to have "temp" as well in ggplot2
+    # the original data frame uses "co2", so it needs to have "co2" as well in ggplot2
     # but it doesn't really do anything    
     p3 +  geom_text(data = ant_pos, aes(x =date, y = Mean, label= lab), col = "black", vjust = 0)
   }
@@ -249,11 +249,11 @@ atcr.cmpr <- function(model, rndmFac){
 bxplts <- function(value, ofst = 0, data){
   par(mfrow = c(2, 3))
   y <- data[[value]] + ofst #ofst is added to make y >0
-  boxplot(y ~ temp*time, data)
-  boxplot(log(y) ~ temp*time, main = "log", data)
-  boxplot(sqrt(y) ~ temp*time, main = "sqrt", data)
-  boxplot(y^(1/3) ~ temp*time, main = "power(1/3)", data)
-  boxplot(1/y ~ temp*time, main = "inverse", data)
+  boxplot(y ~ co2*time, data)
+  boxplot(log(y) ~ co2*time, main = "log", data)
+  boxplot(sqrt(y) ~ co2*time, main = "sqrt", data)
+  boxplot(y^(1/3) ~ co2*time, main = "power(1/3)", data)
+  boxplot(1/y ~ co2*time, main = "inverse", data)
   par(mfrow = c(1,1))
 }
 
