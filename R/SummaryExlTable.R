@@ -1,6 +1,6 @@
 # melt dataset
 names(iem)
-iemMlt <- melt(iem, id = c("time", "date", "ring", "plot", "co2", "id"))
+iemMlt <- melt(iem, id = c("time", "date","insertion", "sampling", "ring", "plot", "co2", "id"))
 
 # Ring summary table & mean
 RngSmmryTbl <- dlply(iemMlt, .(variable), function(x) CreateTable(x, fac = "ring", digit = 1, nsmall = 2))
