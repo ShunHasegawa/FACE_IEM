@@ -1,6 +1,9 @@
 range(iem$nh)
 
-### Pre-CO2 ###
+###########
+# Pre-CO2 #
+###########
+
 bxplts(value= "nh", data= subset(iem, pre))
  # remove two high values(outlier?)
 
@@ -50,7 +53,10 @@ qqnorm(residuals.lm(Fml_pre))
 qqline(residuals.lm(Fml_pre))
   # as expected,, not great...
 
-### post-co2 ###
+############
+# Post-CO2 #
+############
+
 bxplts(value= "nh", data= subset(iem, post))
   # log seems better
 

@@ -1,6 +1,9 @@
 range(iem$no)
 
-### Pre-CO2 ###
+###########
+# Pre-CO2 #
+###########
+
 bxplts(value= "no", data= subset(iem, pre))
   # sqrt seems slightly better
 
@@ -43,7 +46,10 @@ qqnorm(Fml_pre, ~ resid(.)|id)
 qqnorm(residuals.lm(Fml_pre))
 qqline(residuals.lm(Fml_pre))
 
-### post-co2 ###
+############
+# Post-CO2 #
+############
+
 bxplts(value= "no", data= subset(iem, post))
 bxplts(value= "no", ofst = 30, data= subset(iem, post))
   # log seems better

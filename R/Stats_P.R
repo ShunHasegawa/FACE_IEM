@@ -1,4 +1,7 @@
-### Pre-CO2 ###
+###########
+# Pre-CO2 #
+###########
+
 range(iem$p)
 bxplts(value= "p", data= subset(iem, pre))
 # remove the higher outlier
@@ -46,7 +49,10 @@ qqnorm(Fml_pre, ~ resid(.)|ring)
 qqnorm(residuals.lm(Fml_pre))
 qqline(residuals.lm(Fml_pre))
 
-### post-co2 ###
+############
+# post-co2 #
+############
+
 bxplts(value= "p", data= subset(iem, post))
 bxplts(value= "p", ofst = 1.1, data= subset(iem, post))
 # inverse  seems better
