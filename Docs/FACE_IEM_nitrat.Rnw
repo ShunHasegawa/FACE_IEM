@@ -35,11 +35,17 @@ printTbl(TrtSmmryTbl[[1]],
 
 %% Stats %%
 \paragraph{Stats}
+\paragraph{Pre-CO2}
 \noindent
 
 <<StatNitratePreCO2, echo=TRUE, results='markup'>>=
 @
-<<NOPreIml, echo=TRUE, results='markup'>>=
+
+\paragraph{Stats}
+\paragraph{Post-CO2}
+\noindent
+
+<<StatNitratePostCO2, echo=TRUE, results='markup'>>=
 @
 
 %%% Ring %%%
@@ -52,19 +58,14 @@ printTbl(TrtSmmryTbl[[1]],
 <<FigChNitrate, echo=FALSE, fig.height=3, fig.width=6>>=
 RngFg[[1]]
 @
+
 \caption{IEM-adsorbed nitrate in each ring}
 \end{center}
 \end{figure}
 
 <<TableRingNitrate, echo=FALSE, results='asis'>>=
-printTbl(RngSmmryTbl[[1]][, 1:13], 
-         caption = "Ring mean of IEM-adsorbed nitrate",
-         label = "table:FACE_IEM_ring_nitrate",
-         size = "small")
-printTbl(RngSmmryTbl[[1]][, c(1, 14:19)], 
-         caption = NULL,
-         label = NULL,
-         size = "small")
+printRngTbl(RngSmmryTbl[[1]], 
+            caption = "Ring mean of IEM-adsorbed nitrate", 
+            label = "table:FACE_IEM_ring_nitrate",
+            size = "small")
 @
-?print
-ncol(RngSmmryTbl[[1]][, 1:13])
