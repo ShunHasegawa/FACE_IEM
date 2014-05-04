@@ -273,3 +273,17 @@ cntrstTbl <- function(cntrstRes, data, ...){
     P.value = cntrst$Pvalue)
   return(format(Df, ...))
 }
+
+
+###############
+# Print table #
+###############
+printTbl <- function(tbl, caption, label, ...){
+  print(xtable(tbl,
+               caption = caption, 
+               label = label, 
+               align = rep("l", 8)),
+        caption.placement = "top", 
+        include.rownames = FALSE,
+        table.placement = "H", ...)
+}
