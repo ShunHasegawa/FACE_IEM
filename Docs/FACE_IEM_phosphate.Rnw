@@ -41,7 +41,7 @@ source("R/Stats_P.R")
 %<<StatPhosphatePreCO2, echo=TRUE, results='markup'>>=
 %@
 
-<<StatPhosphatePreCO2Smmry, echo=TRUE, results='markup'>>=
+<<StatPhosphatePreCO2Smmry, echo=TRUE, results='asis'>>=
 @
 
 \paragraph{Stats}
@@ -51,7 +51,7 @@ source("R/Stats_P.R")
 %<<StatPhosphatePostCO2, echo=TRUE, results='markup'>>=
 %@
 
-<<StatPhosphatePostCO2Smmry, echo=TRUE, results='markup'>>=
+<<StatPhosphatePostCO2Smmry, echo=TRUE, results='asis'>>=
 @
 
 %%% Ring %%%

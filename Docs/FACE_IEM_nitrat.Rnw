@@ -41,7 +41,7 @@ source("R/Stats_NO.R")
 %<<StatNitratePreCO2, echo=TRUE, results='markup'>>=
 %@
 
-<<StatNitratePreCO2Smmry, echo=TRUE, results='markup'>>=
+<<StatNitratePreCO2Smmry, echo=TRUE, results='asis'>>=
 @
 
 \paragraph{Stats}
@@ -51,7 +51,7 @@ source("R/Stats_NO.R")
 %<<StatNitratePostCO2, echo=TRUE, results='markup'>>=
 %@
 
-<<StatNitratePostCO2Smmry, echo=TRUE, results='markup'>>=
+<<StatNitratePostCO2Smmry, echo=TRUE, results='asis'>>=
 @
 
 %%% Ring %%%

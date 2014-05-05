@@ -41,7 +41,7 @@ source("R/Stats_NH.R")
 %<<StatAmmoniumPreCO2, echo=TRUE, results='markup'>>=
 %@
 
-<<StatAmmoniumPreCO2Smmry, echo=TRUE, results='markup'>>=
+<<StatAmmoniumPreCO2Smmry, echo=TRUE, results='asis'>>=
 @
 
 \paragraph{Stats}
@@ -51,7 +51,7 @@ source("R/Stats_NH.R")
 %<<StatAmmoniumPostCO2, echo=TRUE, results='markup'>>=
 %@
 
-<<StatAmmoniumPostCO2Smmry, echo=TRUE, results='markup'>>=
+<<StatAmmoniumPostCO2Smmry, echo=TRUE, results='asis'>>=
 @
 
 %%% Ring %%%

@@ -120,11 +120,10 @@ anova(Fml_pre)
 ## ---- StatPhosphatePostCO2Smmry ---- 
 # The starting model is:
 Iml_post$call
-anova(Iml_post)
+xtable(anova(Iml_post), floating = FALSE)
 
 # The final model is:
 Fml_post$call
-anova(Fml_post)
+xtable(anova(Fml_post), floating = FALSE)
 
-FACE_IEM_PostCO2_P_CntrstDf
-
+print(xtable(FACE_IEM_PostCO2_P_CntrstDf, floating = FALSE),include.rownames= FALSE)
