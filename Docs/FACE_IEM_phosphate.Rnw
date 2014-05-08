@@ -50,7 +50,7 @@ TrtFg[[3]]
 \end{center}
 \end{figure}
 
-<<Tableco2Phosphate, echo=FALSE, results=''>>=
+<<Tableco2Phosphate, echo=FALSE, results='asis'>>=
 printTbl(TrtSmmryTbl[[3]], 
          caption = "CO2 trt mean of IEM-adsorbed Phosphate",
          label = "table:FACE_IEM_CO2_Phosphate")
