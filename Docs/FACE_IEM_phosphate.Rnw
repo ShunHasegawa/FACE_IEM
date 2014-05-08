@@ -68,38 +68,38 @@ source("R/Stats_P.R")
 @
 
 
-%%%%%%%%%%%%%
-%% Summary %%
-%%%%%%%%%%%%%
-
-\paragraph{Pre-CO$_2$}
-\noindent
-
-<<Stat_FACE_IEM_Phosphate_preCO2_Smmry, echo=TRUE, results='markup'>>=
-@
-
-\paragraph{Post-CO$_2$}
-\noindent
-
-<<Stat_FACE_IEM_Phosphate_postCO2_Smmry, echo=TRUE, results='markup'>>=
-@
-
-% %%%%%%%%%%%%
-% %% Detail %%
-% %%%%%%%%%%%%
+% %%%%%%%%%%%%%
+% %% Summary %%
+% %%%%%%%%%%%%%
 % 
 % \paragraph{Pre-CO$_2$}
 % \noindent
 % 
-% <<Stat_FACE_IEM_Phosphate_preCO2, echo=TRUE, results='markup'>>=
+% <<Stat_FACE_IEM_Phosphate_preCO2_Smmry, echo=TRUE, results='markup'>>=
 % @
 % 
-% \paragraph{Stats}
 % \paragraph{Post-CO$_2$}
 % \noindent
 % 
-% <<Stat_FACE_IEM_Phosphate_postCO2, echo=TRUE, results='markup'>>=
+% <<Stat_FACE_IEM_Phosphate_postCO2_Smmry, echo=TRUE, results='markup'>>=
 % @
+
+%%%%%%%%%%%%
+%% Detail %%
+%%%%%%%%%%%%
+
+\paragraph{Pre-CO$_2$}
+\noindent
+
+<<Stat_FACE_IEM_Phosphate_preCO2, echo=TRUE, results='markup'>>=
+@
+
+\paragraph{Stats}
+\paragraph{Post-CO$_2$}
+\noindent
+
+<<Stat_FACE_IEM_Phosphate_postCO2, echo=TRUE, results='markup'>>=
+@
 
 %%% Ring %%%
 \clearpage

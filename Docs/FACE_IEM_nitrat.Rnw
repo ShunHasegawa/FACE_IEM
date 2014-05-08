@@ -40,38 +40,38 @@ source("R/Stats_NO.R")
 @
 
 
-%%%%%%%%%%%%%
-%% Summary %%
-%%%%%%%%%%%%%
-
-\paragraph{Pre-CO$_2$}
-\noindent
-
-<<Stat_FACE_IEM_Nitrate_preCO2_Smmry, echo=TRUE, results='markup'>>=
-@
-
-\paragraph{Post-CO$_2$}
-\noindent
-
-<<Stat_FACE_IEM_Nitrate_postCO2_Smmry, echo=TRUE, results='markup'>>=
-@
-
-% %%%%%%%%%%%%
-% %% Detail %%
-% %%%%%%%%%%%%
+% %%%%%%%%%%%%%
+% %% Summary %%
+% %%%%%%%%%%%%%
 % 
 % \paragraph{Pre-CO$_2$}
 % \noindent
 % 
-% <<Stat_FACE_IEM_Nitrate_preCO2, echo=TRUE, results='markup'>>=
+% <<Stat_FACE_IEM_Nitrate_preCO2_Smmry, echo=TRUE, results='markup'>>=
 % @
 % 
-% \paragraph{Stats}
 % \paragraph{Post-CO$_2$}
 % \noindent
 % 
-% <<Stat_FACE_IEM_Nitrate_postCO2, echo=TRUE, results='markup'>>=
+% <<Stat_FACE_IEM_Nitrate_postCO2_Smmry, echo=TRUE, results='markup'>>=
 % @
+
+%%%%%%%%%%%%
+%% Detail %%
+%%%%%%%%%%%%
+
+\paragraph{Pre-CO$_2$}
+\noindent
+
+<<Stat_FACE_IEM_Nitrate_preCO2, echo=TRUE, results='markup'>>=
+@
+
+\paragraph{Stats}
+\paragraph{Post-CO$_2$}
+\noindent
+
+<<Stat_FACE_IEM_Nitrate_postCO2, echo=TRUE, results='markup'>>=
+@
 
 %%% Ring %%%
 \clearpage
