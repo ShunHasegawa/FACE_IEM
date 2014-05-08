@@ -340,4 +340,11 @@ printRngTbl <- function(tbl, caption, label, ...){
            ...)
 }
 
+##############################
+# subset data and droplevels #
+##############################
+subsetD <- function(...){
+  droplevels(subset(...))
+}
+
 
