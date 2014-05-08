@@ -57,22 +57,25 @@ qqline(residuals.lm(Fml_pre))
 # post-co2 #
 ############
 
-bxplts(value= "p", data= subset(iem, post))
-bxplts(value= "p", ofst = 1.1, data= subset(iem, post))
-# inverse  seems better
+bxplts(value= "p", data= subsetD(iem, post))
+bxcxplts(value= "p", data= subsetD(iem, post), sval = 0.9, fval = 2)
+# adding constant value of 1.56 may improve
+
+bxplts(value= "p", ofst = 1.6, data= subsetD(iem, post))
+# use box-cox lambda
 
 # different random factor strucures
-m1 <- lme(1/(p + 1) ~ co2 * time, random = ~1|ring/plot,  data = subsetD(iem, post))
-m2 <- lme(1/(p + 1) ~ co2 * time, random = ~1|ring,  data = subsetD(iem, post))
-m3 <- lme(1/(p + 1) ~ co2 * time, random = ~1|id,  data = subsetD(iem, post))
+m1 <- lme((p + 1.6)^(-1.1515) ~ co2 * time, random = ~1|ring/plot,  data = subsetD(iem, post))
+m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * time, random = ~1|ring,  data = subsetD(iem, post))
+m3 <- lme((p + 1.6)^(-1.1515) ~ co2 * time, random = ~1|id,  data = subsetD(iem, post))
 anova(m1, m2, m3)
 # m1 is better
 
 # autocorelation
 atcr.cmpr(m1, rndmFac="ring/plot")$models
-# model 5 looks better
+# model 4 looks better
 
-Iml_post <- atcr.cmpr(m2, rndmFac="ring")[[5]]
+Iml_post <- atcr.cmpr(m2, rndmFac="ring")[[4]]
 
 # The starting model is:
 Iml_post$call
@@ -91,8 +94,6 @@ Fml_post$call
 Anova(Fml_post)
 
 summary(Fml_post)
-
-plot(allEffects(Fml_post))
 
 # contrast
 cntrst<- contrast(Fml_post, 
