@@ -28,31 +28,51 @@ printTbl(TrtSmmryTbl[[2]],
          label = "table:FACE_IEM_CO2_Ammonium")
 @
 
-%% Stats %%
-<<ReadScriptNH, echo=FALSE, cache=FALSE, include=FALSE>>=
+%%%%%%%%%%%%%
+%%% Stats %%%
+%%%%%%%%%%%%%
+\clearpage
+\paragraph{Stats}
+
+<<ReadScriptP, echo=FALSE, cache=FALSE, include=FALSE>>=
 read_chunk('R/Stats_NH.R')
 source("R/Stats_NH.R")
 @
 
-\paragraph{Stats}
+
+%%%%%%%%%%%%%
+%% Summary %%
+%%%%%%%%%%%%%
+
 \paragraph{Pre-CO2}
 \noindent
 
-%<<StatAmmoniumPreCO2, echo=TRUE, results='markup'>>=
-%@
-
-<<StatAmmoniumPreCO2Smmry, echo=TRUE, results='asis'>>=
+<<Stat_FACE_IEM_Ammonium_preCO2_Smmry, echo=TRUE, results='asis'>>=
 @
 
 \paragraph{Stats}
 \paragraph{Post-CO2}
 \noindent
 
-%<<StatAmmoniumPostCO2, echo=TRUE, results='markup'>>=
-%@
-
-<<StatAmmoniumPostCO2Smmry, echo=TRUE, results='asis'>>=
+<<Stat_FACE_IEM_Ammonium_preCO2_smmry, echo=TRUE, results='asis'>>=
 @
+
+% %%%%%%%%%%%%
+% %% Detail %%
+% %%%%%%%%%%%%
+% 
+% \paragraph{Pre-CO2}
+% \noindent
+% 
+% <<Stat_FACE_IEM_Ammonium_preCO2, echo=TRUE, results='markup'>>=
+% @
+% 
+% \paragraph{Stats}
+% \paragraph{Post-CO2}
+% \noindent
+% 
+% <<Stat_FACE_IEM_Ammonium_postCO2, echo=TRUE, results='markup'>>=
+% @
 
 %%% Ring %%%
 \clearpage

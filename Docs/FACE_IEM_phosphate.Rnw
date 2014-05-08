@@ -28,30 +28,50 @@ printTbl(TrtSmmryTbl[[3]],
          label = "table:FACE_IEM_CO2_Phosphate")
 @
 
-%% Stats %%
+%%%%%%%%%%%%%
+%%% Stats %%%
+%%%%%%%%%%%%%
+\clearpage
+\paragraph{Stats}
+
 <<ReadScriptP, echo=FALSE, cache=FALSE, include=FALSE>>=
 read_chunk('R/Stats_P.R')
 source("R/Stats_P.R")
 @
 
-\paragraph{Stats}
+
+%%%%%%%%%%%%%
+%% Summary %%
+%%%%%%%%%%%%%
+
 \paragraph{Pre-CO2}
 \noindent
 
-%<<StatPhosphatePreCO2, echo=TRUE, results='markup'>>=
-%@
-
-<<StatPhosphatePreCO2Smmry, echo=TRUE, results='asis'>>=
+<<Stat_FACE_IEM_Phosphate_preCO2_Smmry, echo=TRUE, results='asis'>>=
 @
 
 \paragraph{Stats}
 \paragraph{Post-CO2}
 \noindent
 
-%<<StatPhosphatePostCO2, echo=TRUE, results='markup'>>=
-%@
+<<Stat_FACE_IEM_Phosphate_preCO2_smmry, echo=TRUE, results='asis'>>=
+@
 
-<<StatPhosphatePostCO2Smmry, echo=TRUE, results='asis'>>=
+%%%%%%%%%%%%
+%% Detail %%
+%%%%%%%%%%%%
+
+\paragraph{Pre-CO2}
+\noindent
+
+<<Stat_FACE_IEM_Phosphate_preCO2, echo=TRUE, results='markup'>>=
+@
+
+\paragraph{Stats}
+\paragraph{Post-CO2}
+\noindent
+
+<<Stat_FACE_IEM_Phosphate_postCO2, echo=TRUE, results='markup'>>=
 @
 
 %%% Ring %%%
