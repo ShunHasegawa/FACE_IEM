@@ -102,19 +102,19 @@ qqline(residuals.lm(Fml_post))
 
 # The starting model is:
 Iml_pre$call
-xtable(Anova(Iml_pre), floating = FALSE)
+Anova(Iml_pre)
 
 # The final model is:
 Fml_pre$call
-xtable(Anova(Fml_pre), floating = FALSE)
+Anova(Fml_pre)
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_Smmry
 
 # The starting model is:
 Iml_post$call
-xtable(Anova(Iml_post), floating = FALSE)
+Anova(Iml_post)
 
 # The final model is:
 Fml_post$call
-xtable(Anova(Fml_post), floating = FALSE)
+Anova(Fml_post)
 

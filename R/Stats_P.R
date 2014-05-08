@@ -113,19 +113,20 @@ qqline(residuals.lm(Fml_post))
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
 Iml_pre$call
-xtable(Anova(Iml_pre), floating = FALSE)
+Anova(Iml_pre)
 
 # The final model is:
 Fml_pre$call
-xtable(Anova(Fml_pre), floating = FALSE)
+Anova(Fml_pre)
 
 ## ---- Stat_FACE_IEM_Phosphate_postCO2_Smmry
 # The starting model is:
-Iml_post$call
-xtable(Anova(Iml_post), floating = FALSE)
+# Iml_post$call
+Anova(Iml_post)
 
 # The final model is:
-Fml_post$call
-xtable(Anova(Fml_post), floating = FALSE)
+# Fml_post$call
+Anova(Fml_post)
 
-print(xtable(FACE_IEM_PostCO2_P_CntrstDf, floating = FALSE),include.rownames= FALSE)
+FACE_IEM_PostCO2_P_CntrstDf
+
