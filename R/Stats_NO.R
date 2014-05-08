@@ -6,13 +6,13 @@ range(iem$no)
 # Pre-CO2 #
 ###########
 
-bxplts(value= "no", data= subset(iem, pre))
+bxplts(value= "no", data= subsetD(iem, pre))
 # sqrt seems slightly better
 
 # different random factor strucures
-m1 <- lme(sqrt(no) ~ co2 * time, random = ~1|ring/plot, subset = pre, data = iem)
-m2 <- lme(sqrt(no) ~ co2 * time, random = ~1|ring, subset = pre, data = iem)
-m3 <- lme(sqrt(no) ~ co2 * time, random = ~1|id, subset = pre, data = iem)
+m1 <- lme(sqrt(no) ~ co2 * time, random = ~1|ring/plot,  data = subsetD(iem, pre))
+m2 <- lme(sqrt(no) ~ co2 * time, random = ~1|ring,  data = subsetD(iem, pre))
+m3 <- lme(sqrt(no) ~ co2 * time, random = ~1|id,  data = subsetD(iem, pre))
 anova(m1, m2, m3)
 # m1 is better
 
@@ -26,7 +26,7 @@ Iml_pre <- atcr.cmpr(m1, rndmFac="ring/plot")[[3]]
 Iml_pre$call
 
 # model simplification
-anova(Iml_pre)
+Anova(Iml_pre)
 
 MdlSmpl(Iml_pre)
 # time * co2 and co2 are removed
@@ -36,7 +36,7 @@ Fml_pre <- MdlSmpl(Iml_pre)$model.reml
 # The final model is:
 Fml_pre$call
 
-anova(Fml_pre)
+Anova(Fml_pre)
 
 summary(Fml_pre)
 
@@ -59,9 +59,9 @@ bxplts(value= "no", ofst = 30, data= subset(iem, post))
 # log seems better
 
 # different random factor strucures
-m1 <- lme(log(no + 30) ~ co2 * time, random = ~1|ring/plot, subset = post, data = iem)
-m2 <- lme(log(no + 30) ~ co2 * time, random = ~1|ring, subset = post, data = iem)
-m3 <- lme(log(no + 30) ~ co2 * time, random = ~1|id, subset = post, data = iem)
+m1 <- lme(log(no + 30) ~ co2 * time, random = ~1|ring/plot,  data = subsetD(iem, post))
+m2 <- lme(log(no + 30) ~ co2 * time, random = ~1|ring,  data = subsetD(iem, post))
+m3 <- lme(log(no + 30) ~ co2 * time, random = ~1|id,  data = subsetD(iem, post))
 anova(m1, m2, m3)
 # m1 is better
 
@@ -75,7 +75,7 @@ Iml_post <- atcr.cmpr(m2, rndmFac="ring")[[4]]
 Iml_post$call
 
 # model simplification
-anova(Iml_post)
+Anova(Iml_post)
 
 MdlSmpl(Iml_post)
 # co2xtime, co2 are removed
@@ -85,7 +85,7 @@ Fml_post <- MdlSmpl(Iml_post)$model.reml
 # The final model is:
 Fml_post$call
 
-anova(Fml_post)
+Anova(Fml_post)
 
 summary(Fml_post)
 
@@ -101,18 +101,18 @@ qqline(residuals.lm(Fml_post))
 ## ---- StatNitratePreCO2Smmry ---- 
 # The starting model is:
 Iml_pre$call
-xtable(anova(Iml_pre), floating = FALSE)
+xtable(Anova(Iml_pre), floating = FALSE)
 
 # The final model is:
 Fml_pre$call
-xtable(anova(Fml_pre), floating = FALSE)
+xtable(Anova(Fml_pre), floating = FALSE)
 
 ## ---- StatNitratePostCO2Smmry ---- 
 # The starting model is:
 Iml_post$call
-xtable(anova(Iml_post), floating = FALSE)
+xtable(Anova(Iml_post), floating = FALSE)
 
 # The final model is:
 Fml_post$call
-xtable(anova(Fml_post), floating = FALSE)
+xtable(Anova(Fml_post), floating = FALSE)
 

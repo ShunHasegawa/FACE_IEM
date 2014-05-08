@@ -6,19 +6,19 @@ range(iem$nh)
 # Pre-CO2 #
 ###########
 
-bxplts(value= "nh", data= subset(iem, pre))
+bxplts(value= "nh", data= subsetD(iem, pre))
  # remove two high values(outlier?)
 
 nhRmOl <- subset(iem, nh < 800)
-bxplts(value= "nh", data= subset(nhRmOl, pre))
-bxplts(value= "nh", ofst= 10,data= subset(nhRmOl, pre))
+bxplts(value= "nh", data= subsetD(nhRmOl, pre))
+bxplts(value= "nh", ofst= 10, data= subsetD(nhRmOl, pre))
   # none of the transformation seems to be working well,
   # but let's carry on with log anyway
 
 # different random factor strucures
-m1 <- lme(log(nh + 10) ~ co2 * time, random = ~1|ring/plot, subset = pre, data = nhRmOl)
-m2 <- lme(log(nh + 10) ~ co2 * time, random = ~1|ring, subset = pre, data = nhRmOl)
-m3 <- lme(log(nh + 10) ~ co2 * time, random = ~1|id, subset = pre, data = nhRmOl)
+m1 <- lme(log(nh + 10) ~ co2 * time, random = ~1|ring/plot, data = subsetD(nhRmOl, pre))
+m2 <- lme(log(nh + 10) ~ co2 * time, random = ~1|ring, data = subsetD(nhRmOl, pre))
+m3 <- lme(log(nh + 10) ~ co2 * time, random = ~1|id, data = subsetD(nhRmOl, pre))
 anova(m1, m2, m3)
   # m1 is better
 
@@ -32,7 +32,7 @@ Iml_pre <- atcr.cmpr(m1, rndmFac="ring/plot")[[5]]
 Iml_pre$call
 
 # model simplification
-anova(Iml_pre)
+Anova(Iml_pre)
 
 MdlSmpl(Iml_pre)
   # time * co2 and co2 are removed
@@ -42,7 +42,7 @@ Fml_pre <- MdlSmpl(Iml_pre)$model.reml
 # The final model is:
 Fml_pre$call
 
-anova(Fml_pre)
+Anova(Fml_pre)
 
 summary(Fml_pre)
 
@@ -61,13 +61,13 @@ qqline(residuals.lm(Fml_pre))
 # Post-CO2 #
 ############
 
-bxplts(value= "nh", data= subset(iem, post))
+bxplts(value= "nh", data= subsetD(iem, post))
   # log seems better
 
 # different random factor strucures
-m1 <- lme(log(nh) ~ co2 * time, random = ~1|ring/plot, subset = post, data = iem)
-m2 <- lme(log(nh) ~ co2 * time, random = ~1|ring, subset = post, data = iem)
-m3 <- lme(log(nh) ~ co2 * time, random = ~1|id, subset = post, data = iem)
+m1 <- lme(log(nh) ~ co2 * time, random = ~1|ring/plot, data = subsetD(iem, post) )
+m2 <- lme(log(nh) ~ co2 * time, random = ~1|ring, data = subsetD(iem, post) )
+m3 <- lme(log(nh) ~ co2 * time, random = ~1|id, data = subsetD(iem, post) )
 anova(m1, m2, m3)
   # m2 is better
 
@@ -81,7 +81,7 @@ Iml_post <- atcr.cmpr(m2, rndmFac="ring")[[3]]
 Iml_post$call
 
 # model simplification
-anova(Iml_post)
+Anova(Iml_post)
 
 MdlSmpl(Iml_post)
   # co2 x time, co2 are removed
@@ -91,7 +91,7 @@ Fml_post <- MdlSmpl(Iml_post)$model.reml
 # The final model is:
 Fml_post$call
 
-anova(Fml_post)
+Anova(Fml_post)
 
 summary(Fml_post)
 
@@ -106,17 +106,17 @@ qqline(residuals.lm(Fml_post))
 ## ---- StatAmmoniumPreCO2Smmry ---- 
 # The starting model is:
 Iml_pre$call
-xtable(anova(Iml_pre), floating = FALSE)
+xtable(Anova(Iml_pre), floating = FALSE)
 
 # The final model is:
 Fml_pre$call
-xtable(anova(Fml_pre), floating = FALSE)
+xtable(Anova(Fml_pre), floating = FALSE)
 
 ## ---- StatAmmoniumPostCO2Smmry ---- 
 # The starting model is:
 Iml_post$call
-xtable(anova(Iml_post), floating = FALSE)
+xtable(Anova(Iml_post), floating = FALSE)
 
 # The final model is:
 Fml_post$call
-xtable(anova(Fml_post), floating = FALSE)
+xtable(Anova(Fml_post), floating = FALSE)
