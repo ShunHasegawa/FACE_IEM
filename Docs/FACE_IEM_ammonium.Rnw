@@ -47,14 +47,14 @@ source("R/Stats_NH.R")
 \paragraph{Pre-CO$_2$}
 \noindent
 
-<<Stat_FACE_IEM_Ammonium_preCO2_Smmry, echo=TRUE, results='asis'>>=
+<<Stat_FACE_IEM_Ammonium_preCO2_Smmry, echo=TRUE, results='markup'>>=
 @
 
 \paragraph{Stats}
 \paragraph{Post-CO$_2$}
 \noindent
 
-<<Stat_FACE_IEM_Ammonium_postCO2_Smmry, echo=TRUE, results='asis'>>=
+<<Stat_FACE_IEM_Ammonium_postCO2_Smmry, echo=TRUE, results='markup'>>=
 @
 
 % %%%%%%%%%%%%
