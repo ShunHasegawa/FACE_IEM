@@ -78,7 +78,6 @@ source("R/Stats_P.R")
 <<Stat_FACE_IEM_Phosphate_preCO2_Smmry, echo=TRUE, results='markup'>>=
 @
 
-\paragraph{Stats}
 \paragraph{Post-CO$_2$}
 \noindent
 

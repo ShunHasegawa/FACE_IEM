@@ -50,7 +50,6 @@ source("R/Stats_NH.R")
 <<Stat_FACE_IEM_Ammonium_preCO2_Smmry, echo=TRUE, results='markup'>>=
 @
 
-\paragraph{Stats}
 \paragraph{Post-CO$_2$}
 \noindent
 
