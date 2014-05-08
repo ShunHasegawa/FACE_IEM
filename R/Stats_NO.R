@@ -1,4 +1,4 @@
-## ---- StatNitratePreCO2 ---- 
+## ---- Stat_FACE_IEM_Nitrate_preCO2
 
 range(iem$no)
 
@@ -48,7 +48,7 @@ qqnorm(Fml_pre, ~ resid(.)|id)
 qqnorm(residuals.lm(Fml_pre))
 qqline(residuals.lm(Fml_pre))
 
-## ---- StatNitratePostCO2 ---- 
+## ---- Stat_FACE_IEM_Nitrate_postCO2
 
 ############
 # Post-CO2 #
@@ -98,7 +98,8 @@ qqnorm(residuals.lm(Fml_post))
 qqline(residuals.lm(Fml_post))
 
 
-## ---- StatNitratePreCO2Smmry ---- 
+## ---- Stat_FACE_IEM_Nitrate_preCO2_Smmry
+
 # The starting model is:
 Iml_pre$call
 xtable(Anova(Iml_pre), floating = FALSE)
@@ -107,7 +108,8 @@ xtable(Anova(Iml_pre), floating = FALSE)
 Fml_pre$call
 xtable(Anova(Fml_pre), floating = FALSE)
 
-## ---- StatNitratePostCO2Smmry ---- 
+## ---- Stat_FACE_IEM_Nitrate_postCO2_Smmry
+
 # The starting model is:
 Iml_post$call
 xtable(Anova(Iml_post), floating = FALSE)

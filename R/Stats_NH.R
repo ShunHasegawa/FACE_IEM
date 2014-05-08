@@ -1,4 +1,4 @@
-## ---- StatAmmoniumPreCO2 ---- 
+## ---- Stat_FACE_IEM_Ammonium_preCO2
 
 range(iem$nh)
 
@@ -55,7 +55,7 @@ qqnorm(residuals.lm(Fml_pre))
 qqline(residuals.lm(Fml_pre))
   # as expected,, not great...
 
-## ---- StatAmmoniumPostCO2 ---- 
+## ---- Stat_FACE_IEM_Ammonium_postCO2
 
 ############
 # Post-CO2 #
@@ -103,7 +103,9 @@ qqnorm(Fml_post, ~ resid(.)|id)
 qqnorm(residuals.lm(Fml_post))
 qqline(residuals.lm(Fml_post))
 
-## ---- StatAmmoniumPreCO2Smmry ---- 
+
+## ---- Stat_FACE_IEM_Ammonium_preCO2_Smmry
+
 # The starting model is:
 Iml_pre$call
 xtable(Anova(Iml_pre), floating = FALSE)
@@ -112,7 +114,8 @@ xtable(Anova(Iml_pre), floating = FALSE)
 Fml_pre$call
 xtable(Anova(Fml_pre), floating = FALSE)
 
-## ---- StatAmmoniumPostCO2Smmry ---- 
+## ---- Stat_FACE_IEM_Ammonium_postCO2_Smmry
+
 # The starting model is:
 Iml_post$call
 xtable(Anova(Iml_post), floating = FALSE)

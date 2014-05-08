@@ -1,4 +1,4 @@
-## ---- StatPhosphatePreCO2 ---- 
+## ---- Stat_FACE_IEM_Phosphate_preCO2
 
 ###########
 # Pre-CO2 #
@@ -52,7 +52,7 @@ qqnorm(residuals.lm(Fml_pre))
 qqline(residuals.lm(Fml_pre))
 
 
-## ---- StatPhosphatePreCO2 ---- 
+## ---- Stat_FACE_IEM_Phosphate_postCO2
 ############
 # post-co2 #
 ############
@@ -109,7 +109,8 @@ qqnorm(Fml_post, ~ resid(.)|id)
 qqnorm(residuals.lm(Fml_post))
 qqline(residuals.lm(Fml_post))
 
-## ---- StatPhosphatePreCO2Smmry ---- 
+
+## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
 Iml_pre$call
 Anova(Iml_pre)
@@ -118,7 +119,7 @@ Anova(Iml_pre)
 Fml_pre$call
 Anova(Fml_pre)
 
-## ---- StatPhosphatePostCO2Smmry ---- 
+## ---- Stat_FACE_IEM_Phosphate_postCO2_Smmry
 # The starting model is:
 Iml_post$call
 xtable(Anova(Iml_post), floating = FALSE)
