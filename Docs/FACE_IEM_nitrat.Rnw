@@ -8,7 +8,7 @@
 \subsection{Nitrate}
 
 %%% CO2 trt %%%
-\subsubsection{CO2 trt}
+\subsubsection{CO$_2$ trt}
 
 \begin{figure}[!h]\label{figure:CO2IEM_Nitrate}
 
@@ -18,7 +18,7 @@
 TrtFg[[1]]
 @
 
-\caption{IEM-adsorbed nitrate at CO2 treatments}
+\caption{IEM-adsorbed nitrate at CO$_2$ treatments}
 \end{center}
 \end{figure}
 
@@ -34,7 +34,7 @@ printTbl(TrtSmmryTbl[[1]],
 \clearpage
 \paragraph{Stats}
 
-<<ReadScriptP, echo=FALSE, cache=FALSE, include=FALSE>>=
+<<ReadScript_FACE_IEM_Nitrate, echo=FALSE, cache=FALSE, include=FALSE>>=
 read_chunk('R/Stats_NO.R')
 source("R/Stats_NO.R")
 @
@@ -44,35 +44,35 @@ source("R/Stats_NO.R")
 %% Summary %%
 %%%%%%%%%%%%%
 
-\paragraph{Pre-CO2}
+\paragraph{Pre-CO$_2$}
 \noindent
 
 <<Stat_FACE_IEM_Nitrate_preCO2_Smmry, echo=TRUE, results='asis'>>=
 @
 
 \paragraph{Stats}
-\paragraph{Post-CO2}
+\paragraph{Post-CO$_2$}
 \noindent
 
-<<Stat_FACE_IEM_Nitrate_preCO2_smmry, echo=TRUE, results='asis'>>=
+<<Stat_FACE_IEM_Nitrate_postCO2_Smmry, echo=TRUE, results='asis'>>=
 @
 
-%%%%%%%%%%%%
-%% Detail %%
-%%%%%%%%%%%%
-
-\paragraph{Pre-CO2}
-\noindent
-
-<<Stat_FACE_IEM_Nitrate_preCO2, echo=TRUE, results='markup'>>=
-@
-
-\paragraph{Stats}
-\paragraph{Post-CO2}
-\noindent
-
-<<Stat_FACE_IEM_Nitrate_postCO2, echo=TRUE, results='markup'>>=
-@
+% %%%%%%%%%%%%
+% %% Detail %%
+% %%%%%%%%%%%%
+% 
+% \paragraph{Pre-CO$_2$}
+% \noindent
+% 
+% <<Stat_FACE_IEM_Nitrate_preCO2, echo=TRUE, results='markup'>>=
+% @
+% 
+% \paragraph{Stats}
+% \paragraph{Post-CO$_2$}
+% \noindent
+% 
+% <<Stat_FACE_IEM_Nitrate_postCO2, echo=TRUE, results='markup'>>=
+% @
 
 %%% Ring %%%
 \clearpage

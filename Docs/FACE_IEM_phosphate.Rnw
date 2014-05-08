@@ -5,10 +5,38 @@
 %% need to be loaded here if one wants to compile this child document to PDF %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<<setup, include=FALSE>>=
+opts_chunk$set(concordance = TRUE, warning = FALSE, tidy = TRUE, tidy.opts = list(width.cutoff = 60))
+opts_knit$set(root.dir=normalizePath('../'))
+@
+
+<<readFiles, include=FALSE>>=
+library(car)
+library(gmodels)
+library(lme4)
+library(lubridate)
+library(MASS)
+library(nlme)
+library(packrat)
+library(plyr)
+library(reshape)
+library(xlsx)
+library(contrast)
+library(effects)
+library(ggplot2)
+library(xtable)
+
+source("R//functions.R")
+load("output/data/FACE_IEM.RData")
+source("R/SummaryExlTable.R")
+source("R/Figs.R")
+@
+
+
 \subsection{Phosphate}
 
 %%% CO2 trt %%%
-\subsubsection{CO2 trt}
+\subsubsection{CO$_2$ trt}
 
 \begin{figure}[!h]\label{figure:CO2IEM_Phosphate}
 
@@ -18,7 +46,7 @@
 TrtFg[[3]]
 @
 
-\caption{IEM-adsorbed Phosphate at CO2 treatments}
+\caption{IEM-adsorbed Phosphate at CO$_2$ treatments}
 \end{center}
 \end{figure}
 
@@ -34,7 +62,7 @@ printTbl(TrtSmmryTbl[[3]],
 \clearpage
 \paragraph{Stats}
 
-<<ReadScriptP, echo=FALSE, cache=FALSE, include=FALSE>>=
+<<ReadScript_FACE_IEM_Phosphate, echo=FALSE, cache=FALSE, include=FALSE>>=
 read_chunk('R/Stats_P.R')
 source("R/Stats_P.R")
 @
@@ -44,35 +72,35 @@ source("R/Stats_P.R")
 %% Summary %%
 %%%%%%%%%%%%%
 
-\paragraph{Pre-CO2}
+\paragraph{Pre-CO$_2$}
 \noindent
 
 <<Stat_FACE_IEM_Phosphate_preCO2_Smmry, echo=TRUE, results='asis'>>=
 @
 
 \paragraph{Stats}
-\paragraph{Post-CO2}
+\paragraph{Post-CO$_2$}
 \noindent
 
-<<Stat_FACE_IEM_Phosphate_preCO2_smmry, echo=TRUE, results='asis'>>=
+<<Stat_FACE_IEM_Phosphate_postCO2_Smmry, echo=TRUE, results='asis'>>=
 @
 
-%%%%%%%%%%%%
-%% Detail %%
-%%%%%%%%%%%%
-
-\paragraph{Pre-CO2}
-\noindent
-
-<<Stat_FACE_IEM_Phosphate_preCO2, echo=TRUE, results='markup'>>=
-@
-
-\paragraph{Stats}
-\paragraph{Post-CO2}
-\noindent
-
-<<Stat_FACE_IEM_Phosphate_postCO2, echo=TRUE, results='markup'>>=
-@
+% %%%%%%%%%%%%
+% %% Detail %%
+% %%%%%%%%%%%%
+% 
+% \paragraph{Pre-CO$_2$}
+% \noindent
+% 
+% <<Stat_FACE_IEM_Phosphate_preCO2, echo=TRUE, results='markup'>>=
+% @
+% 
+% \paragraph{Stats}
+% \paragraph{Post-CO$_2$}
+% \noindent
+% 
+% <<Stat_FACE_IEM_Phosphate_postCO2, echo=TRUE, results='markup'>>=
+% @
 
 %%% Ring %%%
 \clearpage
