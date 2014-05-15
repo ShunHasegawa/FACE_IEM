@@ -48,9 +48,25 @@ source("R/Figs.R")
 
 \section{IEM-adsorbed nutrients}
 
+
+%%%%%%%%%%%%%%%
+% summary fig %
+%%%%%%%%%%%%%%%
+\subsection{Summary results}
+\begin{center}
+\begin{figure}[!ht]\label{figure:FACE_IEM_Allres}
+
+\includegraphics[width=\textwidth]{../output/figs/FACE_IEM_CO2Trt.pdf}
+
+\caption{IEM-adsorbed nutrients}
+
+\end{figure}
+\end{center}
+
 %%%%%%%%%%%
 % Nitrate %
 %%%%%%%%%%%
+\clearpage
 \Sexpr{knit_child('FACE_IEM_nitrat.Rnw')}
 
 %%%%%%%%%%%%
