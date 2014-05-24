@@ -75,7 +75,7 @@ anova(m1, m2, m3)
 atcr.cmpr(m1, rndmFac="ring/plot")$models
 # model 4 looks better
 
-Iml_post <- atcr.cmpr(m2, rndmFac="ring")[[4]]
+Iml_post <- atcr.cmpr(m1, rndmFac="ring/plot")[[4]]
 
 # The starting model is:
 Iml_post$call
