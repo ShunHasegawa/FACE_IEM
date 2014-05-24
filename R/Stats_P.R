@@ -75,7 +75,7 @@ anova(m1, m2, m3)
 atcr.cmpr(m1, rndmFac="ring/plot")$models
 # model 4 looks better
 
-Iml_post <- atcr.cmpr(m2, rndmFac="ring")[[4]]
+Iml_post <- atcr.cmpr(m1, rndmFac="ring/plot")[[4]]
 
 # The starting model is:
 Iml_post$call
@@ -102,6 +102,43 @@ cntrst<- contrast(Fml_post,
 FACE_IEM_PostCO2_P_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], digit = 2)
 
 FACE_IEM_PostCO2_P_CntrstDf
+
+
+# multicomp
+
+library(multcomp)
+
+iem$int <- interaction(iem$co2, iem$time, sep = "x")
+
+m1 <- lme((p + 1.6)^(1.1515) ~ int, data = subsetD(iem, post), random = ~1|ring/plot, correlation = corAR1())
+Anova(m1)
+coef(m1)
+a <- glht(m1, linfct = mcp(int = "Tukey"))
+
+K <- paste("elevx", c(5:8, 12:14), " - ", "ambx", c(5:8, 12:14), " = 0", sep = "")
+a <- glht(m1, linfct = mcp(int = K))
+summary(a)
+
+names(a)
+b <- summary(a)
+summary(b)
+
+install.packages("lsmeans")
+library(lsmeans)
+lsmeans(object = Fml_post, pairwise ~ co2 + time, adjust = "tukey")
+?lsmeans
+
+K <- diag(length(coef(Fml_post)))[-1,]
+rownames(K) <- names(coef(Fml_post))[-1]
+glht(Fml_post, linfct = mcp(co2 = "Tukey", time = "Tukey"))
+glht(Fml_post, linfct = mcp(co2:temp = "co2elev:time5 - co2amb:time5 = 0"))
+
+TukeyHSD(Fml_post)
+
+
+
+
+
 
 # model diagnosis
 plot(Fml_post)
