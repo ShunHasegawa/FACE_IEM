@@ -4,7 +4,7 @@ theme_set(theme_bw()) # graphic backgroud is white
 # summary data frame #
 ######################
 RngMean <- ddply(iemMlt, .(time, date, co2, ring, variable), Crt_SmryDF) 
-TrtMean <- TrtMean <- ddply(RngMean, .(time, date, co2, variable), function(x) Crt_SmryDF(x, val = "Mean"))
+TrtMean <- ddply(RngMean, .(time, date, co2, variable), function(x) Crt_SmryDF(x, val = "Mean"))
 
 #################################
 # plot each nutrient separately #
