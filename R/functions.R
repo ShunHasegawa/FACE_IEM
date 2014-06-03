@@ -150,26 +150,32 @@ Crt_SmryDF <- function(data, val = "value"){
 ####################
 PltMean <- function(data){
   
-  vars <- c(substitute(nutrients),
-            substitute(NO[3]^"-"-N), 
-            substitute(NH[4]^"+"-N),
-            substitute(PO[4]^"3-"-P))
+  unt <- substitute((ng~cm^"-2" ~ d^"-1"))
+  ylabs <- c(expression(),
+            bquote(IEM~adsorbed~nutrients~.(unt)),
+            bquote(atop(paste(IEM - adsorbed ~ NO[3]^"-" - N), 
+                            paste(.(unt)))), 
+            bquote(atop(paste(IEM - adsorbed ~ NH[4]^"+" - N), 
+                            paste(.(unt)))), 
+            bquote(atop(paste(IEM - adsorbed ~ PO[4]^"3-" - N), 
+                            paste(.(unt))))
+            )
   # subsitute returens argument as it is without calculation (similar to expression())
   
-  yvars <- lapply(vars, function(x) bquote(IEM-adsorbed~.(x)))
-  # bquote allows one to call an object and return expression
-  
-  ylabs <- lapply(yvars, function(x) {
-    c(expression(), 
-      bquote(atop(paste(.(x)), paste((ng~cm^"-1"~d^"-1")))))         
-  })
-  
+#   yvars <- lapply(vars, function(x) bquote(IEM-adsorbed~.(x)))
+#   # bquote allows one to call an object and return expression
+#   
+#   ylabs <- lapply(yvars, function(x) {
+#     c(expression(), 
+#       bquote(atop(paste(.(x)), paste((ng~cm^"-2"~d^"-1")))))         
+#   })
+#   
   # atop: put the 1st argument on top of the 2nd
   
-  ylab <- ifelse(length(unique(data$variable)) > 1, ylabs[[1]],
-                 ifelse(unique(data$variable) == "no", ylabs[[2]], 
-                        ifelse(unique(data$variable) == "nh", ylabs[[3]],
-                               ylabs[[4]])))
+  ylab <- ifelse(length(unique(data$variable)) > 1, ylabs[1],
+                 ifelse(unique(data$variable) == "no", ylabs[2], 
+                        ifelse(unique(data$variable) == "nh", ylabs[3],
+                               ylabs[4])))
   
   colfactor <- ifelse(any(names(data) == "ring"), "ring", "co2")
   
