@@ -30,8 +30,8 @@ addDataFrame(iem, sheet, showNA=TRUE, row.names=FALSE, characterNA="NA")
 shnames <- paste("Ring_mean.",c("Nitrate", "Ammonium","Phosphate", sep=""))
 l_ply(1:3, function(x) crSheet(sheetname = shnames[x], dataset = RngSmmryTbl[[x]]))
 
-# worksheets for temp trt summary
-shnames <- paste("Temp_mean.", c("Nitrate", "Ammonium","Phosphate"), sep = "")
+# worksheets for co2 trt summary
+shnames <- paste("CO2_mean.", c("Nitrate", "Ammonium","Phosphate"), sep = "")
 l_ply(1:3, function(x) crSheet(sheetname = shnames[x], dataset = TrtSmmryTbl[[x]]))
 
 #save file
