@@ -1,5 +1,12 @@
+# load("output//data/df.RData")
 summary(df)
 str(df)
+
+library(car)
+library(lattice)
+library(nlme)
+library(effects)
+library(visreg)
 
 ###############################
 # plot against soil variables #
@@ -31,6 +38,8 @@ m1 <- lme((p + 1.6)^(-1.1515) ~ co2 * time * (Moist + Temp_Max),
           random = ~1|ring/plot,  data = df)
 
 Anova(m1)
+
+# model simplification
 m2 <- update(m1, method = "ML")
 m3 <- stepAIC(m2)
 Anova(m3)
@@ -38,6 +47,7 @@ fml <- update(m3, method = "REML")
 Anova(fml)
 
 # model diagnosis
+plot(fml)
 qqnorm(fml, ~ resid(.)|id)
 qqnorm(residuals.lm(fml))
 qqline(residuals.lm(fml))
