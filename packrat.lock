@@ -206,6 +206,11 @@ Package: TH.data
 Source: CRAN
 Version: 1.0-3
 
+Package: visreg
+Source: CRAN
+Version: 2.0-5
+Requires: lattice
+
 Package: xlsx
 Source: CRAN
 Version: 0.5.5
@@ -215,6 +220,10 @@ Package: xlsxjars
 Source: CRAN
 Version: 0.6.0
 Requires: rJava
+
+Package: xtable
+Source: CRAN
+Version: 1.7-3
 
 Package: zoo
 Source: CRAN
