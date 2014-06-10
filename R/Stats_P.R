@@ -176,9 +176,9 @@ for (i in c(5:14)){
          ylim = c(0, 15))
   lines(x = range(iem$Temp_Max[iem$time == i]), y = c(0, 0), lwd = 2)
 }
-legend("topright", leg = c("amb", "elev", "Temp range"), col = c("blue", "red", "black"), lty = 1, lwd = 2)
+legend("topright", leg = c("amb", "elev", "Temp range"), 
+       col = c("blue", "red", "black"), lty = 1, lwd = 2)
 
-dev.off()
 par(mfrow = c(1,2))
 for (i in c("amb", "elev")){
   visreg(m3, 
