@@ -56,6 +56,13 @@ source("R/Stats_NH.R")
 <<Stat_FACE_IEM_Ammonium_postCO2_Smmry, echo=TRUE, results='markup'>>=
 @
 
+\paragraph{Post-CO$_2$ -ANCOVA with soil variables}
+\noindent
+
+<<Stat_FACE_IEM_Ammonium_postCO2_withSoilVar, echo=TRUE, results='markup'>>=
+@
+
+
 % %%%%%%%%%%%%
 % %% Detail %%
 % %%%%%%%%%%%%

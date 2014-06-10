@@ -24,7 +24,9 @@
 % library(contrast)
 % library(effects)
 % library(ggplot2)
+% library(scales)
 % library(xtable)
+% library(visreg)
 % 
 % source("R//functions.R")
 % load("output/data/FACE_IEM.RData")
@@ -83,6 +85,13 @@ source("R/Stats_P.R")
 
 <<Stat_FACE_IEM_Phosphate_postCO2_Smmry, echo=TRUE, results='markup'>>=
 @
+
+\paragraph{Post-CO$_2$ -ANCOVA with soil variables}
+\noindent
+
+<<Stat_FACE_IEM_Phosphate_postCO2_withSoilVar, echo=TRUE, results='markup'>>=
+@
+
 
 % %%%%%%%%%%%%
 % %% Detail %%
