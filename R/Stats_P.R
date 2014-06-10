@@ -145,7 +145,6 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring , subsetD(iem, !pre), type = 
 ############
 m1 <- lme((p + 1.6)^(-1.1515) ~ co2 * time * (Moist + Temp_Max), 
           random = ~1|ring/plot,  data = subsetD(iem, !pre))
-
 m3 <- MdlSmpl(m1)$model.reml
 Anova(m3)
 AIC(m3)
@@ -193,6 +192,63 @@ for (i in c("amb", "elev")){
          ylim = c(0, 0.6))
 }
 
+################
+# without time #
+################
+m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max), 
+          random = ~1|ring/plot,  data = subsetD(iem, !pre))
+m3 <- MdlSmpl(m2)$model.reml
+anova(m3)
+
+# model diagnosis
+plot(m3)
+qqnorm(m3, ~ resid(.)|id)
+qqnorm(residuals.lm(m3))
+qqline(residuals.lm(m3))
+AIC(m3)
+
+# main effects
+plot(allEffects(m3))
+
+par(mfrow = c(1,2))
+for (i in c("Temp_Max", "Moist")){
+  visreg(m3, 
+         xvar = i, 
+         trans = ReTrf, 
+         level = 1, # take random factor into accound
+         print.cond=TRUE,
+         ylim = c(0, 10))
+}
+
+############################
+# lmer with time as random #
+############################
+m2 <- lmer((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max)+
+           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
+           REML = FALSE)
+m3 <- lmer((p + 1.6)^(-1.1515) ~ co2  + Moist + Temp_Max + co2:Moist +
+           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
+           REML = FALSE)
+m4 <- lmer((p + 1.6)^(-1.1515) ~ co2  + Moist + Temp_Max + co2:Temp_Max +
+           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
+           REML = FALSE)
+m5 <- lmer((p + 1.6)^(-1.1515) ~ co2  + Moist + Temp_Max +
+           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
+           REML = FALSE)
+m6 <- lmer((p + 1.6)^(-1.1515) ~ co2  + Temp_Max +
+           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
+           REML = FALSE)
+m7 <- lmer((p + 1.6)^(-1.1515) ~ Temp_Max +
+           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
+           REML = FALSE)
+m8 <- lmer((p + 1.6)^(-1.1515) ~ Temp_Max +
+           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre))
+
+anova(m6, m7)
+summary(m7)
+Anova(m8)
+plot(m8)
+AIC(m8)
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
