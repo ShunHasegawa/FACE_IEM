@@ -7,6 +7,7 @@ library(lattice)
 library(nlme)
 library(effects)
 library(visreg)
+library(MASS)
 
 ###############################
 # plot against soil variables #
@@ -18,17 +19,17 @@ scatterplotMatrix(~ I((p + 1.6)^(-1.1515)) + Moist + Temp_Max + Temp_Min
 # Temp_Max may be positively correlated
 
 # plot for each plot against soil variables
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
+print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, df, type = c("r", "p")))
 
 # co2  x time
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | co2, subsetD(iem, !pre), type = c("r", "p"), 
+print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | co2, df, type = c("r", "p"), 
              panel = panel.superpose, groups = time))
 
 # ring  x time
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring , subsetD(iem, !pre), type = c("r", "p"), 
+print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring , df, type = c("r", "p"), 
              panel = panel.superpose, groups = time))
 
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring , subsetD(iem, !pre), type = c("r", "p"), 
+print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring , df, type = c("r", "p"), 
              panel = panel.superpose, groups = id))
 
 ############
@@ -75,7 +76,7 @@ for (i in levels(df$time)){
          main = paste("Time =", i),
          legend = FALSE, 
          ylim = c(0, 15))
-  lines(x = range(iem$Temp_Max[iem$time == i]), y = c(0, 0), lwd = 2)
+  lines(x = range(df$Temp_Max[df$time == i]), y = c(0, 0), lwd = 2)
 }
 legend("topright", leg = c("amb", "elev", "Temp range"), col = c("blue", "red", "black"), 
        lty = 1, lwd = 2, bty="n")
