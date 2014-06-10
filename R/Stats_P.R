@@ -51,8 +51,6 @@ qqnorm(Fml_pre, ~ resid(.)|ring)
 qqnorm(residuals.lm(Fml_pre))
 qqline(residuals.lm(Fml_pre))
 
-
-
 ## ---- Stat_FACE_IEM_Phosphate_postCO2
 ############
 # post-co2 #
@@ -109,6 +107,7 @@ qqnorm(Fml_post, ~ resid(.)|id)
 qqnorm(residuals.lm(Fml_post))
 qqline(residuals.lm(Fml_post))
 
+## ---- Stat_FACE_IEM_Phosphate_postCO2_withSoilVar
 ############################
 # ANCOVA fit soil variable #
 ############################
