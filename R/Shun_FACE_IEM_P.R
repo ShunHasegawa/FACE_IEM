@@ -1,3 +1,6 @@
+summary(df)
+str(df)
+
 ###############################
 # plot against soil variables #
 ###############################
