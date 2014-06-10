@@ -46,8 +46,30 @@ iem$id <- iem$ring:iem$plot
 iem$pre <- ifelse(iem$time %in% c(1:4), TRUE, FALSE )
 iem$post <- ifelse(!(iem$time %in% c(1:3)), TRUE, FALSE )
 
-#save
-save(iem,file="output/data/FACE_IEM.RData")
+##################
+# soil variables #
+##################
+load("Data/FACE_TDR_ProbeDF.RData")
+
+# subset iem
+TdrIem <- subsetD(FACE_TDR_ProbeDF, Sample == "IEM")
+
+# compute mean of soil variable for given period
+SoilVarDD <- function(data, rings, plots, Start, End){
+  sDF <- subset(data, Date >= Start & Date >= End & ring == rings & plot == plots)
+  ddply(sDF, .(ring, plot),function(x) colMeans(x[c("Moist", "Temp_Mean", "Temp_Min", "Temp_Max")], na.rm = TRUE))
+}
+
+IEMSoil <- ddply(iem, .(insertion, sampling, ring, plot), 
+                 function(x) SoilVarDD(data = TdrIem, Start = x$insertion, End = x$sampling, rings = x$ring, plot = x$plot))
+
+# merge
+iem <- merge(iem, IEMSoil, by = c("insertion", "sampling", "ring", "plot"))
+
+# save
+save(iem, file = "output//data//FACE_IEM.RData")
+
+load("output//data//FACE_IEM.RData")
 
 #################
 # Summary table #
