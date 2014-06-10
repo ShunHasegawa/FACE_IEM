@@ -1,16 +1,3 @@
-head(iem)
-
-df <- subsetD(iem, !pre)
-head(df)
-
-df <- within(df, {
-  insertion <- NULL
-  sampling <- NULL
-  pre <- NULL
-  post <- NULL
-})
-head(df)
-
 ###############################
 # plot against soil variables #
 ###############################
