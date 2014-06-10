@@ -1,4 +1,4 @@
-# load("output//data/df.RData")
+load("df.RData")
 summary(df)
 str(df)
 
