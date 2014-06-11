@@ -102,30 +102,16 @@ qqline(residuals.lm(Fml_post))
 # ANCOVA #
 ##########
 # plot all variables
-scatterplotMatrix(~ I(log(no + 30)) + Moist + Temp_Max + Temp_Min + Temp_Mean, data = iem)
+scatterplotMatrix(~ I(log(no + 30)) + log(Moist) + Temp_Max + Temp_Min + Temp_Mean, data = iem,
+                  diag = "boxplot")
 # negative correlation with Temp_Max
 
 # plot for each plot against soil variables
-print(xyplot(log(no + 30) ~ Moist | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
+print(xyplot(log(no + 30) ~ log(Moist) | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
 print(xyplot(log(no + 30) ~ Temp_Min | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
 
-# co2  x time
-print(xyplot(log(no + 30) ~ Temp_Max | co2, subsetD(iem, !pre), type = c("r", "p"), 
-             panel = panel.superpose, groups = time))
-
-print(xyplot(log(no + 30) ~ Temp_Max | time, subsetD(iem, !pre), type = c("r", "p"), 
-             panel = panel.superpose, groups = co2))
-
-# ring  x time
-print(xyplot(log(no + 30) ~ Temp_Max | ring , subsetD(iem, !pre), type = c("r", "p"), 
-             panel = panel.superpose, groups = time))
-
-print(xyplot(log(no + 30) ~ Temp_Max | ring , subsetD(iem, !pre), type = c("r", "p"), 
-             panel = panel.superpose, groups = id))
-
 ## Analysis ##
-m1 <- lme(log(no + 30) ~ co2 * (Moist + Temp_Max) + 
-            co2:time + time, 
+m1 <- lme(log(no + 30) ~ co2 * (time + Moist + Temp_Max), 
            random = ~1|ring/plot,  data = subsetD(iem, !pre))
 m3 <- MdlSmpl(m1)$model.reml
 Anova(m3)
@@ -137,51 +123,6 @@ qqnorm(m3, ~ resid(.)|id)
 qqnorm(residuals.lm(m3))
 qqline(residuals.lm(m3))
 # no co2 effect
-
-# without time
-m1 <- lme(log(no + 30) ~ co2 * Moist * Temp_Max, 
-          random = ~1|ring/plot,  data = subsetD(iem, !pre), method = "ML")
-Anova(m1)
-
-## ---- Stat_FACE_IEM_Nitrate_preCO2_Smmry
-
-# The starting model is:
-Iml_pre$call
-Anova(Iml_pre)
-
-# The final model is:
-Fml_pre$call
-Anova(Fml_pre)
-
-
-############################
-# lmer with time as random #
-############################
-m2 <- lmer(log(no + 30) ~ co2 * (Moist + Temp_Max)+
-             (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m3 <- lmer(log(no + 30) ~ co2  + Moist + Temp_Max + co2:Moist +
-             (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m4 <- lmer(log(no + 30) ~ co2  + Moist + Temp_Max + co2:Temp_Max +
-             (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m5 <- lmer(log(no + 30) ~ co2  + Moist + Temp_Max +
-             (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m6 <- lmer(log(no + 30) ~ co2  + Temp_Max +
-             (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m7 <- lmer(log(no + 30) ~ Temp_Max +
-             (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m8 <- lmer(log(no + 30) ~ 1 +
-             (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-anova(m7, m8)
-summary(m8)
-AIC(m8)
-
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_Smmry
 
