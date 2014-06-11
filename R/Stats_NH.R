@@ -113,41 +113,29 @@ qqline(residuals.lm(Fml_post))
 #######################
 
 # plot all variables
-scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean, data = iem)
+scatterplotMatrix(~ I(log(nh)) + log(Moist) + Temp_Max + Temp_Min + Temp_Mean, data = iem,
+                  diag = "boxplot")
 
 # plot for each plot against soil variables
-print(xyplot(log(nh) ~ Moist | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
+print(xyplot(log(nh) ~ log(Moist) | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
 print(xyplot(log(nh) ~ Temp_Max | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
-
-# co2  x time
-print(xyplot(log(nh) ~ Temp_Max | co2, subsetD(iem, !pre), type = c("r", "p"), 
-             panel = panel.superpose, groups = time))
-
-print(xyplot(log(nh) ~ Temp_Max | time, subsetD(iem, !pre), type = c("r", "p"), 
-             panel = panel.superpose, groups = co2))
-
-# ring  x time
-print(xyplot(log(nh) ~ Temp_Max | ring , subsetD(iem, !pre), type = c("r", "p"), 
-             panel = panel.superpose, groups = time))
-
-print(xyplot(log(nh) ~ Temp_Max | ring , subsetD(iem, !pre), type = c("r", "p"), 
-             panel = panel.superpose, groups = id))
 
 ############
 # Analysis #
 ############
-m1 <- lme(log(nh) ~ co2 * (Moist + Temp_Max) + time + co2:time, 
+m1 <- lme(log(nh) ~ co2 * (time + log(Moist) + Temp_Max), 
           random = ~1|ring/plot,  data = subsetD(iem, !pre))
 m3 <- MdlSmpl(m1)$model.reml
 Anova(m3)
 AIC(m3)
+# slight indication of co2 effect 
 
 # model diagnosis
 plot(m3)
 qqnorm(m3, ~ resid(.)|id)
 qqnorm(residuals.lm(m3))
 qqline(residuals.lm(m3))
-
+# not very good
 
 # plot main effects
 plot(allEffects(m3))
@@ -158,9 +146,8 @@ visreg(m3, xvar = "Temp_Max",
        level = 1, # take random factor into accound
        overlay = TRUE, print.cond=TRUE, 
        line.par = list(col = c("blue", "red")),
+       points.par = list(col = c("blue", "red")),
        ylim = c(90, 150))
-
-
 timePos <- seq(90, 120, length.out = 10)
 times <- c(5:14)
 
@@ -170,12 +157,6 @@ for (i in 1:10){
        labels = paste("Time =", times[i]), pos = 3)
 }
 legend("topright", leg = "Temp range", col = "black", lty = 1, lwd = 2, bty = "n")
-
-
-# without time
-m1 <- lme(log(no + 30) ~ co2 * Moist * Temp_Max, 
-          random = ~1|ring/plot,  data = subsetD(iem, !pre), method = "ML")
-Anova(m1)
 
 ## ---- Stat_FACE_IEM_Ammonium_preCO2_Smmry
 
