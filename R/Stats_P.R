@@ -173,11 +173,13 @@ for (i in c(5:14)){
          print.cond=TRUE, 
          cond = list(time = i),
          line.par = list(col = c("blue", "red")),
+         points.par = list(col = c("blue", "red")),
          main = paste("Time =", i),
          legend = FALSE, 
          ylim = c(0, 15))
   lines(x = range(iem$Temp_Max[iem$time == i]), y = c(0, 0), lwd = 2)
 }
+plot.new()
 legend("topright", leg = c("amb", "elev", "Temp range"), 
        col = c("blue", "red", "black"), lty = 1, lwd = 2, 
        bty = "n")
@@ -198,20 +200,15 @@ for (i in c("amb", "elev")){
 ##########################
 # Run lme for each month #
 ##########################
-LmeMonth <- function(data){
-  m1 <- lme((p + 1.6)^(-1.1515) ~ co2 + Temp_Max, 
-            random = ~1|ring,  data = data)
-  return(anova(m1))
-}
-
 # each month
 ResLmeMonth <- dlply(subset(iem, !pre), .(time), LmeMonth)
+ResLmeMonth
 
 # months where we see co2 enhancement
 iem$GroupMonth <- factor(ifelse(iem$time %in% c(5,6,7), "enhance1",
                                 ifelse(iem$time %in% c(12, 13, 14), "enhance2", "nd")))
-ResLmeMonth <- dlply(subset(iem, !pre), .(GroupMonth), LmeMonth)
-
+ResLmeEnhancedMonth <- dlply(subset(iem, !pre), .(GroupMonth), LmeMonth)
+ResLmeEnhancedMonth
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
