@@ -194,9 +194,37 @@ for (i in c("amb", "elev")){
          ylim = c(0, 0.6))
 }
 
+
+
+#######################
+# Multiple regression #
+#######################
+# tree
+par(mfrow = c(1,2))
+model <- rpart((p + 1.6)^(-1.1515) ~ co2 + time + Moist + Temp_Max, data = subset(iem, !pre))
+plot(model)
+text(model)
+
+model <- tree((p + 1.6)^(-1.1515) ~ co2 + time + Moist + Temp_Max, data = subset(iem, !pre))
+plot(model)
+text(model)
+
+plot(prune.tree(model))
+m2 <- prune.tree(model, best = 4)
+plot(m2)
+text(m2)
+
+
+
 ################
 # without time #
 ################
+install.packages("tree")
+install.packages("rpart")
+library(tree)
+library(rpart)
+
+
 m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max), 
           random = ~1|ring/plot,  data = subsetD(iem, !pre))
 m3 <- MdlSmpl(m2)$model.reml
@@ -227,8 +255,10 @@ library(Rcmdr)
 with(subsetD(iem, !pre), scatter3d(Moist, (p + 1.6)^(-1.1515), Temp_Max, fit = "additive", rev =1))
 with(subsetD(iem, !pre), scatter3d(Moist, p, Temp_Max, fit = "additive", rev =1))
 
-
-
+cor(cbind(log(iem$Moist), iem$Temp_Mean))
+vif(lme((p + 1.6)^(-1.1515) ~ log(Moist) + Temp_Mean, random = ~1|ring/plot,  data = subsetD(iem, !pre)))
+1/vif(m2)
+?vif
 m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * (log(Moist) + Temp_Mean), 
           random = ~1|ring/plot,  data = subsetD(iem, !pre))
 m3 <- MdlSmpl(m2)$model.reml
