@@ -330,16 +330,6 @@ summary(m2.)
 
 
 
-######################
-# time as continuous #
-######################
-m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max), 
-          random = ~date|ring/plot,  data = subsetD(iem, !pre))
-m2. <- lme((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max), 
-          random = ~1|ring/plot,  data = subsetD(iem, !pre))
-anova(m2, m2.)
-# time as continuous doesn't improve the model
-
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
