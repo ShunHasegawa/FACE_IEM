@@ -123,24 +123,8 @@ scatterplotMatrix(~ I((p + 1.6)^(-1.1515)) + log(Moist) + Temp_Max + Temp_Min + 
                   data = iem, diag = "boxplot")
 
 # plot for each plot against soil variables
-print(xyplot((p + 1.6)^(-1.1515) ~ Moist | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Mean | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Min | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
+print(xyplot((p + 1.6)^(-1.1515) ~ log(Moist) | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
 print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
-
-# co2  x time
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | co2, subsetD(iem, !pre), type = c("r", "p"), 
-             panel = panel.superpose, groups = time))
-
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | time, subsetD(iem, !pre), type = c("r", "p"), 
-             panel = panel.superpose, groups = co2))
-
-# ring  x time
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring , subsetD(iem, !pre), type = c("r", "p"), 
-              panel = panel.superpose, groups = time))
-
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring , subsetD(iem, !pre), type = c("r", "p"), 
-              panel = panel.superpose, groups = id))
 
 ############
 # Analysis #
