@@ -288,49 +288,6 @@ plot(allEffects(m3))
 
 
 
-####################
-# no random factor #
-####################
-# temp
-m1 <- lm((p + 1.6)^(-1.1515) ~ co2 * Temp_Mean), data = subsetD(iem, !pre))
-anova(m1)
-m1. <- step(m1)
-anova(m1.)
-m2 <- update(m1., ~. - Moist:Temp_Max)
-anova(m1., m2)
-m2. <- step(m2)
-anova(m2.)
-plot(allEffects(m2.))
-summary(m2.)
-
-visreg(m2., 
-       xvar = "Temp_Max", 
-       by = "co2", 
-       trans = ReTrf, 
-       overlay = TRUE, 
-       print.cond=TRUE, 
-       line.par = list(col = c("blue", "red")),
-       fill.par = list(col = alpha(c("blue", "red"), alpha = .5)),
-       points.par = list(col = c("blue", "red")),       
-       ylim = c(0, 5))
-abline(v = 19.9)
-abline(v = 21.7)
-
-# moist
-m1 <- lm((p + 1.6)^(-1.1515) ~ co2 * Moist, data = subsetD(iem, !pre))
-anova(m1)
-m1. <- step(m1)
-anova(m1.)
-m2 <- update(m1., ~. - Moist)
-anova(m1., m2)
-m2. <- step(m2)
-anova(m2.)
-plot(allEffects(m2.))
-summary(m2.)
-
-
-
-
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
 Iml_pre$call
