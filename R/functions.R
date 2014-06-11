@@ -357,4 +357,12 @@ subsetD <- function(...){
   droplevels(subset(...))
 }
 
+##########################
+# Run lme for each month #
+##########################
+LmeMonth <- function(data){
+  m1 <- lme((p + 1.6)^(-1.1515) ~ co2 + Temp_Max, 
+            random = ~1|ring,  data = data)
+  return(anova(m1))
+}
 
