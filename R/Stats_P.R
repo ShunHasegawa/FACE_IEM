@@ -286,35 +286,6 @@ m3 <- MdlSmpl(m2)$model.reml
 anova(m3)
 plot(allEffects(m3))
 
-#######################
-# ohter ranodm factor #
-#######################
-# id
-m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max), 
-          random = ~1|id,  data = subsetD(iem, !pre))
-m3 <- MdlSmpl(m2)$model.reml
-anova(m3)
-summary(m3)
-plot(allEffects(m3))
-
-visreg(m3, 
-       xvar = "Temp_Max", 
-       by = "co2", 
-       trans = ReTrf, 
-       level = 1, # take random factor into accound
-       overlay = TRUE, 
-       print.cond=TRUE, 
-       line.par = list(col = c("blue", "red")),
-       ylim = c(0, 5))
-
-
-
-# ring
-m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * Temp_Max, 
-          random = ~1|ring,  data = subsetD(iem, !pre))
-m3 <- MdlSmpl(m2)$model.reml
-anova(m3)
-summary(m3)
 
 
 ####################
