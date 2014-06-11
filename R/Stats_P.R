@@ -117,8 +117,10 @@ qqline(residuals.lm(Fml_post))
 #######################
 
 # plot all variables
-scatterplotMatrix(~ I((p + 1.6)^(-1.1515)) + Moist + Temp_Max + Temp_Min + Temp_Mean
-                  + I(Temp_Max * Moist) + I(Temp_Max + 100 * Moist), data = iem)
+scatterplotMatrix(~ I((p + 1.6)^(-1.1515)) + Moist + Temp_Max + Temp_Min + Temp_Mean,
+                  data = iem, diag = "boxplot")
+scatterplotMatrix(~ I((p + 1.6)^(-1.1515)) + log(Moist) + Temp_Max + Temp_Min + Temp_Mean,
+                  data = iem, diag = "boxplot")
 
 # plot for each plot against soil variables
 print(xyplot((p + 1.6)^(-1.1515) ~ Moist | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
@@ -219,6 +221,44 @@ for (i in c("Temp_Max", "Moist")){
          print.cond=TRUE,
          ylim = c(0, 10))
 }
+
+# 3d plot
+library(Rcmdr)
+with(subsetD(iem, !pre), scatter3d(Moist, (p + 1.6)^(-1.1515), Temp_Max, fit = "additive", rev =1))
+with(subsetD(iem, !pre), scatter3d(Moist, p, Temp_Max, fit = "additive", rev =1))
+
+
+
+m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * (log(Moist) + Temp_Mean), 
+          random = ~1|ring/plot,  data = subsetD(iem, !pre))
+m3 <- MdlSmpl(m2)$model.reml
+anova(m3)
+plot(allEffects(m3))
+
+# different covariates as Temp_Max and Moist is slightly correlated
+# Temp_Max
+m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * Temp_Mean, 
+          random = ~1|ring/plot,  data = subsetD(iem, !pre))
+m3 <- MdlSmpl(m2)$model.reml
+anova(m3)
+
+# Moist
+m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * log(Moist), 
+          random = ~1|ring/plot,  data = subsetD(iem, !pre))
+m3 <- MdlSmpl(m2)$model.reml
+anova(m3)
+plot(allEffects(m3))
+
+
+######################
+# time as continuous #
+######################
+m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max), 
+          random = ~date|ring/plot,  data = subsetD(iem, !pre))
+m2. <- lme((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max), 
+          random = ~1|ring/plot,  data = subsetD(iem, !pre))
+anova(m2, m2.)
+# time as continuous doesn't improve the model
 
 ############################
 # lmer with time as random #
