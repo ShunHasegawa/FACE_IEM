@@ -209,8 +209,14 @@ model <- tree((p + 1.6)^(-1.1515) ~ co2 + time + Moist + Temp_Max, data = subset
 plot(model)
 text(model)
 
+model <- tree((p + 1.6)^(-1.1515) ~ co2 + Moist + Temp_Max, data = subset(iem, !pre))
+model <- tree((p + 1.6)^(-1.1515) ~ co2 + Temp_Max, data = subset(iem, !pre))
+model <- tree((p + 1.6)^(-1.1515) ~ co2 + Moist, data = subset(iem, !pre))
+plot(model)
+text(model)
+
 plot(prune.tree(model))
-m2 <- prune.tree(model, best = 4)
+m2 <- prune.tree(model, best = 3)
 plot(m2)
 text(m2)
 
@@ -273,11 +279,84 @@ m3 <- MdlSmpl(m2)$model.reml
 anova(m3)
 
 # Moist
-m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * log(Moist), 
+m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * Moist, 
           random = ~1|ring/plot,  data = subsetD(iem, !pre))
+anova(m2)
 m3 <- MdlSmpl(m2)$model.reml
 anova(m3)
 plot(allEffects(m3))
+
+#######################
+# ohter ranodm factor #
+#######################
+# id
+m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max), 
+          random = ~1|id,  data = subsetD(iem, !pre))
+m3 <- MdlSmpl(m2)$model.reml
+anova(m3)
+summary(m3)
+plot(allEffects(m3))
+
+visreg(m3, 
+       xvar = "Temp_Max", 
+       by = "co2", 
+       trans = ReTrf, 
+       level = 1, # take random factor into accound
+       overlay = TRUE, 
+       print.cond=TRUE, 
+       line.par = list(col = c("blue", "red")),
+       ylim = c(0, 5))
+
+
+
+# ring
+m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * Temp_Max, 
+          random = ~1|ring,  data = subsetD(iem, !pre))
+m3 <- MdlSmpl(m2)$model.reml
+anova(m3)
+summary(m3)
+
+
+####################
+# no random factor #
+####################
+# temp
+m1 <- lm((p + 1.6)^(-1.1515) ~ co2 * Temp_Mean), data = subsetD(iem, !pre))
+anova(m1)
+m1. <- step(m1)
+anova(m1.)
+m2 <- update(m1., ~. - Moist:Temp_Max)
+anova(m1., m2)
+m2. <- step(m2)
+anova(m2.)
+plot(allEffects(m2.))
+summary(m2.)
+
+visreg(m2., 
+       xvar = "Temp_Max", 
+       by = "co2", 
+       trans = ReTrf, 
+       overlay = TRUE, 
+       print.cond=TRUE, 
+       line.par = list(col = c("blue", "red")),
+       fill.par = list(col = alpha(c("blue", "red"), alpha = .5)),
+       points.par = list(col = c("blue", "red")),       
+       ylim = c(0, 5))
+abline(v = 19.9)
+abline(v = 21.7)
+
+# moist
+m1 <- lm((p + 1.6)^(-1.1515) ~ co2 * Moist, data = subsetD(iem, !pre))
+anova(m1)
+m1. <- step(m1)
+anova(m1.)
+m2 <- update(m1., ~. - Moist)
+anova(m1., m2)
+m2. <- step(m2)
+anova(m2.)
+plot(allEffects(m2.))
+summary(m2.)
+
 
 
 ######################
