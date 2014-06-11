@@ -129,7 +129,7 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), t
 ############
 # Analysis #
 ############
-m1 <- lme((p + 1.6)^(-1.1515) ~ co2 * time * (Moist + Temp_Max), 
+m1 <- lme((p + 1.6)^(-1.1515) ~ co2 * (time + log(Moist) + Temp_Max), 
           random = ~1|ring/plot,  data = subsetD(iem, !pre))
 m3 <- MdlSmpl(m1)$model.reml
 Anova(m3)
@@ -168,6 +168,7 @@ legend("topright", leg = c("amb", "elev", "Temp range"),
        col = c("blue", "red", "black"), lty = 1, lwd = 2, 
        bty = "n")
 
+# for each time point
 par(mfrow = c(1,2))
 for (i in c("amb", "elev")){
   visreg(m3, 
@@ -176,7 +177,7 @@ for (i in c("amb", "elev")){
          overlay = TRUE, 
          print.cond=TRUE, 
          cond = list(co2 = i),
-         main = paste("Time =", i),
+         main = paste("CO2 =", i),
          legend = TRUE, 
          ylim = c(0, 0.6))
 }
