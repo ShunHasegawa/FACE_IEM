@@ -196,32 +196,6 @@ for (i in c("amb", "elev")){
 
 
 
-#######################
-# Multiple regression #
-#######################
-# tree
-par(mfrow = c(1,2))
-model <- rpart((p + 1.6)^(-1.1515) ~ co2 + time + Moist + Temp_Max, data = subset(iem, !pre))
-plot(model)
-text(model)
-
-model <- tree((p + 1.6)^(-1.1515) ~ co2 + time + Moist + Temp_Max, data = subset(iem, !pre))
-plot(model)
-text(model)
-
-model <- tree((p + 1.6)^(-1.1515) ~ co2 + Moist + Temp_Max, data = subset(iem, !pre))
-model <- tree((p + 1.6)^(-1.1515) ~ co2 + Temp_Max, data = subset(iem, !pre))
-model <- tree((p + 1.6)^(-1.1515) ~ co2 + Moist, data = subset(iem, !pre))
-plot(model)
-text(model)
-
-plot(prune.tree(model))
-m2 <- prune.tree(model, best = 3)
-plot(m2)
-text(m2)
-
-
-
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
 Iml_pre$call
