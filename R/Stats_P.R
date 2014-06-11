@@ -340,35 +340,6 @@ m2. <- lme((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max),
 anova(m2, m2.)
 # time as continuous doesn't improve the model
 
-############################
-# lmer with time as random #
-############################
-m2 <- lmer((p + 1.6)^(-1.1515) ~ co2 * (Moist + Temp_Max)+
-           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m3 <- lmer((p + 1.6)^(-1.1515) ~ co2  + Moist + Temp_Max + co2:Moist +
-           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m4 <- lmer((p + 1.6)^(-1.1515) ~ co2  + Moist + Temp_Max + co2:Temp_Max +
-           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m5 <- lmer((p + 1.6)^(-1.1515) ~ co2  + Moist + Temp_Max +
-           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m6 <- lmer((p + 1.6)^(-1.1515) ~ co2  + Temp_Max +
-           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m7 <- lmer((p + 1.6)^(-1.1515) ~ Temp_Max +
-           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre), 
-           REML = FALSE)
-m8 <- lmer((p + 1.6)^(-1.1515) ~ Temp_Max +
-           (1|time) + (1|ring) + (1|id),  data = subsetD(iem, !pre))
-
-anova(m6, m7)
-summary(m7)
-Anova(m8)
-plot(m8)
-AIC(m8)
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
