@@ -370,13 +370,19 @@ LmeMonth <- function(data){
 # Plot soil variable for each incubation time #
 ###############################################
 PltSoilVar <- function(data, var){
-  df <- ddply(data, c("time", var),
+  df <- ddply(data, c("date", var),
               function(x) colMeans(x[c("Moist", "Temp_Mean", "Temp_Min", "Temp_Max")],
                                    na.rm = TRUE))
-  SoilVarMlt <- melt(df, id = c(var, "time"))
+  SoilVarMlt <- melt(df, id = c(var, "date"))
   SoilVarMlt$type <- factor(ifelse(SoilVarMlt$variable != "Moist", "Temp", "Moist"))
-  p <- ggplot(SoilVarMlt, aes_string(x = "time", y = "value", shape = "variable", col = var))
+  p <- ggplot(SoilVarMlt, aes_string(x = "date", y = "value", shape = "variable", col = var))
   pl <- p + geom_point() +
-    facet_grid(type ~., scale = "free_y")
+    facet_grid(type ~., scale = "free_y") +
+    labs(x = "Time", y = NULL) +
+    geom_vline(xintercept = as.numeric(as.Date("2012-09-18")), linetype = "dashed", col = "black") +
+    scale_x_date(breaks= date_breaks("2 month"),
+                 labels = date_format("%b-%y"),
+                 limits = as.Date(c("2012-7-1", "2014-4-2"))) +
+    theme(axis.text.x  = element_text(angle=45, vjust= 1, hjust = 1))
   pl
 }
