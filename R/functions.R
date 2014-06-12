@@ -366,3 +366,17 @@ LmeMonth <- function(data){
   return(anova(m1))
 }
 
+###############################################
+# Plot soil variable for each incubation time #
+###############################################
+PltSoilVar <- function(data, var){
+  df <- ddply(data, c("time", var),
+              function(x) colMeans(x[c("Moist", "Temp_Mean", "Temp_Min", "Temp_Max")],
+                                   na.rm = TRUE))
+  SoilVarMlt <- melt(df, id = c(var, "time"))
+  SoilVarMlt$type <- factor(ifelse(SoilVarMlt$variable != "Moist", "Temp", "Moist"))
+  p <- ggplot(SoilVarMlt, aes_string(x = "time", y = "value", shape = "variable", col = var))
+  pl <- p + geom_point() +
+    facet_grid(type ~., scale = "free_y")
+  pl
+}

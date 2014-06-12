@@ -37,3 +37,18 @@ ylab_label <- function(variable, value){
 pl <- PltMean(TrtMean) +
   facet_grid(variable~., scales= "free_y", labeller= ylab_label)
 ggsavePP(filename = "output//figs/FACE_IEM_CO2Trt", plot = pl, width = 6, height = 6)
+
+########################################################
+# plot soil moist and temp for each incubation periods #
+########################################################
+
+SoilVarDF <- iem[, c("co2", "ring", "time", "Moist", "Temp_Mean", "Temp_Min", "Temp_Max")]
+
+# co2
+pl <- PltSoilVar(data = SoilVarDF, var = "co2")
+ggsavePP(filename = "output//figs/FACE_IEM_SoilVarSummary_CO2", plot = pl, width = 6, height = 4)
+
+
+# ring
+pl <- PltSoilVar(data = SoilVarDF, var = "ring")
+ggsavePP(filename = "output//figs/FACE_IEM_SoilVarSummary_Ring", plot = pl, width = 6, height = 4)
