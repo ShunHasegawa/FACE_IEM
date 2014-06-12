@@ -69,7 +69,7 @@ iem <- merge(iem, IEMSoil, by = c("insertion", "sampling", "ring", "plot"))
 # save
 save(iem, file = "output//data//FACE_IEM.RData")
 
-load("output//data//FACE_IEM.RData")
+# load("output//data//FACE_IEM.RData")
 
 #################
 # Summary table #
