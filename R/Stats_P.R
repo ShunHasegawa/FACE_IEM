@@ -129,16 +129,16 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), t
 ############
 # Analysis #
 ############
-m1 <- lme((p + 1.6)^(-1.1515) ~ co2 * (time + log(Moist) + Temp_Max), 
+Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * (time + log(Moist) + Temp_Max), 
           random = ~1|ring/plot,  data = subsetD(iem, !pre))
-m3 <- MdlSmpl(m1)$model.reml
-Anova(m3)
-AIC(m3)
-plot(allEffects(m3))
+Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
+Anova(Fml_ancv)
+summary(Fml_ancv)
+plot(allEffects(Fml_ancv))
 
-qqnorm(m3, ~ resid(.)|id)
-qqnorm(residuals.lm(m3))
-qqline(residuals.lm(m3))
+qqnorm(Fml_ancv, ~ resid(.)|id)
+qqnorm(residuals.lm(Fml_ancv))
+qqline(residuals.lm(Fml_ancv))
 # pretty much same result as above
 
 
@@ -146,32 +146,37 @@ qqline(residuals.lm(m3))
 ReTrf <- function(x) x^(-1/1.1515)-1.6
 
 # plot predicted value
-par(mfrow = c(3, 4))
-for (i in c(5:14)){
-  visreg(m3, 
-         xvar = "Temp_Max", 
-         by = "co2", 
-         trans = ReTrf, 
-         level = 1, # take random factor into accound
-         overlay = TRUE, 
-         print.cond=TRUE, 
-         cond = list(time = i),
-         line.par = list(col = c("blue", "red")),
-         points.par = list(col = c("blue", "red")),
-         main = paste("Time =", i),
-         legend = FALSE, 
-         ylim = c(0, 15))
-  lines(x = range(iem$Temp_Max[iem$time == i]), y = c(0, 0), lwd = 2)
+PltPr <- function(){
+  par(mfrow = c(3, 4))
+  for (i in c(5:14)){
+    visreg(Fml_ancv, 
+           xvar = "Temp_Max", 
+           by = "co2", 
+           trans = ReTrf, 
+           level = 1, # take random factor into accound
+           overlay = TRUE, 
+           print.cond=TRUE, 
+           cond = list(time = i),
+           line.par = list(col = c("blue", "red")),
+           points.par = list(col = c("blue", "red")),
+           main = paste("Time =", i),
+           legend = FALSE, 
+           ylim = c(0, 15))
+    lines(x = range(iem$Temp_Max[iem$time == i]), y = c(0, 0), lwd = 2)
+  }
+  plot.new()
+  legend("topright", leg = c("amb", "elev", "Temp range"), 
+         col = c("blue", "red", "black"), lty = 1, lwd = 2, 
+         bty = "n")
+  par(mfrow = c(1,1))
 }
-plot.new()
-legend("topright", leg = c("amb", "elev", "Temp range"), 
-       col = c("blue", "red", "black"), lty = 1, lwd = 2, 
-       bty = "n")
+
+PltPr()
 
 # for each time point
 par(mfrow = c(1,2))
 for (i in c("amb", "elev")){
-  visreg(m3, 
+  visreg(Fml_ancv, 
          xvar = "Temp_Max", 
          by = "time", 
          overlay = TRUE, 
@@ -215,3 +220,14 @@ Anova(Fml_post)
 
 FACE_IEM_PostCO2_P_CntrstDf
 
+## ---- Stat_FACE_IEM_Phosphate_postCO2_withSoilVar_Smmry
+# The initial model
+Iml_ancv$call
+Anova(Iml_ancv)
+
+# The final model
+Fml_ancv$call
+Anova(Fml_ancv)
+
+# plot the predicted values
+PltPr()

@@ -123,40 +123,45 @@ print(xyplot(log(nh) ~ Temp_Max | ring + plot, subsetD(iem, !pre), type = c("r",
 ############
 # Analysis #
 ############
-m1 <- lme(log(nh) ~ co2 * (time + log(Moist) + Temp_Max), 
+Iml_ancv <- lme(log(nh) ~ co2 * (time + log(Moist) + Temp_Max), 
           random = ~1|ring/plot,  data = subsetD(iem, !pre))
-m3 <- MdlSmpl(m1)$model.reml
-Anova(m3)
-AIC(m3)
+Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
+Anova(Fml_ancv)
+summary(Fml_ancv)
 # slight indication of co2 effect 
 
 # model diagnosis
-plot(m3)
-qqnorm(m3, ~ resid(.)|id)
-qqnorm(residuals.lm(m3))
-qqline(residuals.lm(m3))
+plot(Fml_ancv)
+qqnorm(Fml_ancv, ~ resid(.)|id)
+qqnorm(residuals.lm(Fml_ancv))
+qqline(residuals.lm(Fml_ancv))
 # not very good
 
 # plot main effects
-plot(allEffects(m3))
+plot(allEffects(Fml_ancv))
 
 # plot predicted value
-visreg(m3, xvar = "Temp_Max", 
-       by = "co2", trans = exp, 
-       level = 1, # take random factor into accound
-       overlay = TRUE, print.cond=TRUE, 
-       line.par = list(col = c("blue", "red")),
-       points.par = list(col = c("blue", "red")),
-       ylim = c(90, 150))
-timePos <- seq(90, 120, length.out = 10)
-times <- c(5:14)
-
-for (i in 1:10){
-  lines(x = range(iem$Temp_Max[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
-  text(x = mean(range(iem$Temp_Max[iem$time == times[i]])), y = timePos[i], 
-       labels = paste("Time =", times[i]), pos = 3)
+PltPr <- function(){
+  visreg(Fml_ancv, xvar = "Temp_Max", 
+         by = "co2", 
+         trans = exp, 
+         level = 1, # take random factor into accound
+         overlay = TRUE, print.cond=TRUE, 
+         line.par = list(col = c("blue", "red")),
+         points.par = list(col = c("blue", "red")),
+         ylim = c(90, 150))
+  timePos <- seq(90, 120, length.out = 10)
+  times <- c(5:14)
+  
+  for (i in 1:10){
+    lines(x = range(iem$Temp_Max[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
+    text(x = mean(range(iem$Temp_Max[iem$time == times[i]])), y = timePos[i], 
+         labels = paste("Time =", times[i]), pos = 3)
+  }
+  legend("topright", leg = "Temp range", col = "black", lty = 1, lwd = 2, bty = "n")
 }
-legend("topright", leg = "Temp range", col = "black", lty = 1, lwd = 2, bty = "n")
+
+PltPr()
 
 ## ---- Stat_FACE_IEM_Ammonium_preCO2_Smmry
 
@@ -177,3 +182,15 @@ Anova(Iml_post)
 # The final model is:
 Fml_post$call
 Anova(Fml_post)
+
+## ---- Stat_FACE_IEM_Ammonium_postCO2_withSoilVar_Smmry
+# The initial model
+Iml_ancv$call
+Anova(Iml_ancv)
+
+# The final model
+Fml_ancv$call
+Anova(Fml_ancv)
+
+# plot the predicted values
+PltPr()

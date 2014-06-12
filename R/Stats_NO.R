@@ -98,6 +98,7 @@ qqnorm(residuals.lm(Fml_post))
 qqline(residuals.lm(Fml_post))
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_withSoilVar
+
 ##########
 # ANCOVA #
 ##########
@@ -111,17 +112,26 @@ print(xyplot(log(no + 30) ~ log(Moist) | ring + plot, subsetD(iem, !pre), type =
 print(xyplot(log(no + 30) ~ Temp_Min | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
 
 ## Analysis ##
-m1 <- lme(log(no + 30) ~ co2 * (time + Moist + Temp_Max), 
+Iml_ancv <- lme(log(no + 30) ~ co2 * (time + Moist + Temp_Max), 
            random = ~1|ring/plot,  data = subsetD(iem, !pre))
-m3 <- MdlSmpl(m1)$model.reml
-Anova(m3)
-AIC(m3)
-plot(allEffects(m3))
+SmMd <-  MdlSmpl(Iml_ancv)$model.reml
+Anova(SmMd)
 
-plot(m3)
-qqnorm(m3, ~ resid(.)|id)
-qqnorm(residuals.lm(m3))
-qqline(residuals.lm(m3))
+# Temp_Max may be removed
+SmMdML <- MdlSmpl(Iml_ancv)$model.ml
+SmMd2 <- update(SmMdML, ~. - Temp_Max)
+anova(SmMdML, SmMd2)
+Anova(SmMd2)
+
+Fml_ancv <- update(SmMd2, method = "REML")
+Anova(Fml_ancv)
+summary(Fml_ancv)
+plot(allEffects(Fml_ancv))
+
+plot(Fml_ancv)
+qqnorm(Fml_ancv, ~ resid(.)|id)
+qqnorm(residuals.lm(Fml_ancv))
+qqline(residuals.lm(Fml_ancv))
 # no co2 effect
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_Smmry
@@ -134,3 +144,11 @@ Anova(Iml_post)
 Fml_post$call
 Anova(Fml_post)
 
+## ---- Stat_FACE_IEM_Nitrate_postCO2_withSoilVar_Smmry
+# The initial model
+Iml_ancv$call
+Anova(Iml_ancv)
+
+# The final model
+Fml_ancv$call
+Anova(Fml_ancv)
