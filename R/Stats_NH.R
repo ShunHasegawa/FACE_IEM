@@ -163,6 +163,29 @@ PltPr <- function(){
 
 PltPr()
 
+############
+# Blocking #
+############
+# Note Temp_Max and log(Moist) appears to be correlated so shouln't be 
+# placed in a multiple regression model
+
+Iml_ancv <- lme(log(nh) ~ co2 * log(Moist), 
+                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
+Anova(Iml_ancv)
+Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
+Anova(Fml_ancv)
+
+# main effects
+plot(allEffects(Fml_ancv))
+
+# model diagnosis
+plot(Fml_ancv)
+qqnorm(Fml_ancv, ~ resid(.)|id)
+qqnorm(residuals.lm(Fml_ancv))
+qqline(residuals.lm(Fml_ancv))
+# not great...
+
+
 ## ---- Stat_FACE_IEM_Ammonium_preCO2_Smmry
 
 # The starting model is:
