@@ -185,6 +185,31 @@ qqnorm(residuals.lm(Fml_ancv))
 qqline(residuals.lm(Fml_ancv))
 # not great...
 
+# plot predicted value
+PltPr <- function(){
+  visreg(Fml_ancv, xvar = "Moist", 
+         by = "co2", 
+         trans = exp, 
+         level = 1, # take random factor into accound
+         overlay = TRUE, print.cond=TRUE, 
+         line.par = list(col = c("blue", "red")),
+         points.par = list(col = c("blue", "red")),
+         ylim  = c(50, 100))
+  
+  timePos <- seq(50, 90, length.out = 10)
+  times <- c(5:14)
+  
+  for (i in 1:10){
+    lines(x = range(iem$Moist[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
+    text(x = mean(range(iem$Moist[iem$time == times[i]])), y = timePos[i], 
+         labels = paste("Time =", times[i]), pos = 3)
+  }
+}
+
+PltPr()
+
+
+
 
 ## ---- Stat_FACE_IEM_Ammonium_preCO2_Smmry
 
