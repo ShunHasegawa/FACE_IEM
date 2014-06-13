@@ -140,17 +140,8 @@ qqline(residuals.lm(Fml_ancv))
 # Note Temp_Max and log(Moist) appears to be correlated so shouln't be 
 # placed in a multiple regression model
 
-Iml_ancv_m <- lme(log(no + 30) ~ co2 * log(Moist), 
+Iml_ancv <- lme(log(no + 30) ~ co2 * log(Moist), 
                 random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
-Iml_ancv_t <- lme(log(no + 30) ~ co2 * Temp_Max, 
-                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
-
-Ml_moist <- update(Iml_ancv_m, method = "ML")
-Ml_temp <- update(Iml_ancv_t, method = "ML")
-anova(Ml_moist, Ml_temp)
-# Ml_moist is slightly better
-
-
 Anova(Iml_ancv)
 Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
 Anova(Fml_ancv)
