@@ -125,6 +125,9 @@ ggsavePP(file = "output/figs/FACE_IEM_P_withSoilVar_ring", plot = pl, width = 6,
 pl  <- p2
 ggsavePP(file = "output/figs/FACE_IEM_P_withSoilVar", plot = pl, width = 6, height = 6)
 
+# Soil moisture and temperature seems to be correlated
+# Temperature may regulate soil moisture
+
 ############################
 # ANCOVA fit soil variable #
 ############################
@@ -146,76 +149,6 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), t
 ############
 # Analysis #
 ############
-Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * (time + log(Moist) + Temp_Max), 
-          random = ~1|ring/plot,  data = subsetD(iem, !pre))
-Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
-Anova(Fml_ancv)
-summary(Fml_ancv)
-plot(allEffects(Fml_ancv))
-
-qqnorm(Fml_ancv, ~ resid(.)|id)
-qqnorm(residuals.lm(Fml_ancv))
-qqline(residuals.lm(Fml_ancv))
-# pretty much same result as above
-
-
-# reverse transormation
-ReTrf <- function(x) x^(-1/1.1515)-1.6
-
-# plot predicted value
-PltPr <- function(){
-  par(mfrow = c(3, 4))
-  for (i in c(5:14)){
-    visreg(Fml_ancv, 
-           xvar = "Temp_Max", 
-           by = "co2", 
-           trans = ReTrf, 
-           level = 1, # take random factor into accound
-           overlay = TRUE, 
-           print.cond=TRUE, 
-           cond = list(time = i),
-           line.par = list(col = c("blue", "red")),
-           points.par = list(col = c("blue", "red")),
-           main = paste("Time =", i),
-           legend = FALSE, 
-           ylim = c(0, 15))
-    lines(x = range(iem$Temp_Max[iem$time == i]), y = c(0, 0), lwd = 2)
-  }
-  plot.new()
-  legend("topright", leg = c("amb", "elev", "Temp range"), 
-         col = c("blue", "red", "black"), lty = 1, lwd = 2, 
-         bty = "n")
-  par(mfrow = c(1,1))
-}
-
-PltPr()
-
-# for each time point
-par(mfrow = c(1,2))
-for (i in c("amb", "elev")){
-  visreg(Fml_ancv, 
-         xvar = "Temp_Max", 
-         by = "time", 
-         overlay = TRUE, 
-         print.cond=TRUE, 
-         cond = list(co2 = i),
-         main = paste("CO2 =", i),
-         legend = TRUE, 
-         ylim = c(0, 0.6))
-}
-
-##########################
-# Run lme for each month #
-##########################
-# each month
-ResLmeMonth <- dlply(subset(iem, !pre), .(time), LmeMonth)
-ResLmeMonth
-
-# months where we see co2 enhancement
-iem$GroupMonth <- factor(ifelse(iem$time %in% c(5,6,7), "enhance1",
-                                ifelse(iem$time %in% c(12, 13, 14), "enhance2", "nd")))
-ResLmeEnhancedMonth <- dlply(subset(iem, !pre), .(GroupMonth), LmeMonth)
-ResLmeEnhancedMonth
 
 ############
 # Blocking #
