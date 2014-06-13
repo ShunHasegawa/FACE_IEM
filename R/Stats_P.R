@@ -209,13 +209,33 @@ iem$block  <- recode(iem$ring, "c(1,2) = 'A'; c(3,4) = 'B'; c(5,6) = 'C'")
 # placed in a multiple regression model
 Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * log(Moist), 
                 random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
-
 Anova(Iml_ancv)
 Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
 Anova(Fml_ancv)
 plot(allEffects(Fml_ancv))
 
-
+# plot predicted value
+PltPr_Moist <- function(){
+  visreg(Fml_ancv, 
+         xvar = "Moist",
+         by = "co2", 
+         trans = ReTrf,
+         level = 1, # take random factor into accound
+         overlay = TRUE, 
+         print.cond=TRUE, 
+         line.par = list(col = c("blue", "red")),
+         points.par = list(col = c("blue", "red")),
+         ylim = c(0, 6))
+  
+  timePos <- seq(0, 5, length.out = 10)
+  times <- c(5:14)
+  for (i in 1:10){
+    lines(x = range(iem$Moist[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
+    text(x = mean(range(iem$Moist[iem$time == times[i]])), y = timePos[i], 
+         labels = paste("Time =", times[i]), pos = 3)
+  }
+}
+PltPr_Moist()
 
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
