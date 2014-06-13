@@ -134,6 +134,37 @@ qqnorm(residuals.lm(Fml_ancv))
 qqline(residuals.lm(Fml_ancv))
 # no co2 effect
 
+############
+# Blocking #
+############
+# Note Temp_Max and log(Moist) appears to be correlated so shouln't be 
+# placed in a multiple regression model
+
+Iml_ancv_m <- lme(log(no + 30) ~ co2 * log(Moist), 
+                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
+Iml_ancv_t <- lme(log(no + 30) ~ co2 * Temp_Max, 
+                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
+
+Ml_moist <- update(Iml_ancv_m, method = "ML")
+Ml_temp <- update(Iml_ancv_t, method = "ML")
+anova(Ml_moist, Ml_temp)
+# Ml_moist is slightly better
+
+
+Anova(Iml_ancv)
+Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
+Anova(Fml_ancv)
+
+plot(allEffects(Fml_ancv))
+
+# model diagnosis
+plot(Fml_ancv)
+qqnorm(Fml_ancv, ~ resid(.)|id)
+qqnorm(residuals.lm(Fml_ancv))
+qqline(residuals.lm(Fml_ancv))
+
+
+
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_Smmry
 
 # The starting model is:
