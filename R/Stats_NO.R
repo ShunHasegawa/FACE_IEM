@@ -145,6 +145,7 @@ Iml_ancv <- lme(log(no + 30) ~ co2 * log(Moist),
 Anova(Iml_ancv)
 Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
 Anova(Fml_ancv)
+# very small indication of CO2 effect 
 
 plot(allEffects(Fml_ancv))
 
