@@ -206,7 +206,7 @@ ResLmeEnhancedMonth
 theme_set(theme_bw())
 iem$TrP <- (iem$p + 1.6)^(-1.1515)
 
-p <- ggplot(subsetD(iem, !pre), aes(x = Temp_Max, y = Moist, size = TrP, col = TrP))
+p <- ggplot(subsetD(iem, !pre), aes(x = Temp_Max, y = log(Moist), size = TrP, col = TrP))
 p2 <- p + geom_point(alpha = .5) + 
   scale_size(range = c(8, 1)) +
   scale_color_gradientn(colours = c("red", "yellow", "blue"))
