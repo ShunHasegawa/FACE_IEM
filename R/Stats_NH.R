@@ -123,45 +123,6 @@ print(xyplot(log(nh) ~ Temp_Max | ring + plot, subsetD(iem, !pre), type = c("r",
 ############
 # Analysis #
 ############
-Iml_ancv <- lme(log(nh) ~ co2 * (time + log(Moist) + Temp_Max), 
-          random = ~1|ring/plot,  data = subsetD(iem, !pre))
-Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
-Anova(Fml_ancv)
-summary(Fml_ancv)
-# slight indication of co2 effect 
-
-# model diagnosis
-plot(Fml_ancv)
-qqnorm(Fml_ancv, ~ resid(.)|id)
-qqnorm(residuals.lm(Fml_ancv))
-qqline(residuals.lm(Fml_ancv))
-# not very good
-
-# plot main effects
-plot(allEffects(Fml_ancv))
-
-# plot predicted value
-PltPr <- function(){
-  visreg(Fml_ancv, xvar = "Temp_Max", 
-         by = "co2", 
-         trans = exp, 
-         level = 1, # take random factor into accound
-         overlay = TRUE, print.cond=TRUE, 
-         line.par = list(col = c("blue", "red")),
-         points.par = list(col = c("blue", "red")),
-         ylim = c(90, 150))
-  timePos <- seq(90, 120, length.out = 10)
-  times <- c(5:14)
-  
-  for (i in 1:10){
-    lines(x = range(iem$Temp_Max[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
-    text(x = mean(range(iem$Temp_Max[iem$time == times[i]])), y = timePos[i], 
-         labels = paste("Time =", times[i]), pos = 3)
-  }
-  legend("topright", leg = "Temp range", col = "black", lty = 1, lwd = 2, bty = "n")
-}
-
-PltPr()
 
 ############
 # Blocking #
@@ -207,9 +168,6 @@ PltPr <- function(){
 }
 
 PltPr()
-
-
-
 
 ## ---- Stat_FACE_IEM_Ammonium_preCO2_Smmry
 
