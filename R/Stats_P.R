@@ -220,4 +220,4 @@ Fml_ancv$call
 Anova(Fml_ancv)
 
 # plot the predicted values
-PltPr()
+PltPr_Moist
