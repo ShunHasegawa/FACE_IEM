@@ -203,6 +203,126 @@ ResLmeEnhancedMonth
 #####################################
 # Plot IEM-P against Moist and Temp #
 #####################################
+theme_set(theme_bw())
+iem$TrP <- (iem$p + 1.6)^(-1.1515)
+
+p <- ggplot(subsetD(iem, !pre), aes(x = Temp_Max, y = Moist, size = TrP, col = TrP))
+p2 <- p + geom_point(alpha = .5) + 
+  scale_size(range = c(8, 1)) +
+  scale_color_gradientn(colours = c("red", "yellow", "blue"))
+
+pl  <- p2 + facet_wrap( ~ ring)
+ggsavePP(file = "output/figs/FACE_IEM_P_withSoilVar_ring", plot = pl, width = 6, height = 6)
+
+pl  <- p2
+ggsavePP(file = "output/figs/FACE_IEM_P_withSoilVar", plot = pl, width = 6, height = 6)
+
+
+
+
+# Hypothesis
+# Temperature has negative effects only when soil moisture is really low
+# However temperature and moisture is correlated so unable to include in regression model at the same time
+# split soil moisture into multiple levels and do regression against Temp for each level of moisture
+
+##################
+# Split moisture #
+##################
+
+# Moist distribution
+postCo2 <- subsetD(iem, !pre)
+
+MoistHist <- hist(log(postCo2$Moist),breaks = 10)
+MoistHist$counts
+# minimum number of observation is 1; unable to do analysis
+# so reduce the number of breaks
+
+MoistHist <- hist(log(postCo2$Moist),breaks = 2)
+
+
+MoistHist <- hist(postCo2$Moist,breaks = 2)
+
+# break Moist according to histgram = every .02 (= 2 %)
+MoistBr <- MoistHist$breaks
+
+
+
+
+
+postCo2$MoistLev <- factor(ifelse(postco2$Moist <= .08, "low", "high"))
+postCo2$MoistLev <- factor(ifelse(postco2$Moist <= .05, "low", "high"))
+
+plot(Moist ~ MoistLev, data = postCo2)
+
+xtabs(~ ring + MoistLev, data = postCo2)
+
+# analysis
+Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * MoistLev * Temp_Max, 
+                random = ~1|ring/plot,  data = subsetD(postCo2))
+
+Anova(Iml_ancv)
+m1 <- update(Iml_ancv, method = "ML")
+m1. <- update(m1, ~. - co2:MoistLev:Temp_Max)
+anova(m1, m1.)
+Anova(m1.)
+m2 <- MdlSmpl(m1.)$model.ml
+m3 <- update(m2, ~. - co2:Temp_Max)
+anova(m2, m3)
+m4 <- MdlSmpl(m3)
+Anova(m4$model.reml)
+
+plot(allEffects(m4$model.reml))
+
+
+# ignore random factors
+postCo2$MoistLev <- cut(log(postCo2$Moist), breaks = 2, include.lowest = TRUE,labels = c("L", "H"))
+
+head(postCo2)
+boxplot(Moist ~ MoistLev, data = postCo2)
+m1 <- lm((p + 1.6)^(-1.1515) ~ co2 * MoistLev * Temp_Max, data = postCo2)
+anova(m1)
+m2 <- step(m1)
+plot(allEffects(m1))
+
+
+ReTrf <- function(x) x^(-1/1.1515)-1.6
+m3 <- m2$model.reml
+# plot predicted value
+PltPr <- function(){
+  par(mfrow = c(2, 2))
+  for (i in c(1:4)){
+    visreg(m3, 
+           xvar = "Temp_Max", 
+           by = "co2", 
+           level = 1, # take random factor into accound
+           overlay = TRUE, 
+           print.cond=TRUE, 
+           line.par = list(col = c("blue", "red")),
+           points.par = list(col = c("blue", "red")),
+           main = paste("MoistLev =", 2))
+  }
+  plot.new()
+  legend("topright", leg = c("amb", "elev", "Temp range"), 
+         col = c("blue", "red", "black"), lty = 1, lwd = 2, 
+         bty = "n")
+  par(mfrow = c(1,1))
+}
+
+PltPr()
+, 
+ylim = c(0, 15)
+lines(x = range(iem$Temp_Max[iem$time == i]), y = c(0, 0), lwd = 2)
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
