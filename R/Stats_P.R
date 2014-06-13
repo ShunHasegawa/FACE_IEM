@@ -168,7 +168,11 @@ Anova(Fml_ancv)
 # main effects
 plot(allEffects(Fml_ancv))
 
-# plot predicted value
+## plot predicted value
+
+# reverse transormation
+ReTrf <- function(x) x^(-1/1.1515)-1.6
+
 PltPr_Moist <- function(){
   visreg(Fml_ancv, 
          xvar = "Moist",
