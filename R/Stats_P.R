@@ -165,6 +165,8 @@ Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * log(Moist),
 Anova(Iml_ancv)
 Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
 Anova(Fml_ancv)
+
+# main effects
 plot(allEffects(Fml_ancv))
 
 # plot predicted value
@@ -189,6 +191,12 @@ PltPr_Moist <- function(){
   }
 }
 PltPr_Moist()
+
+# model diagnosis
+plot(Fml_ancv)
+qqnorm(Fml_ancv, ~ resid(.)|id)
+qqnorm(residuals.lm(Fml_ancv))
+qqline(residuals.lm(Fml_ancv))
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
