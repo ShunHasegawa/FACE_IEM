@@ -200,6 +200,11 @@ iem$GroupMonth <- factor(ifelse(iem$time %in% c(5,6,7), "enhance1",
 ResLmeEnhancedMonth <- dlply(subset(iem, !pre), .(GroupMonth), LmeMonth)
 ResLmeEnhancedMonth
 
+#####################################
+# Plot IEM-P against Moist and Temp #
+#####################################
+
+
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
 Iml_pre$call
