@@ -204,25 +204,18 @@ ResLmeEnhancedMonth
 # Blocking #
 ############
 iem$block  <- recode(iem$ring, "c(1,2) = 'A'; c(3,4) = 'B'; c(5,6) = 'C'")
-Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * (time + log(Moist) + Temp_Max), 
-                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
 
-Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * (log(Moist) + Temp_Max), 
-                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
-
-Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * Temp_Max, 
+# Note Temp_Max and log(Moist) appears to be correlated so shouln't be 
+# placed in a multiple regression model
+Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * log(Moist), 
                 random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
 
 Anova(Iml_ancv)
 Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
-
-
-
-Anova(Fml_ancv)
-
-Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
 Anova(Fml_ancv)
 plot(allEffects(Fml_ancv))
+
+
 
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
