@@ -202,10 +202,8 @@ qqnorm(residuals.lm(Fml_ancv))
 qqline(residuals.lm(Fml_ancv))
 
 # cnofidence interval
-install.packages("papeR")
 library(papeR)
 confint(Fml_ancv)
-?confint.lme
 
 newDF <- with(iem, expand.grid(ring = unique(ring), 
                                plot = unique(plot),
@@ -216,14 +214,37 @@ newDF <- within(newDF, {
   co2 = factor(ifelse(ring %in% c(1, 4, 5), "elev", "amb"))
 })
 
-predDF <- predict(Fml_ancv, level = 0:3, newdata = newDF)
 
-pred <- cbind(newDF, predDF[, c(3:7)])
+BlkminMoist <- function(variable, data){
+  a <- range(subset(iem, !pre & block == variable)$Moist)
+  df <- subset(data, block == variable & 
+                  Moist <= a[2] & 
+                  Moist >= a[1])
+  return(df)
+}
+
+BlkMinMoistDF <- ldply(list("A", "B", "C"), function(x) BlkminMoist(variable = x, data = newDF))
+
+
+predDF <- predict(Fml_ancv, level = 0:3, newdata = BlkMinMoistDF)
+
+
+pred <- cbind(BlkMinMoistDF, predDF[, c(3:7)])
 head(pred)
 
-p <- ggplot(pred, aes(x = Moist, y = predict.block, col = co2))
-p + geom_point() +
+theme_set(theme_bw())
+p <- ggplot(pred, aes(x = Moist, y = ReTrf(predict.block), col = co2))
+p + geom_line() +
+  geom_point(aes(x = Moist, y = p, col = co2), data = subsetD(iem, !pre)) + 
+  scale_color_manual("co2", values = c("blue", "red")) +
   facet_grid(.~block)
+
+
+p <- ggplot(pred, aes(x = log(Moist), y = predict.block, col = co2))
+p + geom_line() +
+  geom_point(aes(x = log(Moist), y = (p + 1.6)^(-1.1515), col = co2), data = subsetD(iem, !pre)) + 
+  scale_color_manual("co2", values = c("blue", "red")) +
+  facet_grid(.~block, scale = "free_x")
 
 
 
