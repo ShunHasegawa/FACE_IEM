@@ -201,6 +201,66 @@ qqnorm(Fml_ancv, ~ resid(.)|id)
 qqnorm(residuals.lm(Fml_ancv))
 qqline(residuals.lm(Fml_ancv))
 
+# cnofidence interval
+install.packages("papeR")
+library(papeR)
+confint(Fml_ancv)
+?confint.lme
+
+newDF <- with(iem, expand.grid(ring = unique(ring), 
+                               plot = unique(plot),
+                               Moist = seq(min(Moist), max(Moist), length.out= 100)))
+
+newDF <- within(newDF, {
+  block = recode(ring, "c(1,2) = 'A'; c(3,4) = 'B'; c(5,6) = 'C'")
+  co2 = factor(ifelse(ring %in% c(1, 4, 5), "elev", "amb"))
+})
+
+predDF <- predict(Fml_ancv, level = 0:3, newdata = newDF)
+
+pred <- cbind(newDF, predDF[, c(3:7)])
+head(pred)
+
+p <- ggplot(pred, aes(x = Moist, y = predict.block, col = co2))
+p + geom_point() +
+  facet_grid(.~block)
+
+
+
+b <- model.matrix(eval(Fml_ancv$call$fixed[-2]), newDF)
+head(b)
+predvar <- diag(b %*% Fml_ancv$varFix %*% t(b))
+?confint
+
+
+mlmer <- lmer((p + 1.6)^(-1.1515) ~ co2 + log(Moist)
+              + (1|block) + (1|ring)+ (1|id),
+              data = subsetD(iem, !pre))
+summary(mlmer)
+test <- confint(mlmer, par = 0:3, method = "boot")
+
+newDF$id <- newDF$ring:newDF$plot
+testPr <- cbind(newDF,predict(mlmer, newdata = newDF))
+names(testPr)[7] <- "predict"
+
+head(testPr)
+p <- ggplot(testPr, aes(x = Moist, y = predict, col = co2))
+p + geom_point() +
+  facet_grid(.~block)
+
+fm1 <- lme(distance ~ age*Sex, random = ~ 1 + age | Subject,
+           data = Orthodont)
+plot(Orthodont)
+
+newdat <- expand.grid(age=c(8,10,12,14), Sex=c("Male","Female"))
+newdat$pred <- predict(fm1, newdat, level = 0)
+
+Designmat <- model.matrix(eval(eval(fm1$call$fixed)[-2]), newdat[-3])
+predvar <- diag(Designmat %*% fm1$varFix %*% t(Designmat))
+
+newdat
+intervals(fm1)
+
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
 Iml_pre$call
