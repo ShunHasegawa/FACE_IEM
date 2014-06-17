@@ -1,5 +1,9 @@
-iem <- read.csv("Data/FACE_IEM.csv", colClasses=c("ring"="factor","plot"="factor","time"="factor",
-                                                  "coverage" = "NULL", "actual.cov" = "NULL"))
+iem <- read.csv("Data/FACE_IEM.csv", 
+                colClasses=c("ring"="factor",
+                             "plot"="factor",
+                             "time"="factor",
+                             "coverage" = "NULL", 
+                             "actual.cov" = "NULL"))
 
 # reorder time
 levels(iem$time)
