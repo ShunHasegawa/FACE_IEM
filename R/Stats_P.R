@@ -253,10 +253,35 @@ head(b)
 predvar <- diag(b %*% Fml_ancv$varFix %*% t(b))
 ?confint
 
+install.packages("LMERConvenienceFunctions")
+library(LMERConvenienceFunctions)
+library(nlme)
 
 mlmer <- lmer((p + 1.6)^(-1.1515) ~ co2 + log(Moist)
-              + (1|block) + (1|ring)+ (1|id),
+              + (1|block/ring/plot),
               data = subsetD(iem, !pre))
+summary(mlmer)
+anova(mlmer)
+
+
+mlmer2 <- lmer((p + 1.6)^(-1.1515) ~ co2 + log(Moist)
+              + (log(Moist)|block/ring/plot),
+              data = subsetD(iem, !pre))
+mlmer3 <- lmer((p + 1.6)^(-1.1515) ~ co2 + log(Moist)
+              + (1|block/ring) +(log(Moist)|id),
+              data = subsetD(iem, !pre))
+mlmer4 <- lmer((p + 1.6)^(-1.1515) ~ co2 + log(Moist)
+              + (log(Moist)|block) +(1|ring/plot),
+              data = subsetD(iem, !pre))
+
+anova(mlmer, mlmer2, mlmer3, mlmer4)
+
+
+install.packages("pbkrtest")
+library(pbkrtest)
+Anova(mlmer, test = "F")
+
+
 summary(mlmer)
 test <- confint(mlmer, par = 0:3, method = "boot")
 
