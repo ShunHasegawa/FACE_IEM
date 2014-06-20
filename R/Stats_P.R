@@ -131,14 +131,6 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), t
 # Analysis #
 ############
 
-############
-# Blocking #
-############
-# Figs from above showed similarrity in Soil Moist and Temp_Max
-# between Ring 1&2, 3&4, and 5&6 so block them
-
-iem$block  <- recode(iem$ring, "c(1,2) = 'A'; c(3,4) = 'B'; c(5,6) = 'C'")
-
 # Note Temp_Max and log(Moist) appears to be correlated so shouln't be 
 # placed in a multiple regression model
 Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * log(Moist), 
