@@ -386,3 +386,14 @@ PltSoilVar <- function(data, var){
     theme(axis.text.x  = element_text(angle=45, vjust= 1, hjust = 1))
   pl
 }
+
+########################################
+# adjust moisture range for each block #
+########################################
+BlkminMoist <- function(variable, data){
+  a <- range(subset(iem, !pre & block == variable)$Moist)
+  df <- subset(data, block == variable & 
+                 Moist <= a[2] & 
+                 Moist >= a[1])
+  return(df)
+}
