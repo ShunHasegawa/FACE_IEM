@@ -222,67 +222,6 @@ p + geom_line() +
   facet_grid(.~block, scale = "free_x")
 
 
-
-b <- model.matrix(eval(Fml_ancv$call$fixed[-2]), newDF)
-head(b)
-predvar <- diag(b %*% Fml_ancv$varFix %*% t(b))
-?confint
-
-install.packages("LMERConvenienceFunctions")
-library(LMERConvenienceFunctions)
-library(nlme)
-
-mlmer <- lmer((p + 1.6)^(-1.1515) ~ co2 + log(Moist)
-              + (1|block/ring/plot),
-              data = subsetD(iem, !pre))
-summary(mlmer)
-Anova(mlmer)
-anova(mlmer)
-
-
-mlmer2 <- lmer((p + 1.6)^(-1.1515) ~ co2 + log(Moist)
-              + (log(Moist)|block/ring/plot),
-              data = subsetD(iem, !pre))
-mlmer3 <- lmer((p + 1.6)^(-1.1515) ~ co2 + log(Moist)
-              + (1|block/ring) +(log(Moist)|id),
-              data = subsetD(iem, !pre))
-mlmer4 <- lmer((p + 1.6)^(-1.1515) ~ co2 + log(Moist)
-              + (log(Moist)|block) +(1|ring/plot),
-              data = subsetD(iem, !pre))
-
-anova(mlmer, mlmer2, mlmer3, mlmer4)
-
-
-install.packages("pbkrtest")
-library(pbkrtest)
-Anova(mlmer, test = "F")
-
-
-summary(mlmer)
-test <- confint(mlmer, par = 0:3, method = "boot")
-
-newDF$id <- newDF$ring:newDF$plot
-testPr <- cbind(newDF,predict(mlmer, newdata = newDF))
-names(testPr)[7] <- "predict"
-
-head(testPr)
-p <- ggplot(testPr, aes(x = Moist, y = predict, col = co2))
-p + geom_point() +
-  facet_grid(.~block)
-
-fm1 <- lme(distance ~ age*Sex, random = ~ 1 + age | Subject,
-           data = Orthodont)
-plot(Orthodont)
-
-newdat <- expand.grid(age=c(8,10,12,14), Sex=c("Male","Female"))
-newdat$pred <- predict(fm1, newdat, level = 0)
-
-Designmat <- model.matrix(eval(eval(fm1$call$fixed)[-2]), newdat[-3])
-predvar <- diag(Designmat %*% fm1$varFix %*% t(Designmat))
-
-newdat
-intervals(fm1)
-
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
 Iml_pre$call
