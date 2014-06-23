@@ -184,8 +184,7 @@ qqline(residuals.lm(Fml_ancv))
 expDF <- with(iem, expand.grid(ring = unique(ring), 
                                plot = unique(plot),
                                Moist = seq(min(Moist), max(Moist), length.out= 100)))
-
-expDF <- within(PredDF, {
+expDF <- within(expDF, {
   block = recode(ring, "c(1,2) = 'A'; c(3,4) = 'B'; c(5,6) = 'C'")
   co2 = factor(ifelse(ring %in% c(1, 4, 5), "elev", "amb"))
 })
@@ -248,4 +247,4 @@ Fml_ancv$call
 Anova(Fml_ancv)
 
 # plot the predicted values
-PltPr_Moist
+PltPr_Moist()
