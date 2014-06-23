@@ -46,5 +46,14 @@ IEMSoil <- ddply(iem, .(insertion, sampling, ring, plot),
 # merge
 iem <- merge(iem, IEMSoil, by = c("insertion", "sampling", "ring", "plot"))
 
+############
+# Blocking #
+############
+
+# Figs from above showed similarrity in Soil Moist and
+# Temp_Max between Ring 1&2, 3&4, and 5&6 so block them
+
+iem$block  <- recode(iem$ring, "c(1,2) = 'A'; c(3,4) = 'B'; c(5,6) = 'C'")
+
 # save
 save(iem, file = "output//data//FACE_IEM.RData")
