@@ -236,6 +236,7 @@ mlmer <- lmer((p + 1.6)^(-1.1515) ~ co2 + log(Moist)
               + (1|block/ring/plot),
               data = subsetD(iem, !pre))
 summary(mlmer)
+Anova(mlmer)
 anova(mlmer)
 
 
