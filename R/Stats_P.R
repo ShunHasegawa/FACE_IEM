@@ -166,6 +166,7 @@ PltPr_Moist <- function(){
     text(x = mean(range(iem$Moist[iem$time == times[i]])), y = timePos[i], 
          labels = paste("Time =", times[i]), pos = 3)
   }
+  legend("topright", lty = 1, leg = "Moisture range", bty = "n")
 }
 PltPr_Moist()
 
