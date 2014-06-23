@@ -5,11 +5,11 @@
 %% need to be loaded here if one wants to compile this child document to PDF %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<setup, include=FALSE>>=
-opts_chunk$set(concordance = TRUE, warning = FALSE, tidy = TRUE, tidy.opts = list(width.cutoff = 60))
-opts_knit$set(root.dir=normalizePath('../'))
-@
-
+% <<setup, include=FALSE>>=
+% opts_chunk$set(concordance = TRUE, warning = FALSE, tidy = TRUE, tidy.opts = list(width.cutoff = 60))
+% opts_knit$set(root.dir=normalizePath('../'))
+% @
+% 
 % <<readFiles, include=FALSE>>=
 % library(car)
 % library(gmodels)
@@ -88,7 +88,7 @@ source("R/Stats_NO.R")
 \paragraph{Post-CO$_2$ -ANCOVA with soil variables}
 \noindent
 
-<<Stat_FACE_IEM_Nitrate_postCO2_withSoilVar, echo=TRUE, results='markup'>>=
+<<Stat_FACE_IEM_Nitrate_postCO2_withSoilVar_Smmry, echo=TRUE, results='markup'>>=
 @
 
 
@@ -107,6 +107,11 @@ source("R/Stats_NO.R")
 % \noindent
 % 
 % <<Stat_FACE_IEM_Nitrate_postCO2, echo=TRUE, results='markup'>>=
+% @
+% \paragraph{Post-CO$_2$ -ANCOVA with soil variables}
+% \noindent
+% 
+% <<Stat_FACE_IEM_Nitrate_postCO2_withSoilVar, echo=TRUE, results='markup'>>=
 % @
 
 %%% Ring %%%
