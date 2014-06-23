@@ -5,6 +5,36 @@
 %% need to be loaded here if one wants to compile this child document to PDF %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<<setup, include=FALSE>>=
+opts_chunk$set(concordance = TRUE, warning = FALSE, tidy = TRUE, tidy.opts = list(width.cutoff = 60))
+opts_knit$set(root.dir=normalizePath('../'))
+@
+
+% <<readFiles, include=FALSE>>=
+% library(car)
+% library(gmodels)
+% library(lme4)
+% library(lubridate)
+% library(MASS)
+% library(nlme)
+% library(packrat)
+% library(plyr)
+% library(reshape)
+% library(xlsx)
+% library(contrast)
+% library(effects)
+% library(ggplot2)
+% library(scales)
+% library(xtable)
+% library(visreg)
+% 
+% source("R//functions.R")
+% load("output/data/FACE_IEM.RData")
+% source("R/SummaryExlTable.R")
+% source("R/Figs.R")
+% @
+
+
 \subsection{Ammonium}
 
 %%% CO2 trt %%%
