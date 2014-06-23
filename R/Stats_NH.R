@@ -111,7 +111,6 @@ qqline(residuals.lm(Fml_post))
 #######################
 # plot soil variables #
 #######################
-
 # plot all variables
 scatterplotMatrix(~ I(log(nh)) + log(Moist) + Temp_Max + Temp_Min + Temp_Mean, data = iem,
                   diag = "boxplot")
@@ -123,17 +122,19 @@ print(xyplot(log(nh) ~ Temp_Max | ring + plot, subsetD(iem, !pre), type = c("r",
 ############
 # Analysis #
 ############
+# Iml_ancv <- lme(log(nh) ~ co2 * log(Moist), 
+#                 random = ~1|block/ring/plot, data = subsetD(iem, !pre))
+# it gives me error message for some reasons.. so try lmer
 
-############
-# Blocking #
-############
-# Note Temp_Max and log(Moist) appears to be correlated so shouln't be 
-# placed in a multiple regression model
+Iml_ancv <- lmer(log(nh) ~ co2 * log(Moist) +
+                   (1|block/ring/plot), data = subsetD(iem, !pre))
 
-Iml_ancv <- lme(log(nh) ~ co2 * log(Moist), 
-                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
 Anova(Iml_ancv)
-Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
+
+Fml_ancv <- lmer(log(nh) ~ co2 + log(Moist) +
+                   (1|block/ring/plot), data = subsetD(iem, !pre))
+
+anova(Iml_ancv, Fml_ancv)
 Anova(Fml_ancv)
 
 # main effects
@@ -141,9 +142,8 @@ plot(allEffects(Fml_ancv))
 
 # model diagnosis
 plot(Fml_ancv)
-qqnorm(Fml_ancv, ~ resid(.)|id)
-qqnorm(residuals.lm(Fml_ancv))
-qqline(residuals.lm(Fml_ancv))
+qqnorm(resid(Fml_ancv))
+
 # not great...
 
 # plot predicted value
