@@ -165,6 +165,7 @@ PltPr <- function(){
     text(x = mean(range(iem$Moist[iem$time == times[i]])), y = timePos[i], 
          labels = paste("Time =", times[i]), pos = 3)
   }
+  legend("topright", lty = 1, leg = "Moisture range", bty = "n")
 }
 
 PltPr()
@@ -191,11 +192,13 @@ Anova(Fml_post)
 
 ## ---- Stat_FACE_IEM_Ammonium_postCO2_withSoilVar_Smmry
 # The initial model
-Iml_ancv$call
+Iml_ancv@call
+# use @ instead $ for lmer model
+
 Anova(Iml_ancv)
 
 # The final model
-Fml_ancv$call
+Fml_ancv@call
 Anova(Fml_ancv)
 
 # plot the predicted values
