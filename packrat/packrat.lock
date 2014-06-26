@@ -96,7 +96,7 @@ Version: 7.3-32
 
 Package: Matrix
 Source: CRAN
-Version: 1.1-3
+Version: 1.1-4
 Requires: lattice
 
 Package: memoise
