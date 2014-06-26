@@ -12,8 +12,15 @@ git clone https://github.com/ShunHasegawa/FACE_IEM.git
 This will copy (or "clone"") this repository to your local directory.
 
 
-## Update library
-Once you finishe clonning the repository, open .Rproj from the clone. Firstly you need to restore packages which are used for this project. In order to do so, run
+## Restore packages using packrat
+Once you finishe clonning the repository, open .Rproj from the clone. Firstly you need to restore packages which are used for this project. In order to do so, firstly install pacrat:
+
+```r
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github("rstudio/packrat")
+```
+
+Restart R session if you're asked. Then run:
 
 ```r
 packrat::restore()
