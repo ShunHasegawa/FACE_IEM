@@ -1,7 +1,7 @@
 # Qucik guide
 
 
-## github
+## clone this repository
 Open git bush and move to the folder you'd like to make a copy of this repository using `cd "path to the working directory"`.
 Then run:
 
