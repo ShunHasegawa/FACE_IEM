@@ -80,6 +80,11 @@ Source: CRAN
 Version: 3.14-4
 Requires: cluster, Formula, lattice, latticeExtra, survival
 
+Package: htmltools
+Source: CRAN
+Version: 0.2.4
+Requires: digest
+
 Package: knitr
 Source: CRAN
 Version: 1.6
@@ -203,6 +208,15 @@ Package: rJava
 Source: CRAN
 Version: 0.9-6
 
+Package: rmarkdown
+Source: github
+Version: 0.2.49
+Requires: htmltools, knitr, yaml
+GithubRepo: rmarkdown
+GithubUsername: rstudio
+GithubRef: master
+GithubSha1: f4a8326cd1abb349d6959f20fdb01f1aac729746
+
 Package: rms
 Source: CRAN
 Version: 4.2-0
@@ -252,6 +266,10 @@ Requires: rJava
 Package: xtable
 Source: CRAN
 Version: 1.7-3
+
+Package: yaml
+Source: CRAN
+Version: 2.1.13
 
 Package: zoo
 Source: CRAN
