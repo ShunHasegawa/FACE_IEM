@@ -2,17 +2,14 @@
 
 
 ## github
-
 Open git bush and move to the folder you'd like to make a copy of this repository using `cd "path to the working directory"`.
-Then run
-
+Then run:
 
 ```
 git clone https://github.com/ShunHasegawa/FACE_IEM.git
 ```
 
-
-This will copy this repository your local directory.
+This will copy (or "clone"") this repository to your local directory.
 
 
 ## Update library
@@ -36,6 +33,7 @@ Error in fileLoc[1, 2] : subscript out of bounds
 ```
 
 In this case try:
+
 ```r
 for (i in 1:40) try({packrat::restore()}, silent = TRUE) 
 # ignore error and run restore() 30 times.
