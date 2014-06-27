@@ -46,10 +46,25 @@ SoilVarDF <- iem[, c("co2", "ring", "date", "Moist", "Temp_Mean", "Temp_Min", "T
 # co2
 pl <- PltSoilVar(data = SoilVarDF, var = "co2") +
   scale_color_manual(values = c("blue", "red"), expression(CO[2]~trt), labels = c("Ambient", expression(eCO[2])))
-ggsavePP(filename = "output//figs/FACE_IEM_SoilVarSummary_CO2", plot = pl, width = 6, height = 4)
+ggsavePP(filename = "output//figs/FACE_IEM_SoilVarMonth_CO2", plot = pl, width = 6, height = 4)
 
 
 # ring
 pl <- PltSoilVar(data = SoilVarDF, var = "ring") +
   scale_color_manual(values = palette(), "Ring", labels = paste("Ring", c(1:6), sep = "_"))
-ggsavePP(filename = "output//figs/FACE_IEM_SoilVarSummary_Ring", plot = pl, width = 6, height = 4)
+ggsavePP(filename = "output//figs/FACE_IEM_SoilVarMonth_Ring", plot = pl, width = 6, height = 4)
+
+############################
+# Plot Moist against  Temp #
+############################
+
+p <- ggplot(subsetD(iem, !pre), aes(x = Temp_Max, y = log(Moist), col = ring))
+p2 <- p + geom_point(alpha = .5) 
+
+pl  <- p2 + facet_wrap( ~ ring)
+ggsavePP(file = "output/figs/FACE_IEM_SoilVar_Ring", plot = pl, width = 6, height = 6)
+
+ggsavePP(file = "output/figs/FACE_IEM_SoilVar", plot = p2, width = 6, height = 6)
+
+# Soil moisture and temperature seems to be correlated
+# Temperature may regulate. 
