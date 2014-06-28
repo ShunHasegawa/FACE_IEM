@@ -4,6 +4,10 @@ RVersion: 3.1.0
 Repos: CRAN=http://cran.rstudio.com,
   CRANextra=http://www.stats.ox.ac.uk/pub/RWin
 
+Package: bitops
+Source: CRAN
+Version: 1.0-6
+
 Package: car
 Source: CRAN
 Version: 2.0-20
@@ -21,6 +25,11 @@ Package: contrast
 Source: CRAN
 Version: 0.19
 Requires: rms
+
+Package: devtools
+Source: CRAN
+Version: 1.5
+Requires: digest, evaluate, httr, memoise, RCurl, whisker
 
 Package: dichromat
 Source: CRAN
@@ -84,6 +93,11 @@ Package: htmltools
 Source: CRAN
 Version: 0.2.4
 Requires: digest
+
+Package: httr
+Source: CRAN
+Version: 0.3
+Requires: digest, RCurl, stringr
 
 Package: knitr
 Source: CRAN
@@ -169,8 +183,8 @@ Source: github
 Version: 0.3.0
 GithubRepo: packrat
 GithubUsername: rstudio
-GithubRef: master
-GithubSha1: 0d0b963149f40342e132dab88ebd5fc0dc169a5b
+GithubRef: feature/source-repos
+GithubSha1: 79f6defdba7e24dc78cd71ff2e6871e708cea1c1
 
 Package: plyr
 Source: CRAN
@@ -193,6 +207,11 @@ Package: RcppEigen
 Source: CRAN
 Version: 0.3.2.1.2
 Requires: Matrix, Rcpp
+
+Package: RCurl
+Source: CRAN
+Version: 1.95-4.1
+Requires: bitops
 
 Package: reshape
 Source: CRAN
@@ -244,6 +263,11 @@ Package: survival
 Source: CRAN
 Version: 2.37-7
 
+Package: testthat
+Source: CRAN
+Version: 0.8.1
+Requires: digest
+
 Package: TH.data
 Source: CRAN
 Version: 1.0-3
@@ -252,6 +276,10 @@ Package: visreg
 Source: CRAN
 Version: 2.0-5
 Requires: lattice
+
+Package: whisker
+Source: CRAN
+Version: 0.3-2
 
 Package: xlsx
 Source: CRAN
