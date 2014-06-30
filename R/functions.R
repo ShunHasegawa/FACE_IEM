@@ -35,7 +35,7 @@ Crrct.ccv <- function(x, data, ccval = 7.5){
 
 # applied the function above for each subsets of ccvs
 Crrtct.ccv.df <- function(filename, ccval = 7.5){
-  data <- read.csv(paste("Data/AQ2/NeedToBeCorrected/", filename, sep = ""), header = TRUE)
+  data <- read.csv(paste("Data/AQ2/NO3_NeedToBeCorrected/", filename, sep = ""), header = TRUE)
   
   # make time factor as numeric
   a <- sapply(as.character(data$Time), strsplit, " ")

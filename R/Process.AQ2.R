@@ -2,18 +2,18 @@ library(lubridate)
 library(plyr)
 library(reshape)
 
-source("functions/functions.R")
+source("R/functions.R")
 
 ############################
 # Correct NO3 based on CCV #
 ############################
 fls <- dir(path = "Data/AQ2/NO3_NeedToBeCorrected/", pattern = ".csv$")
 
-res <- read.csv(paste("Data/AQ2/NO3_NeedToBeCorrected/", fls[1], sep = ""), header = TRUE)
-write.csv(Crrtct.ccv.df(res), paste("Data/AQ2/ReadyToProcess/", "Corrected_", fls[1], sep =""), row.names = TRUE)
+Crrtct.ccv.df(fls[1])
+write.csv(Crrtct.ccv.df(fls[1]), paste("Data/AQ2/ReadyToProcess/", "Corrected_", fls[1], sep =""), row.names = TRUE)
 
-res <- read.csv(paste("Data/AQ2/NO3_NeedToBeCorrected/", fls[2], sep = ""), header = TRUE)
-write.csv(Crrtct.ccv.df(res), paste("Data/AQ2/ReadyToProcess/", "Corrected_", fls[2], sep =""), row.names = TRUE)
+Crrtct.ccv.df(fls[2])
+write.csv(Crrtct.ccv.df(fls[2]), paste("Data/AQ2/ReadyToProcess/", "Corrected_", fls[2], sep =""), row.names = TRUE)
 
 
 
