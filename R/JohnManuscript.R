@@ -1,4 +1,4 @@
-load("output//data/FACE_rampDF.RData")
+load("FACE_rampDF.RData")
 
 library(plyr)
 library(reshape)
@@ -24,7 +24,7 @@ MeanDFcst <- within(MeanDFcst, {
 # block average for each of pre and post-co2
 Mean_blockDf <- ddply(MeanDFcst, .(block, co2, variable), summarise, meanR = mean(ratio))
 
-# treatment average for each of pre and post-co2
+# pre and post-co2 average
 MeanRDf <- ddply(Mean_blockDf, .(co2, variable), summarise, MeanR = mean(meanR), SE = ci(meanR)[4])
 MeanRDf$co2 <- relevel(MeanRDf$co2, "pre")
 
