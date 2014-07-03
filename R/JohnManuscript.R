@@ -1,7 +1,11 @@
 rmpDF <- subsetD(iem, time %in% c(3:8))
 rmpDF <- rmpDF[c("date", "time", "block", "ring", "plot", "no", "nh", "p")]
+save(rmpDF, file = "output//data/FACE_rampDF.RData")
+load("output//data/FACE_rampDF.RData")
 
-
+library(plyr)
+library(reshape)
+library(ggplot2)
 
 # ring average for each date
 MeanDF <- ddply(rmpDF, .(time, co2, block, ring), summarise, 
