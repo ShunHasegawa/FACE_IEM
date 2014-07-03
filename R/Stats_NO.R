@@ -157,6 +157,16 @@ qqline(residuals.lm(Fml_ancv))
 
 
 
+## ---- Stat_FACE_IEM_Nitrate_preCO2_Smmry
+
+# The starting model is:
+Iml_pre$call
+Anova(Iml_pre)
+
+# The final model is:
+Fml_pre$call
+Anova(Fml_pre)
+
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_Smmry
 
 # The starting model is:
