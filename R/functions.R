@@ -231,22 +231,12 @@ ggsavePP <- function(filename, plot, width, height){
 #############################################
 # compare different auto-correlation models #
 #############################################
-
-atcr.cmpr <- function(model, rndmFac){
-  if(rndmFac == "ring/plot"){
-    model2 <- update(model,corr=corCompSymm(form=~1|ring/plot)) 
-  } else {
-    if(rndmFac == "ring"){
-      model2 <- update(model,corr=corCompSymm(form=~1|ring))
-    } else {
-      model2 <- update(model,corr=corCompSymm(form=~1|id))
-    }
-  }
-  
-  model3 <- update(model,correlation=corARMA(q=2))
+atcr.cmpr <- function(model){
+  model2 <- update(model,corr=corCompSymm(form = model$call$random))
+  model3 <- update(model,correlation=corARMA(q = 2))
   model4 <- update(model,correlation=corAR1()) 
-  model5 <- update(model,correlation=corARMA(q=1))
-  a <- anova(model,model2,model3,model4,model5)
+  model5 <- update(model,correlation=corARMA(q = 1))
+  a <- anova(model, model2, model3, model4, model5)
   rownames(a) <- c("NULL", "corCompSymm", "corARMA(q=2)", "corAR1()", "corARMA(q=1)")
   models <- list(model, model2, model3, model4, model5, 'models' = a)
   return(models)
