@@ -14,19 +14,15 @@ bxplts(value= "p", data= subsetD(PRmOl, pre))
 
 # different random factor strucures
 m1 <- lme(log(p) ~ co2 * time, random = ~1|block/ring/plot,  data = subsetD(PRmOl, pre))
-m2 <- update(m1, random = ~ 1|block/ring)
-m3 <- update(m1, random = ~ 1|block/id)
-m4 <- update(m1, random = ~ 1|ring/plot)
-m5 <- update(m1, random = ~ 1|ring)
-m6 <- update(m1, random = ~ 1|id)
-anova(m1, m2, m3, m4, m5, m6)
+RndmComp(m1)$anova
+m2 <- RndmComp(m1)[[2]]
 # m2 is slightly better
 
 # autocorelation
-atcr.cmpr(m5)$models
+atcr.cmpr(m2)$models
 # model 4 looks better
 
-Iml_pre <- atcr.cmpr(m2, rndmFac="ring")[[4]]
+Iml_pre <- atcr.cmpr(m2)[[4]]
 
 # The starting model is:
 Iml_pre$call
@@ -66,17 +62,17 @@ bxplts(value= "p", ofst = 1.6, data= subsetD(iem, post))
 # use box-cox lambda
 
 # different random factor strucures
-m1 <- lme((p + 1.6)^(-1.1515) ~ co2 * time, random = ~1|ring/plot,  data = subsetD(iem, post))
-m2 <- lme((p + 1.6)^(-1.1515) ~ co2 * time, random = ~1|ring,  data = subsetD(iem, post))
-m3 <- lme((p + 1.6)^(-1.1515) ~ co2 * time, random = ~1|id,  data = subsetD(iem, post))
-anova(m1, m2, m3)
-# m1 is better
+m1 <- lme((p + 1.6)^(-1.1515) ~ co2 * time, random = ~1|block/ring/plot,  data = subsetD(iem, post))
+RmMd <- RndmComp(m1)
+RmMd$anova
+# m3 is better
 
 # autocorelation
-atcr.cmpr(m1, rndmFac="ring/plot")$models
+ArgMd <- atcr.cmpr(RmMd[[3]])
+ArgMd$models
 # model 4 looks better
 
-Iml_post <- atcr.cmpr(m1, rndmFac="ring/plot")[[4]]
+Iml_post <- ArgMd[[4]]
 
 # The starting model is:
 Iml_post$call
@@ -101,7 +97,6 @@ cntrst<- contrast(Fml_post,
                   a = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "amb"),
                   b = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "elev"))
 FACE_IEM_PostCO2_P_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], digit = 2)
-
 FACE_IEM_PostCO2_P_CntrstDf
 
 # model diagnosis

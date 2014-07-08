@@ -242,6 +242,23 @@ atcr.cmpr <- function(model){
   return(models)
 }
 
+##############################################
+# Compare different random factor structures #
+##############################################
+RndmComp <- function(model){
+  m2 <- update(model, random = ~ 1|block/ring)
+  m3 <- update(model, random = ~ 1|block/id)
+  m4 <- update(model, random = ~ 1|ring/plot)
+  m5 <- update(model, random = ~ 1|ring)
+  m6 <- update(model, random = ~ 1|id)
+  ms <- list(model, m2, m3, m4, m5, m6)
+  a <- anova(model, m2, m3, m4, m5, m6)
+  rownames(a) <- sapply(ms, function(x) as.character(x$call$random[2]))
+  ms[[length(ms) + 1]] <- a
+  names(ms)[length(ms)] <- 'anova'
+  return(ms)
+}
+
 ###########################################
 # produce box plots with transformed data #
 ###########################################
