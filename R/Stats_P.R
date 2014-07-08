@@ -13,14 +13,17 @@ bxplts(value= "p", data= subsetD(PRmOl, pre))
 # log transformation seems slightly better
 
 # different random factor strucures
-m1 <- lme(log(p) ~ co2 * time, random = ~1|ring/plot,  data = subsetD(PRmOl, pre))
-m2 <- lme(log(p) ~ co2 * time, random = ~1|ring,  data = subsetD(PRmOl, pre))
-m3 <- lme(log(p) ~ co2 * time, random = ~1|id,  data = subsetD(PRmOl, pre))
-anova(m1, m2, m3)
+m1 <- lme(log(p) ~ co2 * time, random = ~1|block/ring/plot,  data = subsetD(PRmOl, pre))
+m2 <- update(m1, random = ~ 1|block/ring)
+m3 <- update(m1, random = ~ 1|block/id)
+m4 <- update(m1, random = ~ 1|ring/plot)
+m5 <- update(m1, random = ~ 1|ring)
+m6 <- update(m1, random = ~ 1|id)
+anova(m1, m2, m3, m4, m5, m6)
 # m2 is slightly better
 
 # autocorelation
-atcr.cmpr(m2, rndmFac="ring")$models
+atcr.cmpr(m5)$models
 # model 4 looks better
 
 Iml_pre <- atcr.cmpr(m2, rndmFac="ring")[[4]]
