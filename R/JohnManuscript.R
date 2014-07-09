@@ -1,13 +1,15 @@
 load("FACE_rampDF.RData")
 
+head(rmpDF)
+
 library(plyr)
 library(reshape)
 library(ggplot2)
 library(gmodels)
 
 # process dataframe
-head(rmpDF)
 rmpDF$co2 <- factor(ifelse(rmpDF$ring %in% c(1, 4, 5), "elev", "amb"))
+
 rmpDFMlt <- melt(rmpDF, id = c("date", "time", "block","ring", "plot", "co2"))
 
 # ring average for each date
