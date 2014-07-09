@@ -69,18 +69,22 @@ SoilVarDF <- iem[, c("co2", "ring", "date", "Moist", "Temp_Mean", "Temp_Min", "T
 ## co2 ##
 pl <- PltSoilVar(data = SoilVarDF, var = "co2") +
   scale_color_manual(values = c("blue", "red"), expression(CO[2]~trt), 
-                     labels = c("Ambient", expression(eCO[2]))) +
-  geom_line(aes(x = Date, y = value, group = co2), data = iemTDR_co2Mean) +
+                     labels = c("Ambient", expression(eCO[2])))
+
+# check if above functions are working properly by plotting raw data
+pl +  geom_line(aes(x = Date, y = value, group = co2), data = iemTDR_co2Mean) +
   geom_vline(xintercept = as.numeric(unique(iem$insertion)), col = "green", size = .5)
+  # looks fine
 
 ggsavePP(filename = "output//figs/FACE_IEM_SoilVarMonth_CO2", plot = pl, width = 6, height = 4)
 
-
 ## ring ##
 pl <- PltSoilVar(data = SoilVarDF, var = "ring") +
-  scale_color_manual(values = palette(), "Ring", labels = paste("Ring", c(1:6), sep = "_")) +
-  geom_line(aes(x = Date, y = value, group = ring), data = iemTDR_RngMean) +
+  scale_color_manual(values = palette(), "Ring", labels = paste("Ring", c(1:6), sep = "_"))
+
+pl + geom_line(aes(x = Date, y = value, group = ring), data = iemTDR_RngMean) +
   geom_vline(xintercept = as.numeric(unique(iem$insertion)), col = "green", size = .5)
+  # looks fine
 
 ggsavePP(filename = "output//figs/FACE_IEM_SoilVarMonth_Ring", plot = pl, width = 6, height = 4)
 
