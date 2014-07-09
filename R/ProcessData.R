@@ -7,7 +7,7 @@ iem <- read.csv("Data/FACE_IEM.csv",
 
 # reorder time
 levels(iem$time)
-iem$time <- factor(iem$time, levels = c(as.character(1:length(levels(iem$time)))))
+iem$time <- factor(iem$time, levels = 1:length(levels(iem$time)))
 
 #unify date for each time
 iem$insertion <- as.Date(dmy(iem$insertion))
@@ -37,7 +37,8 @@ TdrIem <- subsetD(FACE_TDR_ProbeDF, Sample == "IEM")
 # compute mean of soil variable for given period
 SoilVarDD <- function(data, rings, plots, Start, End){
   sDF <- subset(data, Date >= Start & Date >= End & ring == rings & plot == plots)
-  ddply(sDF, .(ring, plot),function(x) colMeans(x[c("Moist", "Temp_Mean", "Temp_Min", "Temp_Max")], na.rm = TRUE))
+  ddply(sDF, .(ring, plot),
+        function(x) colMeans(x[c("Moist", "Temp_Mean", "Temp_Min", "Temp_Max")], na.rm = TRUE))
 }
 
 IEMSoil <- ddply(iem, .(insertion, sampling, ring, plot), 
