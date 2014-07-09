@@ -21,8 +21,7 @@ iem[, c("no", "nh", "p")] <- iem[, c("no", "nh", "p")] * 1000
 iem$id <- iem$ring:iem$plot
 
 # pre or post co2
-# time 4 is pre-co2 but need to be in post as well 
-# as it's used as a baseline
+# time 4 is pre-co2 but need to be in post as well as it's used as a baseline
 iem$pre <- ifelse(iem$time %in% c(1:4), TRUE, FALSE )
 iem$post <- ifelse(!(iem$time %in% c(1:3)), TRUE, FALSE )
 
@@ -36,14 +35,14 @@ TdrIem <- subsetD(FACE_TDR_ProbeDF, Sample == "IEM")
 
 # compute mean of soil variable for given period
 SoilVarDD <- function(data, rings, plots, Start, End){
-  sDF <- subset(data, Date >= Start & Date >= End & ring == rings & plot == plots)
-  ddply(sDF, .(ring, plot),
-        function(x) colMeans(x[c("Moist", "Temp_Mean", "Temp_Min", "Temp_Max")], na.rm = TRUE))
+  sDF <- subset(data, Date >= Start & Date <= End & ring == rings & plot == plots)
+#   ddply(sDF, .(ring, plot),
+#         function(x) colMeans(x[c("Moist", "Temp_Mean", "Temp_Min", "Temp_Max")], na.rm = TRUE))
+  colMeans(sDF[c("Moist", "Temp_Mean", "Temp_Min", "Temp_Max")], na.rm = TRUE)
 }
 
 IEMSoil <- ddply(iem, .(insertion, sampling, ring, plot), 
                  function(x) SoilVarDD(data = TdrIem, Start = x$insertion, End = x$sampling, rings = x$ring, plot = x$plot))
-
 # merge
 iem <- merge(iem, IEMSoil, by = c("insertion", "sampling", "ring", "plot"))
 
