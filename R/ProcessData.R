@@ -36,8 +36,6 @@ TdrIem <- subsetD(FACE_TDR_ProbeDF, Sample == "IEM")
 # compute mean of soil variable for given period
 SoilVarDD <- function(data, rings, plots, Start, End){
   sDF <- subset(data, Date >= Start & Date <= End & ring == rings & plot == plots)
-#   ddply(sDF, .(ring, plot),
-#         function(x) colMeans(x[c("Moist", "Temp_Mean", "Temp_Min", "Temp_Max")], na.rm = TRUE))
   colMeans(sDF[c("Moist", "Temp_Mean", "Temp_Min", "Temp_Max")], na.rm = TRUE)
 }
 
