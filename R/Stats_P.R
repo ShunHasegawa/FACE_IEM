@@ -131,11 +131,36 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), t
 
 # Note Temp_Max and log(Moist) appears to be correlated so shouln't be 
 # placed in a multiple regression model
-Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * log(Moist), 
+Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * log(Moist) * Temp_Max, 
                 random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
-Anova(Iml_ancv)
 Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
 Anova(Fml_ancv)
+visreg(Fml_ancv, "Temp_Max", 
+       by = "co2", 
+       print.cond = TRUE, 
+       overlay = TRUE, 
+       trans = ReTrf, 
+       ylim = c(0, 6), 
+       line.par = list(col = c("blue", "red")),
+       points.par = list(col = c("blue", "red")))
+
+
+visreg(Fml_ancv, "Moist", by = "co2", print.cond = TRUE, overlay = TRUE, 
+       trans = ReTrf, ylim = c(0, 6))
+
+
+
+
+visreg(Fml_ancv, "Moist", by = "co2", print.cond = TRUE, overlay = TRUE, 
+ ylim = c(0, .4))
+
+Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 *(log(Moist) + Temp_Max), 
+                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
+Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2  + log(Moist) + Temp_Max, 
+                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
+Anova(Iml_ancv)
+Anova(Fml_ancv)
+
 
 # main effects
 plot(allEffects(Fml_ancv))
@@ -148,16 +173,16 @@ plot(allEffects(Fml_ancv))
 ReTrf <- function(x) x^(-1/1.1515)-1.6
 
 PltPr_Moist <- function(){
-  visreg(Fml_ancv, 
+  visreg(Iml_ancv, 
          xvar = "Moist",
          by = "co2", 
          trans = ReTrf,
-         level = 1, # take random factor into accound
          overlay = TRUE, 
          print.cond=TRUE, 
          line.par = list(col = c("blue", "red")),
          points.par = list(col = c("blue", "red")),
-         ylim = c(0, 6))
+         ylim = c(0, 6)
+         )
   
   timePos <- seq(0, 5, length.out = 10)
   times <- c(5:14)
