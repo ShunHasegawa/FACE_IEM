@@ -133,13 +133,32 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), t
 # placed in a multiple regression model
 Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * log(Moist) * Temp_Max, 
                 random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
+
+
+Iml_ancv <- lmer((p + 1.6)^(-1.1515) ~ co2 * (log(Moist) + Temp_Max) + 
+                (1|block/ring/plot),  data = subsetD(iem, !pre))
+Iml_ancv <- lmer(log(p) ~ co2 * (Moist + Temp_Max) + 
+                (1|block/ring/plot),  data = subsetD(iem, !pre))
+Anova(Iml_ancv, test.statistic = "F")
+Anova(Iml_ancv)
+
+
+
 Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
 Anova(Fml_ancv)
-visreg(Fml_ancv, "Temp_Max", 
+visreg(Iml_ancv, "Temp_Max", 
        by = "co2", 
        print.cond = TRUE, 
        overlay = TRUE, 
-       trans = ReTrf, 
+       trans = exp, 
+       ylim = c(0, 6), 
+       line.par = list(col = c("blue", "red")),
+       points.par = list(col = c("blue", "red")))
+visreg(Iml_ancv, "Moist", 
+       by = "co2", 
+       print.cond = TRUE, 
+       overlay = TRUE, 
+       trans = exp, 
        ylim = c(0, 6), 
        line.par = list(col = c("blue", "red")),
        points.par = list(col = c("blue", "red")))
