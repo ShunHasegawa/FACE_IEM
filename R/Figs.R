@@ -95,6 +95,3 @@ pl  <- p2 + facet_wrap( ~ ring)
 ggsavePP(file = "output/figs/FACE_IEM_SoilVar_Ring", plot = pl, width = 6, height = 6)
 
 ggsavePP(file = "output/figs/FACE_IEM_SoilVar", plot = p2, width = 6, height = 6)
-
-# Soil moisture and temperature seems to be correlated
-# Temperature may regulate. 
