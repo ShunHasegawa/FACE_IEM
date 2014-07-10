@@ -221,49 +221,6 @@ Est.val <- rbind(
   co2elev.Temp_Mean = ciDF [6, ] + ciDF[4, 1]
   )
 
-########################################
-# Plot predicted values for each block #
-########################################
-
-# Create a data frame for explanatory
-
-# moisture and given temp (median)
-expDF <- with(iem, expand.grid(ring = unique(ring), 
-                               plot = unique(plot),
-                               Moist = seq(min(Moist, na.rm = TRUE), max(Moist, na.rm = TRUE), length.out= 100),
-                               Temp_Mean = median(Temp_Mean, na.rm = TRUE)))
-
-# temperature and give moist
-# expDF <- with(iem, expand.grid(ring = unique(ring), 
-#                                plot = unique(plot),
-#                                Temp_Mean = seq(min(Temp_Mean, na.rm = TRUE), max(Temp_Mean, na.rm = TRUE), length.out= 100),
-#                                Moist = median(Moist, na.rm = TRUE)))
-expDF <- within(expDF, {
-  block = recode(ring, "c(1,2) = 'A'; c(3,4) = 'B'; c(5,6) = 'C'")
-  co2 = factor(ifelse(ring %in% c(1, 4, 5), "elev", "amb"))
-})
-
-
-# predicted values
-PredVal <- predict(Fml_ancv, re.form = ~(1|block), newdata = AdjexpDF)
-PredDF <- cbind(AdjexpDF, PredVal)
-
-# plot
-theme_set(theme_bw())
-p <- ggplot(PredDF, aes(x = Moist, y = exp(PredVal), col = co2))
-p + geom_line(aes(group = ring)) +
-  geom_point(aes(x = Moist, y = p, col = co2), data = subsetD(iem, !pre)) + 
-  scale_color_manual("co2", values = c("blue", "red")) +
-  facet_grid(. ~ block)
-  labs(y = "IEM-P")
-
-
-
-
-
-
-
-
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
 Iml_pre$call
