@@ -41,7 +41,9 @@ ggsavePP(filename = "output//figs/FACE_IEM_CO2Trt", plot = pl, width = 6, height
 # plot soil moist and temp for each incubation periods #
 ########################################################
 
-## raw (before taking two week mean) ##
+##########################
+## Process raw TDR data ##
+##########################
 load("Data/FACE_TDR_ProbeDF.RData")
 
 # subset IEM tdr
@@ -55,32 +57,30 @@ iemTDR <- within(iemTDR, {
   Temp_Max <- NULL
   Sample <- NULL
 })
-names(iemTDR)[5] <- "Temp"
 
 iemTDRdf <- melt(iemTDR, id = c("Date", "co2", "ring", "plot"))
-iemTDRdf$type <- iemTDRdf$variable
+iemTDRdf$type <- factor(ifelse(iemTDRdf$variable == "Moist", "Moist", "Temp")) 
+  # need "type" column for ggplot later
 
+# compute mean
 iemTDR_RngMean <- ddply(iemTDRdf, .(Date, co2, ring, variable, type), summarise, value = mean(value, na.rm = TRUE))
 iemTDR_co2Mean <- ddply(iemTDR_RngMean, .(Date, co2, variable, type), summarise, value = mean(value, na.rm = TRUE))
 
-## Make figs ##
-SoilVarDF <- iem[, c("co2", "ring", "date", "Moist", "Temp_Mean", "Temp_Min", "Temp_Max")]
+##############################################
+## Plot raw data and incubation-period mean ##
+##############################################
 
 ## co2 ##
-pl <- PltSoilVar(data = SoilVarDF, var = "co2") +
+pl <- PltSoilVar(data = iem, var = "co2", tdrData = iemTDR_co2Mean, linealpha = .5) +
   scale_color_manual(values = c("blue", "red"), expression(CO[2]~trt), 
-                     labels = c("Ambient", expression(eCO[2]))) + 
-  geom_line(aes(x = Date, y = value, group = co2), data = iemTDR_co2Mean, alpha = .5) +
-  geom_vline(xintercept = c(unique(ave(as.numeric(iem$insertion), iem$time)), 
-                            max(as.numeric(iem$sampling))),
-             col = "gray30", size = .5,linetype = "dotted") +
+                     labels = c("Ambient", expression(eCO[2]))) +
   ggtitle("Mean soil moisture and temperature\nduring IEM incubation")
-
 ggsavePP(filename = "output//figs/FACE_IEM_SoilVarMonth_CO2", plot = pl, width = 6, height = 4)
 
 ## ring ##
-pl <- PltSoilVar(data = SoilVarDF, var = "ring") +
-  scale_color_manual(values = palette(), "Ring", labels = paste("Ring", c(1:6), sep = "_"))
+pl <- PltSoilVar(data = iem, var = "ring", tdrData = iemTDR_RngMean, linealpha = .3) +
+  scale_color_manual(values = palette(), "Ring", labels = paste("Ring", c(1:6), sep = "_")) +
+  ggtitle("Mean soil moisture and temperature\nduring IEM incubation")
 
 ggsavePP(filename = "output//figs/FACE_IEM_SoilVarMonth_Ring", plot = pl, width = 6, height = 4)
 
