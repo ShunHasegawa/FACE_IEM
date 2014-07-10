@@ -243,11 +243,6 @@ expDF <- within(expDF, {
   co2 = factor(ifelse(ring %in% c(1, 4, 5), "elev", "amb"))
 })
 
-# adjust moisture range for each block
-boxplot(Moist ~ block, data = expDF)
-
-sAdjexpDF <- ldply(list("A", "B", "C"), function(x) BlkminMoist(variable = x, data = expDF))
-boxplot(Moist ~ block, data = AdjexpDF)
 
 # predicted values
 PredVal <- predict(Fml_ancv, re.form = ~(1|block), newdata = AdjexpDF)
