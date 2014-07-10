@@ -33,6 +33,10 @@ vif(lm(nh ~ Moist + Temp_Mean + MxT, data = postDF))
 1/vif(lm(nh ~ Moist + Temp_Mean + MxT, data = postDF))
 # it looks fine now
 
+# save
+save(postDF, file = "output//data/postDF.RData")
+
+
 ###########
 # Nitrate #
 ###########
