@@ -103,58 +103,36 @@ qqline(residuals.lm(Fml_post))
 # ANCOVA #
 ##########
 # plot all variables
-scatterplotMatrix(~ I(log(no + 30)) + log(Moist) + Temp_Max + Temp_Min + Temp_Mean, data = iem,
-                  diag = "boxplot")
-# negative correlation with Temp_Max
+scatterplotMatrix(~ log(no + 30) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
+                  data = postDF, diag = "boxplot")
+scatterplotMatrix(~ log(no) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
+                  data = postDF, diag = "boxplot")
 
 # plot for each plot against soil variables
-print(xyplot(log(no + 30) ~ log(Moist) | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
-print(xyplot(log(no + 30) ~ Temp_Min | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
+print(xyplot(log(no + 30) ~ Moist | ring + plot, postDF, type = c("r", "p")))
+print(xyplot(log(no) ~ Moist | ring + plot, postDF, type = c("r", "p")))
+
+print(xyplot(log(no + 30) ~ Temp_Mean | ring + plot, postDF, type = c("r", "p")))
+print(xyplot(log(no + 30) ~ MxT | ring + plot, postDF, type = c("r", "p")))
 
 ## Analysis ##
-Iml_ancv <- lme(log(no + 30) ~ co2 * (time + Moist + Temp_Max), 
-           random = ~1|ring/plot,  data = subsetD(iem, !pre))
-SmMd <-  MdlSmpl(Iml_ancv)$model.reml
-Anova(SmMd)
+Iml_ancv <- lmer(log(no + 30) ~ co2 * (Moist + Temp_Mean + MxT) + 
+                 (1|block) + (1|ring) + (1|id),  data = postDF)
 
-# Temp_Max may be removed
-SmMdML <- MdlSmpl(Iml_ancv)$model.ml
-SmMd2 <- update(SmMdML, ~. - Temp_Max)
-anova(SmMdML, SmMd2)
-Anova(SmMd2)
-
-Fml_ancv <- update(SmMd2, method = "REML")
-Anova(Fml_ancv)
-summary(Fml_ancv)
-plot(allEffects(Fml_ancv))
-
-plot(Fml_ancv)
-qqnorm(Fml_ancv, ~ resid(.)|id)
-qqnorm(residuals.lm(Fml_ancv))
-qqline(residuals.lm(Fml_ancv))
-# no co2 effect
-
-############
-# Blocking #
-############
-# Note Temp_Max and log(Moist) appears to be correlated so shouln't be 
-# placed in a multiple regression model
-
-Iml_ancv <- lme(log(no + 30) ~ co2 * log(Moist), 
-                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
 Anova(Iml_ancv)
-Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
-Anova(Fml_ancv)
-# very small indication of CO2 effect 
 
+# model simplification
+Fml_ancv <- stepLmer(Iml_ancv) 
+Anova(Fml_ancv)
+Anova(Fml_ancv, test.statistic = "F")
+
+# main effect
 plot(allEffects(Fml_ancv))
 
 # model diagnosis
 plot(Fml_ancv)
-qqnorm(Fml_ancv, ~ resid(.)|id)
-qqnorm(residuals.lm(Fml_ancv))
-qqline(residuals.lm(Fml_ancv))
-
+qqnorm(resid(Fml_ancv))
+qqline(resid(Fml_ancv))
 
 
 ## ---- Stat_FACE_IEM_Nitrate_preCO2_Smmry
