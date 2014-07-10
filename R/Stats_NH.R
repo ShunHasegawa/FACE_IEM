@@ -112,24 +112,55 @@ qqline(residuals.lm(Fml_post))
 # plot soil variables #
 #######################
 # plot all variables
-scatterplotMatrix(~ I(log(nh)) + log(Moist) + Temp_Max + Temp_Min + Temp_Mean, data = iem,
+scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean, data = iem,
                   diag = "boxplot")
 
 # plot for each plot against soil variables
-print(xyplot(log(nh) ~ log(Moist) | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
-print(xyplot(log(nh) ~ Temp_Max | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
+print(xyplot(log(nh) ~ Moist | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
+print(xyplot(log(nh) ~ Temp_Mean | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
 
 ############
 # Analysis #
 ############
-# Iml_ancv <- lme(log(nh) ~ co2 * log(Moist), 
-#                 random = ~1|block/ring/plot, data = subsetD(iem, !pre))
-# it gives me error message for some reasons.. so try lmer
 
-Iml_ancv <- lmer(log(nh) ~ co2 * log(Moist) +
+df <- subsetD(iem, !pre)
+df <- within(df, {
+  tm <- (Moist - mean(Moist)) * (Temp_Mean - mean(Temp_Mean))
+})
+scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean + tm, 
+                  data = df, diag = "boxplot")
+
+
+
+Iml_ancv <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean + tm) + 
                    (1|block/ring/plot), data = subsetD(iem, !pre))
 
+Iml_ancv <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean + tm) + 
+                   (1|block/ring/plot), data = df)
+Iml_ancv2 <- lmer(log(nh) ~ co2 + Moist + Temp_Mean + tm + 
+                   (1|block/ring/plot), data = df)
+anova(Iml_ancv, Iml_ancv2)
+Anova(Iml_ancv2)
+Anova(Iml_ancv2, test.statistic = "F")
+plot(allEffects(Iml_ancv2))
+
+
+
+Iml_ancv2 <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean + tm) + 
+                   (1|block/ring/plot), data = df)
 Anova(Iml_ancv)
+
+
+Iml_ancv2 <- lmer(log(nh) ~ co2 + (Moist * Temp_Mean) + 
+                   (1|block/ring/plot), data = subsetD(iem, !pre))
+Iml_ancv3 <- lmer(log(nh) ~ co2 + Moist + Temp_Mean + 
+                   (1|block/ring/plot), data = subsetD(iem, !pre))
+anova(Iml_ancv, Iml_ancv2, Iml_ancv3)
+Anova(Iml_ancv2)
+
+
+anova(Iml_ancv, Iml_ancv2)
+Anova(Iml_ancv2)
 
 Fml_ancv <- lmer(log(nh) ~ co2 + log(Moist) +
                    (1|block/ring/plot), data = subsetD(iem, !pre))
@@ -138,7 +169,7 @@ anova(Iml_ancv, Fml_ancv)
 Anova(Fml_ancv)
 
 # main effects
-plot(allEffects(Fml_ancv))
+plot(allEffects(Iml_ancv3))
 
 # model diagnosis
 plot(Fml_ancv)
