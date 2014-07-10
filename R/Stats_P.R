@@ -136,11 +136,11 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), t
 ############
 
 # use lmer to get confidence intervals for predicted values
-m1 <- lmer(log(p) ~ co2 * Moist * Temp_Mean +
+Iml_ancv <- lmer(log(p) ~ co2 * Moist * Temp_Mean +
                    (1|block/ring/plot), data = subsetD(iem, !pre))
 m2 <- lmer(log(p) ~ co2 * (Moist + Temp_Mean) +
                    (1|block/ring/plot), data = subsetD(iem, !pre))
-anova(m1, m2)
+anova(Iml_ancv, m2)
 # m2 is better
 Anova(m2)
 Anova(m2, test.statistic = "F")
@@ -153,52 +153,36 @@ plot(allEffects(Fml_ancv))
 ##########################
 ## plot predicted value ##
 ##########################
-
-# vs Moist
-PltPr_Moist <- function(){
-  visreg(Fml_ancv, 
-         xvar = "Moist",
+PltPrdVal <- function(model, variable, ...){
+  visreg(model, 
+         xvar = variable,
          by = "co2", 
          trans = exp,
          overlay = TRUE, 
          print.cond=TRUE, 
          line.par = list(col = c("blue", "red")),
          points.par = list(col = c("blue", "red")),
-         ylim = c(0, 6))
+         ylim = c(0, 6),
+         ...)
   
   timePos <- seq(0, 5, length.out = 10)
   times <- c(5:14)
+  iem$yval <- iem[, variable]
   for (i in 1:10){
-    lines(x = range(iem$Moist[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
-    text(x = mean(range(iem$Moist[iem$time == times[i]])), y = timePos[i], 
+    lines(x = range(iem$yval[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
+    text(x = mean(range(iem$yval[iem$time == times[i]])), y = timePos[i], 
          labels = paste("Time =", times[i]), pos = 3)
   }
-  legend("topright", lty = 1, leg = "Moisture range", bty = "n")
+  legend("topright", lty = 1, leg = paste(variable, "range"), bty = "n")
 }
-PltPr_Moist()
 
-# vs Temp
-PltPr_Temp <- function(){
-  visreg(Fml_ancv, 
-         xvar = "Temp_Mean",
-         by = "co2", 
-         trans = exp,
-         overlay = TRUE, 
-         print.cond=TRUE, 
-         line.par = list(col = c("blue", "red")),
-         points.par = list(col = c("blue", "red")),
-         ylim = c(0, 6))
-  
-  timePos <- seq(0, 5, length.out = 10)
-  times <- c(5:14)
-  for (i in 1:10){
-    lines(x = range(iem$Temp_Mean[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
-    text(x = mean(range(iem$Temp_Mean[iem$time == times[i]])), y = timePos[i], 
-         labels = paste("Time =", times[i]), pos = 3)
-  }
-  legend("topright", lty = 1, leg = "Temperature range", bty = "n")
-}
-PltPr_Temp()
+par(mfrow = c(2,2))
+# moist
+PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 12), ylab = "IEM-P (Temp = 12)")
+PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 23), ylab = "IEM-P (Temp = 23)")
+# temp
+PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .05), ylab = "IEM-P (Moist = .05)")
+PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .25), ylab = "IEM-P (Moist = .25)")
 
 # model diagnosis
 plot(Fml_ancv)
@@ -206,10 +190,7 @@ qqnorm(resid(Fml_ancv))
 qqline(resid(Fml_ancv))
 
 # confidence interval for estimated parameters
-CIs <- confint(Fml_ancv, method = "boot")
-CIs <- CIs[c(5:10),]
-coefs <- summary(Fml_ancv)$coefficients
-ciDF <- cbind(CIs, Estimate = coefs[,1])
+ciDF <- CIdf(model = Fml_ancv)
 
 # calculate actual values
 Est.val <- rbind(
@@ -220,6 +201,8 @@ Est.val <- rbind(
   co2elev.Moist = ciDF[5, ] + ciDF[3, 1],
   co2elev.Temp_Mean = ciDF [6, ] + ciDF[4, 1]
   )
+
+Est.val
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
@@ -243,12 +226,28 @@ FACE_IEM_PostCO2_P_CntrstDf
 
 ## ---- Stat_FACE_IEM_Phosphate_postCO2_withSoilVar_Smmry
 # The initial model
-Iml_ancv$call
+Iml_ancv@call
 Anova(Iml_ancv)
 
 # The final model
-Fml_ancv$call
+Fml_ancv@call
+
+# Chisq
 Anova(Fml_ancv)
 
+# F-test
+Anova(Fml_ancv, test.statistic = "F")
+
+
+# 95% CI for estimated parameter
+Est.val
+
 # plot the predicted values
-PltPr_Moist()
+par(mfrow = c(2,2))
+# moist
+PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 12), ylab = "IEM-P (Temp = 12)")
+PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 23), ylab = "IEM-P (Temp = 23)")
+# temp
+PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .05), ylab = "IEM-P (Moist = .05)")
+PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .25), ylab = "IEM-P (Moist = .25)")
+
