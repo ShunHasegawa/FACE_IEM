@@ -241,7 +241,16 @@ abline(cf[1] + cf[2], cf[3] + cf[4], col = "red")
 ?abline
 
 
+# ring mean
+df <- subsetD(iem, !pre)
+RngM <- ddply(df, .(ring, time, co2), function(x) colMeans(x[, c("p", "Moist", "Temp_Mean")]))
+coM <- ddply(RngM, .(time, co2), function(x) colMeans(x[, c("p", "Moist", "Temp_Mean")]))
 
+p <- ggplot(data =  coM, aes(x = Temp_Mean, y = Moist, size = p, col = co2))
+p + geom_point(alpha = .5) +
+    scale_color_manual(values = c("blue", "red"), expression(CO[2])) +
+  scale_size(range = c(1 , 20), breaks = seq(1, 9, 1))
+range(RngM$p)
 
 ## Plot predicted values for each block ##
 
