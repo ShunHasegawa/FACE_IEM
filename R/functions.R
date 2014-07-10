@@ -450,7 +450,7 @@ PltPrdVal <- function(data, model, variable, ...){
 ###########################
 # step deletion with lmer #
 ###########################
-stepLmer <- function(model){
+stepLmer <- function(model, red.rndm = FALSE){
   require(lmerTest)
-  update(step(model, reduce.random = FALSE)$model, contrasts = NULL)
+  update(step(model, reduce.random = red.rndm)$model, contrasts = NULL)
 }
