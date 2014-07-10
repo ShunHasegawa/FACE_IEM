@@ -446,3 +446,11 @@ PltPrdVal <- function(data, model, variable, ...){
   }
   legend("topright", lty = 1, leg = paste(variable, "range"), bty = "n")
 }
+
+###########################
+# step deletion with lmer #
+###########################
+steLmer <- function(model){
+  require(lmerTest)
+  update(step(model)$model, contrasts = NULL)
+}
