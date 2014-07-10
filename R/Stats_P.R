@@ -157,29 +157,29 @@ plot(allEffects(Fml_ancv))
 ##########################
 ## plot predicted value ##
 ##########################
-par(mfrow = c(2,2))
+par(mfrow = c(1,2))
 # moist
 PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 12),
           ylab = "IEM-P (Temp = 12)",
           ylim = c(0, 6),
           trans = exp,
-          data = iem)
+          data = postDF)
 PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 23), 
           ylab = "IEM-P (Temp = 23)",
           ylim = c(0, 6),
           trans = exp,
-          data = iem)
+          data = postDF)
 # temp
 PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .05), 
           ylab = "IEM-P (Moist = .05)",
           ylim = c(0, 6),
           trans = exp,
-          data = iem)
+          data = postDF)
 PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .25), 
           ylab = "IEM-P (Moist = .25)",
           ylim = c(0, 6),
           trans = exp,
-          data = iem)
+          data = postDF)
 
 # model diagnosis
 plot(Fml_ancv)
