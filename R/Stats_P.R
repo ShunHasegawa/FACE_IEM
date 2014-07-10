@@ -153,36 +153,29 @@ plot(allEffects(Fml_ancv))
 ##########################
 ## plot predicted value ##
 ##########################
-PltPrdVal <- function(model, variable, ...){
-  visreg(model, 
-         xvar = variable,
-         by = "co2", 
-         trans = exp,
-         overlay = TRUE, 
-         print.cond=TRUE, 
-         line.par = list(col = c("blue", "red")),
-         points.par = list(col = c("blue", "red")),
-         ylim = c(0, 6),
-         ...)
-  
-  timePos <- seq(0, 5, length.out = 10)
-  times <- c(5:14)
-  iem$yval <- iem[, variable]
-  for (i in 1:10){
-    lines(x = range(iem$yval[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
-    text(x = mean(range(iem$yval[iem$time == times[i]])), y = timePos[i], 
-         labels = paste("Time =", times[i]), pos = 3)
-  }
-  legend("topright", lty = 1, leg = paste(variable, "range"), bty = "n")
-}
-
 par(mfrow = c(2,2))
 # moist
-PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 12), ylab = "IEM-P (Temp = 12)")
-PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 23), ylab = "IEM-P (Temp = 23)")
+PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 12),
+          ylab = "IEM-P (Temp = 12)",
+          ylim = c(0, 6),
+          trans = exp,
+          data = iem)
+PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 23), 
+          ylab = "IEM-P (Temp = 23)",
+          ylim = c(0, 6),
+          trans = exp,
+          data = iem)
 # temp
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .05), ylab = "IEM-P (Moist = .05)")
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .25), ylab = "IEM-P (Moist = .25)")
+PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .05), 
+          ylab = "IEM-P (Moist = .05)",
+          ylim = c(0, 6),
+          trans = exp,
+          data = iem)
+PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .25), 
+          ylab = "IEM-P (Moist = .25)",
+          ylim = c(0, 6),
+          trans = exp,
+          data = iem)
 
 # model diagnosis
 plot(Fml_ancv)
@@ -195,11 +188,11 @@ ciDF <- CIdf(model = Fml_ancv)
 # calculate actual values
 Est.val <- rbind(
   int = ciDF[1, ],
-  co2elev = ciDF[2, ] + ciDF[1, 1],
+  co2elev = ciDF[2, ] + ciDF[1, 3],
   Moist = ciDF[3, ],
   Temp_Mean = ciDF[4, ],
-  co2elev.Moist = ciDF[5, ] + ciDF[3, 1],
-  co2elev.Temp_Mean = ciDF [6, ] + ciDF[4, 1]
+  co2elev.Moist = ciDF[5, ] + ciDF[3, 3],
+  co2elev.Temp_Mean = ciDF [6, ] + ciDF[4, 3]
   )
 
 Est.val
