@@ -159,27 +159,22 @@ plot(allEffects(Fml_ancv))
 ##########################
 par(mfrow = c(1,2))
 # moist
-PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 12),
-          ylab = "IEM-P (Temp = 12)",
-          ylim = c(0, 6),
-          trans = exp,
-          data = postDF)
-PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 23), 
-          ylab = "IEM-P (Temp = 23)",
-          ylim = c(0, 6),
-          trans = exp,
-          data = postDF)
+l_ply(c(12, 23), function(x){
+  PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 12),
+            ylab = paste("IEM-P (Temp = ", x, ")", sep = ""),
+            ylim = c(0, 6),
+            trans = exp,
+            data = postDF)
+})
+
 # temp
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .05), 
-          ylab = "IEM-P (Moist = .05)",
-          ylim = c(0, 6),
-          trans = exp,
-          data = postDF)
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .25), 
-          ylab = "IEM-P (Moist = .25)",
-          ylim = c(0, 6),
-          trans = exp,
-          data = postDF)
+l_ply(c(.05, .25), function(x){
+  PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Temp_Mean = 12),
+            ylab = paste("IEM-P (Moist = ", x, ")", sep = ""),
+            ylim = c(0, 6),
+            trans = exp,
+            data = postDF)
+})
 
 # model diagnosis
 plot(Fml_ancv)
@@ -241,9 +236,19 @@ Est.val
 # plot the predicted values
 par(mfrow = c(1,2))
 # moist
-PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 12), ylab = "IEM-P (Temp = 12)")
-PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 23), ylab = "IEM-P (Temp = 23)")
-# temp
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .05), ylab = "IEM-P (Moist = .05)")
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = .25), ylab = "IEM-P (Moist = .25)")
+l_ply(c(12, 23), function(x){
+  PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = x),
+            ylab = paste("IEM-P (Temp = ", x, ")", sep = ""),
+            ylim = c(0, 6),
+            trans = exp,
+            data = postDF)
+})
 
+# temp
+l_ply(c(.05, .25), function(x){
+  PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = x),
+            ylab = paste("IEM-P (Moist = ", x, ")", sep = ""),
+            ylim = c(0, 6),
+            trans = exp,
+            data = postDF)
+})
