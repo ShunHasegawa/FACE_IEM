@@ -108,39 +108,13 @@ qqline(residuals.lm(Fml_post))
 # ANCOVA #
 ##########
 
-##########################
-## Add interaction term ##
-##########################
-
-postDF <- subsetD(iem, !pre)
-
-# creat interactive term: Moist x Temp_Mean
-postDF$MxT <- postDF$Moist * postDF$Temp_Mean
-
-# plot all variables
-scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
-                  data = postDF, diag = "boxplot")
-  # MxT seems highly corelated to Moist
-
-# check multi-colinearity
-cor(postDF[, c("Moist", "Temp_Mean", "MxT")])
-vif(lm(log(nh) ~ Moist + Temp_Mean + MxT, data = postDF))
-1/vif(lm(log(nh) ~ Moist + Temp_Mean + MxT, data = postDF))
-  # vif<.2 nad 1/vif>>5 so collinarity is problem
-
-# to avoid multicoliniarity, use conduct first centering
-postDF$MxT <- with(postDF, (Moist - mean(Moist)) * (Temp_Mean - mean(Temp_Mean)))
-scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
-                  data = postDF, diag = "boxplot")
-cor(postDF[, c("Moist", "Temp_Mean", "MxT")])
-vif(lm(log(nh) ~ Moist + Temp_Mean + MxT, data = postDF))
-1/vif(lm(log(nh) ~ Moist + Temp_Mean + MxT, data = postDF))
-  # it looks fine now
-
 ######################
 # Plot all variables #
 ######################
 # plot for each plot against soil variables
+# plot all variables
+scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
+                  data = postDF, diag = "boxplot")
 print(xyplot(log(nh) ~ Moist | ring + plot, postDF, type = c("r", "p")))
 print(xyplot(log(nh) ~ Temp_Mean | ring + plot, postDF, type = c("r", "p")))
 print(xyplot(log(nh) ~ MxT | ring + plot, postDF, type = c("r", "p")))
