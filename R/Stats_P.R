@@ -145,6 +145,12 @@ Fml_ancv <- stepLmer(Iml_ancv)
 Anova(Fml_ancv)
 Anova(Fml_ancv, test.statistic = "F")
 
+# what if I allow this to reduce random factors
+Anova(ml <- stepLmer(Iml_ancv, red.rndm = TRUE))
+ml@call 
+  # ring is removed. main effects are more significant than before but there're
+  # interactions so it doesn't really matter too much
+
 # main effects
 plot(allEffects(Fml_ancv))
 
