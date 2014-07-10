@@ -108,98 +108,87 @@ qqline(residuals.lm(Fml_post))
 # ANCOVA #
 ##########
 
-#######################
-# plot soil variables #
-#######################
-# plot all variables
-scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean, data = iem,
-                  diag = "boxplot")
+##########################
+## Add interaction term ##
+##########################
 
+postDF <- subsetD(iem, !pre)
+
+# creat interactive term: Moist x Temp_Mean
+postDF$MxT <- postDF$Moist * postDF$Temp_Mean
+
+# plot all variables
+scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
+                  data = postDF, diag = "boxplot")
+  # MxT seems highly corelated to Moist
+
+# check multi-colinearity
+cor(postDF[, c("Moist", "Temp_Mean", "MxT")])
+vif(lm(log(nh) ~ Moist + Temp_Mean + MxT, data = postDF))
+1/vif(lm(log(nh) ~ Moist + Temp_Mean + MxT, data = postDF))
+  # vif<.2 nad 1/vif>>5 so collinarity is problem
+
+# to avoid multicoliniarity, use conduct first centering
+postDF$MxT <- with(postDF, (Moist - mean(Moist)) * (Temp_Mean - mean(Temp_Mean)))
+scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
+                  data = postDF, diag = "boxplot")
+cor(postDF[, c("Moist", "Temp_Mean", "MxT")])
+vif(lm(log(nh) ~ Moist + Temp_Mean + MxT, data = postDF))
+1/vif(lm(log(nh) ~ Moist + Temp_Mean + MxT, data = postDF))
+  # it looks fine now
+
+######################
+# Plot all variables #
+######################
 # plot for each plot against soil variables
-print(xyplot(log(nh) ~ Moist | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
-print(xyplot(log(nh) ~ Temp_Mean | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
+print(xyplot(log(nh) ~ Moist | ring + plot, postDF, type = c("r", "p")))
+print(xyplot(log(nh) ~ Temp_Mean | ring + plot, postDF, type = c("r", "p")))
+print(xyplot(log(nh) ~ MxT | ring + plot, postDF, type = c("r", "p")))
 
 ############
 # Analysis #
 ############
-
-df <- subsetD(iem, !pre)
-df <- within(df, {
-  tm <- (Moist - mean(Moist)) * (Temp_Mean - mean(Temp_Mean))
-})
-scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean + tm, 
-                  data = df, diag = "boxplot")
-
-
-
-Iml_ancv <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean + tm) + 
-                   (1|block/ring/plot), data = subsetD(iem, !pre))
-
-Iml_ancv <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean + tm) + 
-                   (1|block/ring/plot), data = df)
-Iml_ancv2 <- lmer(log(nh) ~ co2 + Moist + Temp_Mean + tm + 
-                   (1|block/ring/plot), data = df)
+Iml_ancv <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean + MxT) +
+                   (1|block/ring/plot), data = postDF)
+Anova(Iml_ancv)
+# probably no co2 interaction, so remove
+Iml_ancv2 <- lmer(log(nh) ~ co2 + Moist + Temp_Mean + MxT +
+                    (1|block/ring/plot), data = postDF)
 anova(Iml_ancv, Iml_ancv2)
+  # Iml_ancv2's better
 Anova(Iml_ancv2)
 Anova(Iml_ancv2, test.statistic = "F")
-plot(allEffects(Iml_ancv2))
-
-
-
-Iml_ancv2 <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean + tm) + 
-                   (1|block/ring/plot), data = df)
-Anova(Iml_ancv)
-
-
-Iml_ancv2 <- lmer(log(nh) ~ co2 + (Moist * Temp_Mean) + 
-                   (1|block/ring/plot), data = subsetD(iem, !pre))
-Iml_ancv3 <- lmer(log(nh) ~ co2 + Moist + Temp_Mean + 
-                   (1|block/ring/plot), data = subsetD(iem, !pre))
-anova(Iml_ancv, Iml_ancv2, Iml_ancv3)
-Anova(Iml_ancv2)
-
-
-anova(Iml_ancv, Iml_ancv2)
-Anova(Iml_ancv2)
-
-Fml_ancv <- lmer(log(nh) ~ co2 + log(Moist) +
-                   (1|block/ring/plot), data = subsetD(iem, !pre))
-
-anova(Iml_ancv, Fml_ancv)
-Anova(Fml_ancv)
+  # all terms are highly significant!!
+Fml_ancv <- Iml_ancv2
 
 # main effects
-plot(allEffects(Iml_ancv3))
+plot(allEffects(Fml_ancv))
 
 # model diagnosis
 plot(Fml_ancv)
 qqnorm(resid(Fml_ancv))
+qqline(resid(Fml_ancv))
 
-# not great...
+# confidence interval for estimated parameters
+ciDF <- CIdf(model = Fml_ancv)
 
-# plot predicted value
-PltPr <- function(){
-  visreg(Fml_ancv, xvar = "Moist", 
-         by = "co2", 
-         trans = exp, 
-         level = 1, # take random factor into accound
-         overlay = TRUE, print.cond=TRUE, 
-         line.par = list(col = c("blue", "red")),
-         points.par = list(col = c("blue", "red")),
-         ylim  = c(50, 100))
-  
-  timePos <- seq(50, 90, length.out = 10)
-  times <- c(5:14)
-  
-  for (i in 1:10){
-    lines(x = range(iem$Moist[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
-    text(x = mean(range(iem$Moist[iem$time == times[i]])), y = timePos[i], 
-         labels = paste("Time =", times[i]), pos = 3)
-  }
-  legend("topright", lty = 1, leg = "Moisture range", bty = "n")
-}
+# calculate actual values
+Est.val <- rbind(
+  int = ciDF[1, ],
+  co2elev = ciDF[2, ] + ciDF[1, 3],
+  Moist = ciDF[3, ],
+  Temp_Mean = ciDF[4, ],
+  MoistxTemp = ciDF[5, ]
+)
 
-PltPr()
+Est.val
+
+########################
+# Plot predicted value #
+########################
+PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF)
+PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
+PltPrdVal(model = Fml_ancv, variable = "MxT", data = postDF)
 
 ## ---- Stat_FACE_IEM_Ammonium_preCO2_Smmry
 
@@ -225,12 +214,17 @@ Anova(Fml_post)
 # The initial model
 Iml_ancv@call
 # use @ instead $ for lmer model
-
 Anova(Iml_ancv)
 
 # The final model
 Fml_ancv@call
 Anova(Fml_ancv)
+Anova(Fml_ancv, test.statistic = "F")
+
+# 95 % CI for estimates
+Est.val
 
 # plot the predicted values
-PltPr()
+PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF)
+PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
+PltPrdVal(model = Fml_ancv, variable = "MxT", data = postDF)
