@@ -408,3 +408,15 @@ BlkminMoist <- function(variable, data){
                  Moist >= a[1])
   return(df)
 }
+
+########################################################
+# confidence interval for estimated parameters by lmer #
+########################################################
+CIdf <- function(model, method = "boot"){
+  CIs <- confint(model, method = method)
+  CIs <- CIs[-grep("sd|sigma", row.names(CIs)), ] 
+  # take out estimates for fixed factors
+  coefs <- summary(model)$coefficients
+  ciDF <- cbind(CIs, Estimate = coefs[, "Estimate"])
+  return(ciDF)
+}  
