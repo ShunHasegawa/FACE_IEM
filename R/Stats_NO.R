@@ -10,17 +10,15 @@ bxplts(value= "no", data= subsetD(iem, pre))
 # sqrt seems slightly better
 
 # different random factor strucures
-m1 <- lme(sqrt(no) ~ co2 * time, random = ~1|ring/plot,  data = subsetD(iem, pre))
-m2 <- lme(sqrt(no) ~ co2 * time, random = ~1|ring,  data = subsetD(iem, pre))
-m3 <- lme(sqrt(no) ~ co2 * time, random = ~1|id,  data = subsetD(iem, pre))
-anova(m1, m2, m3)
-# m1 is better
+m1 <- lme(sqrt(no) ~ co2 * time, random = ~1|block/ring/plot,  data = subsetD(iem, pre))
+RndmComp(m1)$anova
+# m3 is better
+RnMl <- RndmComp(m1)[[3]]
 
 # autocorelation
-atcr.cmpr(m1, rndmFac="ring/plot")$models
+atcr.cmpr(RnMl)$models
 # model 3 looks better
-
-Iml_pre <- atcr.cmpr(m1, rndmFac="ring/plot")[[3]]
+Iml_pre <- atcr.cmpr(RnMl)[[3]]
 
 # The starting model is:
 Iml_pre$call
@@ -54,31 +52,28 @@ qqline(residuals.lm(Fml_pre))
 # Post-CO2 #
 ############
 
-bxplts(value= "no", data= subset(iem, post))
-bxplts(value= "no", ofst = 30, data= subset(iem, post))
-# log seems better
+bxplts(value= "no", data= subsetD(iem, post))
+# log seems better, but remove one outlier
+NoRmOl <- subsetD(iem, post)
+NoRmOl <- subsetD(NoRmOl, no != min(no, na.rm = TRUE))
+bxplts(value= "no", data= NoRmOl)
 
 # different random factor strucures
-m1 <- lme(log(no + 30) ~ co2 * time, random = ~1|ring/plot,  data = subsetD(iem, post))
-m2 <- lme(log(no + 30) ~ co2 * time, random = ~1|ring,  data = subsetD(iem, post))
-m3 <- lme(log(no + 30) ~ co2 * time, random = ~1|id,  data = subsetD(iem, post))
-anova(m1, m2, m3)
-# m1 is better
+m1 <- lme(log(no) ~ co2 * time, random = ~1|block/ring/plot,  data = NoRmOl)
+RndmComp(m1)$anova
+  # model4 looks better
+RnMl <- RndmComp(m1)[[4]]
 
 # autocorelation
-atcr.cmpr(m1, rndmFac="ring/plot")$models
-# model 4 looks better
-
-Iml_post <- atcr.cmpr(m2, rndmFac="ring")[[4]]
+atcr.cmpr(RnMl)$models
+  # model 4 looks better
+Iml_post <- atcr.cmpr(RnMl)[[4]]
 
 # The starting model is:
 Iml_post$call
 
 # model simplification
 Anova(Iml_post)
-
-MdlSmpl(Iml_post)
-# co2xtime, co2 are removed
 
 Fml_post <- MdlSmpl(Iml_post)$model.reml
 
