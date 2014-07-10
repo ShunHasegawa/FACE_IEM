@@ -36,9 +36,11 @@ library(ggplot2)
 library(scales)
 library(xtable)
 library(visreg)
+library(lmerTest)
 
 source("R//functions.R")
 load("output/data/FACE_IEM.RData")
+load("output//data/postDF.RData")
 source("R/SummaryExlTable.R")
 source("R/Figs.R")
 @
