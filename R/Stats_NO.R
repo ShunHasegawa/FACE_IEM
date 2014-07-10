@@ -103,28 +103,45 @@ qqline(residuals.lm(Fml_post))
 # ANCOVA #
 ##########
 # plot all variables
-scatterplotMatrix(~ log(no + 30) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
+scatterplotMatrix(~ log(no) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
                   data = postDF, diag = "boxplot")
 scatterplotMatrix(~ log(no) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
                   data = postDF, diag = "boxplot")
 
 # plot for each plot against soil variables
-print(xyplot(log(no + 30) ~ Moist | ring + plot, postDF, type = c("r", "p")))
 print(xyplot(log(no) ~ Moist | ring + plot, postDF, type = c("r", "p")))
-
-print(xyplot(log(no + 30) ~ Temp_Mean | ring + plot, postDF, type = c("r", "p")))
-print(xyplot(log(no + 30) ~ MxT | ring + plot, postDF, type = c("r", "p")))
+print(xyplot(log(no) ~ Temp_Mean | ring + plot, postDF, type = c("r", "p")))
+print(xyplot(log(no) ~ MxT | ring + plot, postDF, type = c("r", "p")))
 
 ## Analysis ##
-Iml_ancv <- lmer(log(no + 30) ~ co2 * (Moist + Temp_Mean + MxT) + 
-                 (1|block) + (1|ring) + (1|id),  data = postDF)
 
-Anova(Iml_ancv)
-
+Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean + MxT) + 
+                   (1|block) + (1|ring) + (1|id),  data = postDF)
 # model simplification
-Fml_ancv <- stepLmer(Iml_ancv) 
+Fml_ancv <- stepLmer(Iml_ancv)
 Anova(Fml_ancv)
 Anova(Fml_ancv, test.statistic = "F")
+plot(Fml_ancv)
+qqnorm(resid(Fml_ancv))
+qqline(resid(Fml_ancv))
+# looking at qqplot, there's one outlier so remove
+
+# identifi the outlier and remove
+qqval <- qqnorm(resid(Fml_ancv))[[2]]
+min(qqval)
+postDF[which(qqval == min(qqval)), "no"] <- NA
+
+# rerun analysis
+Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean + MxT) + 
+                   (1|block) + (1|ring) + (1|id),  
+                 data = postDF, na.action = "na.omit")
+Fml_ancv <- stepLmer(Iml_ancv)
+Anova(Fml_ancv)
+Anova(Fml_ancv, test.statistic = "F")
+plot(Fml_ancv)
+qqnorm(resid(Fml_ancv))
+qqline(resid(Fml_ancv))
+# looks prety good
 
 # main effect
 plot(allEffects(Fml_ancv))
@@ -133,6 +150,9 @@ plot(allEffects(Fml_ancv))
 plot(Fml_ancv)
 qqnorm(resid(Fml_ancv))
 qqline(resid(Fml_ancv))
+
+
+
 
 
 ## ---- Stat_FACE_IEM_Nitrate_preCO2_Smmry
