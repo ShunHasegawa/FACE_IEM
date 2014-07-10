@@ -151,9 +151,20 @@ plot(Fml_ancv)
 qqnorm(resid(Fml_ancv))
 qqline(resid(Fml_ancv))
 
+# confidence interval for estimated parameters
+ciDF <- CIdf(model = Fml_ancv)
 
+# calculate actual values
+Est.val <- rbind(
+  int = ciDF[1, ],
+  co2elev = ciDF[2, ] + ciDF[1, 3],
+  Moist = ciDF[3, ],
+  Temp_Mean = ciDF[4, ],
+  Mxt = ciDF[5, ],
+  co2elev.MxT = ciDF [6, ] + ciDF[5, 3]
+)
 
-
+Est.val
 
 ## ---- Stat_FACE_IEM_Nitrate_preCO2_Smmry
 
@@ -177,9 +188,19 @@ Anova(Fml_post)
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_withSoilVar_Smmry
 # The initial model
-Iml_ancv$call
+Iml_ancv@call
 Anova(Iml_ancv)
 
 # The final model
-Fml_ancv$call
+Fml_ancv@call
 Anova(Fml_ancv)
+Anova(Fml_ancv, test.statistic = "F")
+
+# 95% CI for estimated parameter
+Est.val
+
+# plot the predicted values
+PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF, trans = exp)
+PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
+PltPrdVal(model = Fml_ancv, variable = "MxT", data = postDF)
+
