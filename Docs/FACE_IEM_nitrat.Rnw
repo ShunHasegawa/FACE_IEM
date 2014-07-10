@@ -11,6 +11,9 @@
 % @
 % 
 % <<readFiles, include=FALSE>>=
+% .libPaths("packrat/lib/x86_64-w64-mingw32//3.1.0") 
+% #path to packrat library. knitr use local drive library as
+% #default
 % library(car)
 % library(gmodels)
 % library(lme4)
@@ -19,6 +22,7 @@
 % library(nlme)
 % library(packrat)
 % library(plyr)
+% library(reshape2)
 % library(reshape)
 % library(xlsx)
 % library(contrast)
@@ -27,9 +31,11 @@
 % library(scales)
 % library(xtable)
 % library(visreg)
+% library(lmerTest)
 % 
 % source("R//functions.R")
 % load("output/data/FACE_IEM.RData")
+% load("output//data/postDF.RData")
 % source("R/SummaryExlTable.R")
 % source("R/Figs.R")
 % @
