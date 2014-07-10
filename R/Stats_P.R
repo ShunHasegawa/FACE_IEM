@@ -118,6 +118,12 @@ qqline(residuals.lm(Fml_post))
 # plot all variables
 scatterplotMatrix(~ I((p + 1.6)^(-1.1515)) + Moist + Temp_Max + Temp_Min + Temp_Mean,
                   data = iem, diag = "boxplot")
+
+scatterplotMatrix(~ log(p) + Moist + Temp_Max + Temp_Min + Temp_Mean,
+                  data = iem, diag = "boxplot")
+scatterplotMatrix(~ log(p) + log(Moist) + Temp_Max + Temp_Min + Temp_Mean,
+                  data = iem, diag = "boxplot")
+
 scatterplotMatrix(~ I((p + 1.6)^(-1.1515)) + log(Moist) + Temp_Max + Temp_Min + Temp_Mean,
                   data = iem, diag = "boxplot")
 
@@ -129,11 +135,20 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), t
 # Analysis #
 ############
 
-# Note Temp_Max and log(Moist) appears to be correlated so shouln't be 
-# placed in a multiple regression model
-Iml_ancv <- lme((p + 1.6)^(-1.1515) ~ co2 * log(Moist), 
+## compare transformations by differen power function ##
+
+# box-cox
+Iml_ancv_bx <- lme((p + 1.6)^(-1.1515) ~ co2 * Moist * Temp_Mean, 
                 random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
-Anova(Iml_ancv)
+# log
+Iml_ancv_lg <- lme(log(p) ~ co2 * Moist * Temp_Mean, 
+                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
+
+Anova(Iml_ancv_bx)
+Anova(Iml_ancv_lg)
+# slightly box-cox may be beter, but pretty much the same. so use log
+
+Iml_ancv <- Iml_ancv_lg
 Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
 Anova(Fml_ancv)
 
@@ -144,15 +159,12 @@ plot(allEffects(Fml_ancv))
 ## plot predicted value ##
 ##########################
 
-# reverse transormation
-ReTrf <- function(x) x^(-1/1.1515)-1.6
-
+# vs Moist
 PltPr_Moist <- function(){
   visreg(Fml_ancv, 
          xvar = "Moist",
          by = "co2", 
-         trans = ReTrf,
-         level = 1, # take random factor into accound
+         trans = exp,
          overlay = TRUE, 
          print.cond=TRUE, 
          line.par = list(col = c("blue", "red")),
@@ -170,6 +182,29 @@ PltPr_Moist <- function(){
 }
 PltPr_Moist()
 
+# vs Temp
+PltPr_Temp <- function(){
+  visreg(Fml_ancv, 
+         xvar = "Temp_Mean",
+         by = "co2", 
+         trans = exp,
+         overlay = TRUE, 
+         print.cond=TRUE, 
+         line.par = list(col = c("blue", "red")),
+         points.par = list(col = c("blue", "red")),
+         ylim = c(0, 6))
+  
+  timePos <- seq(0, 5, length.out = 10)
+  times <- c(5:14)
+  for (i in 1:10){
+    lines(x = range(iem$Temp_Mean[iem$time == times[i]]), y = rep(timePos[i], 2), lwd = 2)
+    text(x = mean(range(iem$Temp_Mean[iem$time == times[i]])), y = timePos[i], 
+         labels = paste("Time =", times[i]), pos = 3)
+  }
+  legend("topright", lty = 1, leg = "Temperature range", bty = "n")
+}
+PltPr_Temp()
+
 # model diagnosis
 plot(Fml_ancv)
 qqnorm(Fml_ancv, ~ resid(.)|id)
@@ -181,7 +216,8 @@ qqline(residuals.lm(Fml_ancv))
 # Create a data frame for explanatory
 expDF <- with(iem, expand.grid(ring = unique(ring), 
                                plot = unique(plot),
-                               Moist = seq(min(Moist), max(Moist), length.out= 100)))
+                               Moist = seq(min(Moist, na.rm = TRUE), max(Moist, na.rm = TRUE), length.out= 100),
+                               Temp_Mean = seq(min(Temp_Mean, na.rm = TRUE), max(Temp_Mean, na.rm = TRUE), length.out= 100)))
 expDF <- within(expDF, {
   block = recode(ring, "c(1,2) = 'A'; c(3,4) = 'B'; c(5,6) = 'C'")
   co2 = factor(ifelse(ring %in% c(1, 4, 5), "elev", "amb"))
@@ -199,8 +235,8 @@ PredDF <- cbind(AdjexpDF, PredVal[, c(3:7)])
 
 # plot
 theme_set(theme_bw())
-p <- ggplot(PredDF, aes(x = Moist, y = ReTrf(predict.block), col = co2))
-p + geom_line() +
+p <- ggplot(PredDF, aes(x = Moist, y = exp(predict.block), col = co2))
+p + geom_line(group = co2) +
   geom_point(aes(x = Moist, y = p, col = co2), data = subsetD(iem, !pre)) + 
   scale_color_manual("co2", values = c("blue", "red")) +
   facet_grid(.~block) +
