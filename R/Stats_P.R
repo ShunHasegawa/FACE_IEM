@@ -235,12 +235,11 @@ Anova(Fml_ancv)
 # F-test
 Anova(Fml_ancv, test.statistic = "F")
 
-
 # 95% CI for estimated parameter
 Est.val
 
 # plot the predicted values
-par(mfrow = c(2,2))
+par(mfrow = c(1,2))
 # moist
 PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 12), ylab = "IEM-P (Temp = 12)")
 PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = 23), ylab = "IEM-P (Temp = 23)")
