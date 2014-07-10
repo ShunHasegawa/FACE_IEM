@@ -135,22 +135,17 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), t
 # Analysis #
 ############
 
-## compare transformations by differen power function ##
-
-# box-cox
-Iml_ancv_bx <- lme((p + 1.6)^(-1.1515) ~ co2 * Moist * Temp_Mean, 
-                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
-# log
-Iml_ancv_lg <- lme(log(p) ~ co2 * Moist * Temp_Mean, 
-                random = ~1|block/ring/plot,  data = subsetD(iem, !pre))
-
-Anova(Iml_ancv_bx)
-Anova(Iml_ancv_lg)
-# slightly box-cox may be beter, but pretty much the same. so use log
-
-Iml_ancv <- Iml_ancv_lg
-Fml_ancv <- MdlSmpl(Iml_ancv)$model.reml
-Anova(Fml_ancv)
+# use lmer to get confidence intervals for predicted values
+m1 <- lmer(log(p) ~ co2 * Moist * Temp_Mean +
+                   (1|block/ring/plot), data = subsetD(iem, !pre))
+m2 <- lmer(log(p) ~ co2 * (Moist + Temp_Mean) +
+                   (1|block/ring/plot), data = subsetD(iem, !pre))
+anova(m1, m2)
+# m2 is better
+Anova(m2)
+Anova(m2, test.statistic = "F")
+# significant co2:moist and co2:temp interaction
+Fml_ancv <- m2
 
 # main effects
 plot(allEffects(Fml_ancv))
@@ -207,9 +202,46 @@ PltPr_Temp()
 
 # model diagnosis
 plot(Fml_ancv)
-qqnorm(Fml_ancv, ~ resid(.)|id)
-qqnorm(residuals.lm(Fml_ancv))
-qqline(residuals.lm(Fml_ancv))
+qqnorm(resid(Fml_ancv))
+qqline(resid(Fml_ancv))
+
+# confidence interval for estimated parameters
+test <- confint(Fml_ancv, method = "boot")
+test
+
+
+newDF$id <- newDF$ring:newDF$plot
+testPr <- cbind(newDF,predict(mlmer, newdata = newDF))
+names(testPr)[7] <- "predict"
+
+a <- summary(Fml_ancv)
+a$coefficients
+
+
+
+m1 <- lm(log(p) ~ co2 * (Moist + Temp_Mean), data = subsetD(iem, !pre))
+summary(m1)
+anova(m1)
+visreg(m1, "Temp_Mean", by = "co2", overlay = TRUE, trans = exp)
+visreg(m1, "Moist", by = "co2", overlay = TRUE, trans = exp)
+
+plot(log(p) ~ Temp_Mean, subsetD(iem, !pre), col = co2)
+a <- lm(log(p) ~ co2 * Temp_Mean, data = subsetD(iem, !pre))
+cf <- coef(a)
+abline(cf[1], cf[3])
+abline(cf[1] + cf[2], cf[3] + cf[4], col = "red")
+
+par(mfrow = c(1,2))
+plot(p ~ Temp_Mean, subsetD(iem, !pre), col = co2)
+plot(p ~ Moist, subsetD(iem, !pre), col = co2)
+a <- lm(log(p) ~ co2 * Temp_Mean, data = subsetD(iem, !pre))
+cf <- coef(a)
+abline(cf[1], cf[3])
+abline(cf[1] + cf[2], cf[3] + cf[4], col = "red")
+?abline
+
+
+
 
 ## Plot predicted values for each block ##
 
