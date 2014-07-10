@@ -116,36 +116,34 @@ qqline(residuals.lm(Fml_post))
 #######################
 
 # plot all variables
-scatterplotMatrix(~ I((p + 1.6)^(-1.1515)) + Moist + Temp_Max + Temp_Min + Temp_Mean,
-                  data = iem, diag = "boxplot")
-
+scatterplotMatrix(~ I((p + 1.6)^(-1.1515)) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT,
+                  data = postDF, diag = "boxplot")
 scatterplotMatrix(~ log(p) + Moist + Temp_Max + Temp_Min + Temp_Mean,
-                  data = iem, diag = "boxplot")
+                  data = postDF, diag = "boxplot")
 scatterplotMatrix(~ log(p) + log(Moist) + Temp_Max + Temp_Min + Temp_Mean,
-                  data = iem, diag = "boxplot")
+                  data = postDF, diag = "boxplot")
 
 scatterplotMatrix(~ I((p + 1.6)^(-1.1515)) + log(Moist) + Temp_Max + Temp_Min + Temp_Mean,
-                  data = iem, diag = "boxplot")
+                  data = postDF, diag = "boxplot")
 
 # plot for each plot against soil variables
-print(xyplot((p + 1.6)^(-1.1515) ~ log(Moist) | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
-print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, subsetD(iem, !pre), type = c("r", "p")))
+print(xyplot((p + 1.6)^(-1.1515) ~ log(Moist) | ring + plot, postDF, type = c("r", "p")))
+print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, postDF, type = c("r", "p")))
 
 ############
 # Analysis #
 ############
 
 # use lmer to get confidence intervals for predicted values
-Iml_ancv <- lmer(log(p) ~ co2 * Moist * Temp_Mean +
-                   (1|block/ring/plot), data = subsetD(iem, !pre))
-m2 <- lmer(log(p) ~ co2 * (Moist + Temp_Mean) +
-                   (1|block/ring/plot), data = subsetD(iem, !pre))
-anova(Iml_ancv, m2)
-# m2 is better
-Anova(m2)
-Anova(m2, test.statistic = "F")
-# significant co2:moist and co2:temp interaction
-Fml_ancv <- m2
+Iml_ancv <- lmer(log(p) ~ co2 * (Moist + Temp_Mean + MxT) + 
+                   (1|block) + (1|ring) + (1|id), data = postDF)
+  # random factor needs to be coded separatedly as above to use "step"
+Anova(Iml_ancv)
+
+# model simplification
+Fml_ancv <- stepLmer(Iml_ancv)
+Anova(Fml_ancv)
+Anova(Fml_ancv, test.statistic = "F")
 
 # main effects
 plot(allEffects(Fml_ancv))
