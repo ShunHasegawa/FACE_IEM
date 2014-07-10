@@ -63,28 +63,24 @@ iemTDRdf$type <- iemTDRdf$variable
 iemTDR_RngMean <- ddply(iemTDRdf, .(Date, co2, ring, variable, type), summarise, value = mean(value, na.rm = TRUE))
 iemTDR_co2Mean <- ddply(iemTDR_RngMean, .(Date, co2, variable, type), summarise, value = mean(value, na.rm = TRUE))
 
-## Make figs
+## Make figs ##
 SoilVarDF <- iem[, c("co2", "ring", "date", "Moist", "Temp_Mean", "Temp_Min", "Temp_Max")]
 
 ## co2 ##
 pl <- PltSoilVar(data = SoilVarDF, var = "co2") +
   scale_color_manual(values = c("blue", "red"), expression(CO[2]~trt), 
-                     labels = c("Ambient", expression(eCO[2])))
-
-# check if above functions are working properly by plotting raw data
-pl +  geom_line(aes(x = Date, y = value, group = co2), data = iemTDR_co2Mean) +
-  geom_vline(xintercept = as.numeric(unique(iem$insertion)), col = "green", size = .5)
-  # looks fine
+                     labels = c("Ambient", expression(eCO[2]))) + 
+  geom_line(aes(x = Date, y = value, group = co2), data = iemTDR_co2Mean, alpha = .5) +
+  geom_vline(xintercept = c(unique(ave(as.numeric(iem$insertion), iem$time)), 
+                            max(as.numeric(iem$sampling))),
+             col = "gray30", size = .5,linetype = "dotted") +
+  ggtitle("Mean soil moisture and temperature\nduring IEM incubation")
 
 ggsavePP(filename = "output//figs/FACE_IEM_SoilVarMonth_CO2", plot = pl, width = 6, height = 4)
 
 ## ring ##
 pl <- PltSoilVar(data = SoilVarDF, var = "ring") +
   scale_color_manual(values = palette(), "Ring", labels = paste("Ring", c(1:6), sep = "_"))
-
-pl + geom_line(aes(x = Date, y = value, group = ring), data = iemTDR_RngMean) +
-  geom_vline(xintercept = as.numeric(unique(iem$insertion)), col = "green", size = .5)
-  # looks fine
 
 ggsavePP(filename = "output//figs/FACE_IEM_SoilVarMonth_Ring", plot = pl, width = 6, height = 4)
 
