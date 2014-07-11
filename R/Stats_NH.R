@@ -115,8 +115,11 @@ Iml_ancv <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean) +
                    (1|block) + (1|ring) + (1|id), data = postDF)
 Anova(Iml_ancv)
 # model simplification
-Fml_ancv <- stepLmer(Iml_ancv)
-  # no random effects,,,?
+
+
+# Fml_ancv <- stepLmer(Iml_ancv)
+#   error message saying no random effects,,,?
+
 summary(Iml_ancv)
   # Yes no random effect... May I remove them..
 
