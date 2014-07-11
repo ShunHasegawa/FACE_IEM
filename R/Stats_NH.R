@@ -192,4 +192,3 @@ Est.val
 # plot the predicted values
 PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF)
 PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
-PltPrdVal(model = Fml_ancv, variable = "MxT", data = postDF)

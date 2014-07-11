@@ -98,19 +98,17 @@ qqline(residuals.lm(Fml_post))
 # ANCOVA #
 ##########
 # plot all variables
-scatterplotMatrix(~ log(no) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
+scatterplotMatrix(~ log(no) + Moist + Temp_Max + Temp_Min + Temp_Mean, 
                   data = postDF, diag = "boxplot")
-scatterplotMatrix(~ log(no) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
+scatterplotMatrix(~ log(no) + Moist + Temp_Max + Temp_Min + Temp_Mean, 
                   data = postDF, diag = "boxplot")
 
 # plot for each plot against soil variables
 print(xyplot(log(no) ~ Moist | ring + plot, postDF, type = c("r", "p")))
 print(xyplot(log(no) ~ Temp_Mean | ring + plot, postDF, type = c("r", "p")))
-print(xyplot(log(no) ~ MxT | ring + plot, postDF, type = c("r", "p")))
 
 ## Analysis ##
-
-Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean + MxT) + 
+Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean) + 
                    (1|block) + (1|ring) + (1|id),  data = postDF)
 # model simplification
 Fml_ancv <- stepLmer(Iml_ancv)
@@ -127,7 +125,7 @@ min(qqval)
 postDF[which(qqval == min(qqval)), "no"] <- NA
 
 # rerun analysis
-Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean + MxT) + 
+Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean) + 
                    (1|block) + (1|ring) + (1|id),  
                  data = postDF, na.action = "na.omit")
 Fml_ancv <- stepLmer(Iml_ancv)
@@ -141,25 +139,11 @@ qqline(resid(Fml_ancv))
 # main effect
 plot(allEffects(Fml_ancv))
 
-# model diagnosis
-plot(Fml_ancv)
-qqnorm(resid(Fml_ancv))
-qqline(resid(Fml_ancv))
-
 # confidence interval for estimated parameters
 ciDF <- CIdf(model = Fml_ancv)
 
 # calculate actual values
-Est.val <- rbind(
-  int = ciDF[1, ],
-  co2elev = ciDF[2, ] + ciDF[1, 3],
-  Moist = ciDF[3, ],
-  Temp_Mean = ciDF[4, ],
-  Mxt = ciDF[5, ],
-  co2elev.MxT = ciDF [6, ] + ciDF[5, 3]
-)
-
-Est.val
+Est.val <- ciDF
 
 ## ---- Stat_FACE_IEM_Nitrate_preCO2_Smmry
 
