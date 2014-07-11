@@ -1,3 +1,7 @@
+# Data frame for ancova
+postDF <- subsetD(iem, !pre)
+save(postDF, filen = "output//data/postDF.RData")
+
 ###########
 # Nitrate #
 ###########
