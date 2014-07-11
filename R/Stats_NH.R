@@ -103,26 +103,30 @@ qqline(residuals.lm(Fml_post))
 ######################
 # plot for each plot against soil variables
 # plot all variables
-scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean + MxT, 
+scatterplotMatrix(~ I(log(nh)) + Moist + Temp_Max + Temp_Min + Temp_Mean, 
                   data = postDF, diag = "boxplot")
 print(xyplot(log(nh) ~ Moist | ring + plot, postDF, type = c("r", "p")))
 print(xyplot(log(nh) ~ Temp_Mean | ring + plot, postDF, type = c("r", "p")))
-print(xyplot(log(nh) ~ MxT | ring + plot, postDF, type = c("r", "p")))
 
 ############
 # Analysis #
 ############
-Iml_ancv <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean + MxT) +
-                   (1|block/ring/plot), data = postDF)
+Iml_ancv <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean) + 
+                   (1|block) + (1|ring) + (1|id), data = postDF)
 Anova(Iml_ancv)
-# probably no co2 interaction, so remove
-Iml_ancv2 <- lmer(log(nh) ~ co2 + Moist + Temp_Mean + MxT +
-                    (1|block/ring/plot), data = postDF)
+# model simplification
+Fml_ancv <- stepLmer(Iml_ancv)
+  # no random effects,,,?
+summary(Iml_ancv)
+  # Yes no random effect... May I remove them..
+
+# remove nonsignificant factos by hands
+Iml_ancv2 <- lmer(log(nh) ~ co2 * Moist + Temp_Mean + 
+                    (1|block) + (1|ring) + (1|id), data = postDF)
 anova(Iml_ancv, Iml_ancv2)
-  # Iml_ancv2's better
+  #Iml_ancv2's better
 Anova(Iml_ancv2)
 Anova(Iml_ancv2, test.statistic = "F")
-  # all terms are highly significant!!
 Fml_ancv <- Iml_ancv2
 
 # main effects
@@ -142,17 +146,14 @@ Est.val <- rbind(
   co2elev = ciDF[2, ] + ciDF[1, 3],
   Moist = ciDF[3, ],
   Temp_Mean = ciDF[4, ],
-  MoistxTemp = ciDF[5, ]
+  co2elev.Moist = ciDF[5, ] + ciDF[3, 3]
 )
-
-Est.val
 
 ########################
 # Plot predicted value #
 ########################
 PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF)
 PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
-PltPrdVal(model = Fml_ancv, variable = "MxT", data = postDF)
 
 ## ---- Stat_FACE_IEM_Ammonium_preCO2_Smmry
 
