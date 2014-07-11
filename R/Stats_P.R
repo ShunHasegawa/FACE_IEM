@@ -135,7 +135,7 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, postDF, type = c("r",
 ############
 
 # use lmer to get confidence intervals for predicted values
-Iml_ancv <- lmer(log(p) ~ co2 * (Moist + Temp_Mean + MxT) + 
+Iml_ancv <- lmer(log(p) ~ co2 * (Moist + Temp_Mean) + 
                    (1|block) + (1|ring) + (1|id), data = postDF)
   # random factor needs to be coded separatedly as above to use "step"
 Anova(Iml_ancv)
