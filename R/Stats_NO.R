@@ -179,7 +179,5 @@ Anova(Fml_ancv, test.statistic = "F")
 Est.val
 
 # plot the predicted values
-PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF, trans = exp)
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
-PltPrdVal(model = Fml_ancv, variable = "MxT", data = postDF)
-
+visreg(Fml_ancv, "Moist")
+visreg(Fml_ancv, "Temp_Mean")
