@@ -130,7 +130,7 @@ Requires: memoise, plyr, stringr
 
 Package: MASS
 Source: CRAN
-Version: 7.3-32
+Version: 7.3-33
 
 Package: Matrix
 Source: CRAN
@@ -159,7 +159,7 @@ Requires: colorspace
 
 Package: mvtnorm
 Source: CRAN
-Version: 0.9-99992
+Version: 1.0-0
 
 Package: nlme
 Source: CRAN
