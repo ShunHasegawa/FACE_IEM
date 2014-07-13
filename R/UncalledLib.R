@@ -1,3 +1,3 @@
 # uncalled library
 library(devtools)
-library(knitr)
+extlib("knitr") 

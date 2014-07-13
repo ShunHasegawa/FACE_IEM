@@ -3,3 +3,5 @@ vcs.ignore.lib: TRUE
 vcs.ignore.src: FALSE
 print.banner.on.startup: auto
 external.packages:
+use.cache: FALSE
+local.repos:
