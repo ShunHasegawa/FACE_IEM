@@ -36,8 +36,8 @@ source("R/SummaryExlTable.R")
 # Figs #
 ########
 source("R/Figs.R")
-# Don't worry about the arning message saying containing missing values. This is
-# due to missing soil variable data during 1st incubation period.
+# Don't worry about the aarning message saying containing missing values. This
+# is due to missing soil variable data during 1st incubation period.
 
 #########
 # Stats #
