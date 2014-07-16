@@ -186,21 +186,6 @@ l_ply(c(.05, .25), function(x){
 # Plot all variables #
 ######################
 
-BtsCI <- function(model, MoistVal, TempVal){
-  expDF <- data.frame(co2 = c("amb", "elev"),
-                      Moist = rep(MoistVal, 2),
-                      Temp_Mean = rep(TempVal, 2))
-  bb <- bootMer(model,
-                FUN=function(x) predict(x, expDF, re.form = NA),
-                nsim=500)
-  lci <- apply(bb$t, 2, quantile, 0.025)
-  uci <- apply(bb$t, 2, quantile, 0.975)
-  PredVal <- bb$t0
-  df <- cbind(lci, uci, PredVal, expDF)
-  return(df)
-} 
-
-
 BtsCI(model = Fml_ancv, MoistVal = 0.07220816, TempVal = 18.88414)
 
 MTdf <- expand.grid(MoistVal = seq(0.02, 0.3, 0.05),

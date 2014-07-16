@@ -459,3 +459,23 @@ stepLmer <- function(model, red.rndm = FALSE, ddf = "Kenward-Roger", ...){
 # is the same as the default DF given by Anova(model, test.statistic = "F). The
 # default of step gives me a warning message for IEM-NO3 for some reasons (not
 # sure why.. so changed it.)
+
+###########################################
+# Predict values for given temp and moist #
+###########################################
+
+# compute predicted values from the model using bootstrap. This process takes
+# time
+BtsCI <- function(model, MoistVal, TempVal){
+  expDF <- data.frame(co2 = c("amb", "elev"),
+                      Moist = rep(MoistVal, 2),
+                      Temp_Mean = rep(TempVal, 2))
+  bb <- bootMer(model,
+                FUN=function(x) predict(x, expDF, re.form = NA),
+                nsim=500)
+  lci <- apply(bb$t, 2, quantile, 0.025)
+  uci <- apply(bb$t, 2, quantile, 0.975)
+  PredVal <- bb$t0
+  df <- cbind(lci, uci, PredVal, expDF)
+  return(df)
+} 
