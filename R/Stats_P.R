@@ -250,31 +250,6 @@ p3 <- p2 + geom_point(data = test, aes(x = co2, y = p), position  = "jitter", al
 p3
 ggsave(filename = "output//figs/testfig.pdf", plot = p3, width = 8, height = 8)
 
-library("gtable")
-z <- ggplot_gtable(ggplot_build(p3))
-
-# add label for right strip
-z <- gtable_add_cols(z, z$widths[[7]])
-z <- gtable_add_grob(z, 
-                     list(rectGrob(gp = gpar(col = NA, fill = gray(0.5))),
-                          textGrob("Moisture", rot = -90, gp = gpar(col = gray(1)))),
-                     4, 16, 14, name = paste(runif(2)))
-
-# add label for top strip
-z <- gtable_add_rows(z, z$heights[[3]], 2)
-z <- gtable_add_grob(z, 
-                     list(rectGrob(gp = gpar(col = NA, fill = gray(0.5))),
-                          textGrob("Temperature", gp = gpar(col = gray(1)))),
-                     3, 4, 3, 14, name = paste(runif(2)))
-
-# add margins
-z <- gtable_add_cols(z, unit(1/8, "line"), 7)
-z <- gtable_add_rows(z, unit(1/8, "line"), 3)
-
-# draw it
-grid.newpage()
-grid.draw(z)
-
 
 
 # confidence interval for estimated parameters
