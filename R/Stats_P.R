@@ -154,6 +154,11 @@ ml@call
 # main effects
 plot(allEffects(Fml_ancv))
 
+# model diagnosis
+plot(Fml_ancv)
+qqnorm(resid(Fml_ancv))
+qqline(resid(Fml_ancv))
+
 ##########################
 ## plot predicted value ##
 ##########################
@@ -176,10 +181,101 @@ l_ply(c(.05, .25), function(x){
             data = postDF)
 })
 
-# model diagnosis
-plot(Fml_ancv)
-qqnorm(resid(Fml_ancv))
-qqline(resid(Fml_ancv))
+
+######################
+# Plot all variables #
+######################
+
+BtsCI <- function(model, MoistVal, TempVal){
+  expDF <- data.frame(co2 = c("amb", "elev"),
+                      Moist = rep(MoistVal, 2),
+                      Temp_Mean = rep(TempVal, 2))
+  bb <- bootMer(model,
+                FUN=function(x) predict(x, expDF, re.form = NA),
+                nsim=500)
+  lci <- apply(bb$t, 2, quantile, 0.025)
+  uci <- apply(bb$t, 2, quantile, 0.975)
+  PredVal <- bb$t0
+  df <- cbind(lci, uci, PredVal, expDF)
+  return(df)
+} 
+
+
+BtsCI(model = Fml_ancv, MoistVal = 0.07220816, TempVal = 18.88414)
+
+MTdf <- expand.grid(MoistVal = seq(0.02, 0.3, 0.05),
+                    TempVal = seq(10, 24, length.out = 6))
+
+system.time(Lst_CI <- ddply(MTdf, .(MoistVal, TempVal), 
+                function(x) BtsCI(model = Fml_ancv,
+                                  MoistVal = x$MoistVal,
+                                  TempVal = x$TempVal),
+                .progress = "text")
+)
+
+
+Lst_CI <- within(Lst_CI, {
+  MoistVal = factor(MoistVal)
+  TempVal = factor(TempVal)
+})
+
+Lst_CI$MoistVal <- factor(Lst_CI$MoistVal, labels = rev(M))
+
+theme_set(theme_bw())
+p <- ggplot(Lst_CI, aes(x = co2, y = exp(PredVal), col = co2))
+p2 <- p + geom_point(size = 3) +
+  geom_errorbar(aes(ymin = exp(lci), ymax = exp(uci)), width = .5) +
+  scale_color_manual(values = c("blue", "red"), expression(CO[2])) +
+  facet_grid(MoistVal ~ TempVal, labeller=label_both) +
+  labs(y = "IEM-P")
+
+
+head(postDF)
+M <- seq(0.02, 0.3, 0.05)
+m <- M + 0.025
+Te <- seq(10, 24, length.out = 6)
+rm(T)
+
+test <- postDF
+test$MLev <- cut(postDF$Moist, breaks =c(0, m))
+test$MoistVval <- factor(test$MLev, labels = M)
+test$MoistVval <- factor(test$MoistVval, levels = rev(M))
+
+
+
+test$TempVal <- cut(postDF$Temp_Mean, breaks =c(0, Te + 1.4))
+levels(test$TempVal) <- Te
+
+p3 <- p2 + geom_point(data = test, aes(x = co2, y = p), position  = "jitter", alpha = .3)
+p3
+ggsave(filename = "output//figs/testfig.pdf", plot = p3, width = 8, height = 8)
+
+library("gtable")
+z <- ggplot_gtable(ggplot_build(p3))
+
+# add label for right strip
+z <- gtable_add_cols(z, z$widths[[7]])
+z <- gtable_add_grob(z, 
+                     list(rectGrob(gp = gpar(col = NA, fill = gray(0.5))),
+                          textGrob("Moisture", rot = -90, gp = gpar(col = gray(1)))),
+                     4, 16, 14, name = paste(runif(2)))
+
+# add label for top strip
+z <- gtable_add_rows(z, z$heights[[3]], 2)
+z <- gtable_add_grob(z, 
+                     list(rectGrob(gp = gpar(col = NA, fill = gray(0.5))),
+                          textGrob("Temperature", gp = gpar(col = gray(1)))),
+                     3, 4, 3, 14, name = paste(runif(2)))
+
+# add margins
+z <- gtable_add_cols(z, unit(1/8, "line"), 7)
+z <- gtable_add_rows(z, unit(1/8, "line"), 3)
+
+# draw it
+grid.newpage()
+grid.draw(z)
+
+
 
 # confidence interval for estimated parameters
 ciDF <- CIdf(model = Fml_ancv)
