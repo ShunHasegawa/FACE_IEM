@@ -186,56 +186,52 @@ l_ply(c(.05, .25), function(x){
 # Plot all variables #
 ######################
 
-BtsCI(model = Fml_ancv, MoistVal = 0.07220816, TempVal = 18.88414)
+# Moist & Temperature data frame
 
-MTdf <- expand.grid(MoistVal = seq(0.02, 0.3, 0.05),
-                    TempVal = seq(10, 24, length.out = 6))
+# Devide Moisture and Temperature by 6, then get the middle values
+M <- seq(range(postDF$Moist)[1], range(postDF$Moist)[2], length.out = 4)
+Mval <- round(M[-4] + (M[2] - M[1])/2, 2)
 
-system.time(Lst_CI <- ddply(MTdf, .(MoistVal, TempVal), 
+Tv <- seq(range(postDF$Temp_Mean)[1], range(postDF$Temp_Mean)[2], length.out = 4)
+Tval <- round(Tv[-4] + (Tv[2] - Tv[1])/2, 0)
+
+MTdf <- expand.grid(MoistVal = Mval,TempVal = Tval)
+
+# compute predicted values and CI intervals
+Lst_CI <- ddply(MTdf, .(MoistVal, TempVal), 
                 function(x) BtsCI(model = Fml_ancv,
                                   MoistVal = x$MoistVal,
                                   TempVal = x$TempVal),
                 .progress = "text")
-)
 
-
+# re-format the data frame for plotting
 Lst_CI <- within(Lst_CI, {
-  MoistVal = factor(MoistVal)
+  MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)))
   TempVal = factor(TempVal)
 })
 
-Lst_CI$MoistVal <- factor(Lst_CI$MoistVal, labels = rev(M))
+save(Lst_CI, file = "output//data/FACE_IEM_P_LstCI")
 
+# Add moist and temp levels to postDF. e.g. when 14.5 < Temp < 17.5, TempVal =
+# 16 to overlay actual values on p2
+
+MLev <- cut(postDF$Moist, breaks = M, include.lowest = TRUE)
+TLev <- cut(postDF$Temp_Mean, breaks = Tv, include.lowest = TRUE)
+
+postDF$MoistVal <- factor(MLev, labels = Mval)
+postDF$TempVal <- factor(TLev, labels = Tval)
+
+## Plot
 theme_set(theme_bw())
-p <- ggplot(Lst_CI, aes(x = co2, y = exp(PredVal), col = co2))
+p <- ggplot(Lst_CI, aes(x = co2, y = PredVal, col = co2))
 p2 <- p + geom_point(size = 3) +
-  geom_errorbar(aes(ymin = exp(lci), ymax = exp(uci)), width = .5) +
+  geom_errorbar(aes(ymin = lci, ymax = uci), width = .5) +
   scale_color_manual(values = c("blue", "red"), expression(CO[2])) +
   facet_grid(MoistVal ~ TempVal, labeller=label_both) +
-  labs(y = "IEM-P")
-
-
-head(postDF)
-M <- seq(0.02, 0.3, 0.05)
-m <- M + 0.025
-Te <- seq(10, 24, length.out = 6)
-rm(T)
-
-test <- postDF
-test$MLev <- cut(postDF$Moist, breaks =c(0, m))
-test$MoistVval <- factor(test$MLev, labels = M)
-test$MoistVval <- factor(test$MoistVval, levels = rev(M))
-
-
-
-test$TempVal <- cut(postDF$Temp_Mean, breaks =c(0, Te + 1.4))
-levels(test$TempVal) <- Te
-
-p3 <- p2 + geom_point(data = test, aes(x = co2, y = p), position  = "jitter", alpha = .3)
-p3
-ggsave(filename = "output//figs/testfig.pdf", plot = p3, width = 8, height = 8)
-
-
+  labs(y = "log(IEM-P)") +
+  geom_point(data = postDF, aes(x = co2, y = log(p)), position  = "jitter", alpha = .5)
+p2
+ggsave(filename = "output//figs/FACE_IEM_P_TempMoist.pdf", plot = p2, width = 8, height = 8)
 
 # confidence interval for estimated parameters
 ciDF <- CIdf(model = Fml_ancv)
