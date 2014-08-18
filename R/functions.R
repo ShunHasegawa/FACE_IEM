@@ -498,7 +498,7 @@ ANCV_Tbl <- function(df, digits = 2, nsmall = 2){
   # format disimal numbers for each predictor
   formatDF <- ddply(Est.val.Cst, .(predictor), 
                     function(x) format(x, digits = digits, nsmall = nsmall))
-  
+  # concatenate CI and estimated values
   formatDF$val <- apply(formatDF, 1, function(x) 
     paste(x["Estimate"], "(", x["bCI"], ", ",x["tCI"], ")", sep = ""))
   
