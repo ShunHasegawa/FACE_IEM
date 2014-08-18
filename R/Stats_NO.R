@@ -145,6 +145,16 @@ ciDF <- CIdf(model = Fml_ancv)
 # calculate actual values
 Est.val <- ciDF
 
+
+a <- Anova(Fml_ancv, test.statistic = "F")
+Est.val
+nrow(a)
+nrow(Est.val)
+row.names(a)
+
+merge(a, Est.val, by = "row.names", all = TRUE)
+
+
 ## ---- Stat_FACE_IEM_Nitrate_preCO2_Smmry
 
 # The starting model is:

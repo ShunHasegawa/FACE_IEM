@@ -248,6 +248,23 @@ Est.val <- rbind(
 
 Est.val
 
+# reshape- Est.val to combine with Anova table
+# add co2 column
+Est.val <- within(data.frame(Est.val), {
+  pred <- row.names(Est.val)
+  co2 <- factor(ifelse(grepl("elev", pred), "elev", "amb"))
+  type <- factor(ifelse(grepl("Temp", pred), "Temp",
+                        ifelse(grepl("Moist", pred), "Moist", 
+                               "co2")))
+})
+names(Est.val)[c(1,2)] <- c("bCI", "tCI") 
+
+Est.val.mlt <- melt(Est.val, id = c("co2", "pred", "type"))
+Est.val.Cst <- cast(Est.val.mlt, type ~ co2 + variable)
+
+anvF <- Anova(Fml_ancv, test.statistic = "F")
+merge(Est.val.Cst, anvF)
+
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
 Iml_pre$call
