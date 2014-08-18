@@ -143,13 +143,15 @@ Anova(Iml_ancv)
 # model simplification
 Fml_ancv <- stepLmer(Iml_ancv)
 Anova(Fml_ancv)
-Anova(Fml_ancv, test.statistic = "F")
+AnvF_P <- Anova(Fml_ancv, test.statistic = "F")
+sAnvF_P
 
 # what if I allow this to reduce random factors
 Anova(ml <- stepLmer(Iml_ancv, red.rndm = TRUE))
 ml@call 
-  # ring is removed. main effects are more significant than before but there're
-  # interactions so it doesn't really matter too much
+  # ring is removed. main effects are more significant than
+  # before but there're interactions so it doesn't really
+  # matter too much
 
 # main effects
 plot(allEffects(Fml_ancv))
@@ -233,7 +235,9 @@ p2 <- p + geom_point(size = 3) +
 p2
 ggsave(filename = "output//figs/FACE_IEM_P_TempMoist.pdf", plot = p2, width = 8, height = 8)
 
-# confidence interval for estimated parameters
+################################################
+# confidence interval for estimated parameters #
+################################################
 ciDF <- CIdf(model = Fml_ancv)
 
 # calculate actual values
@@ -248,8 +252,7 @@ Est.val <- rbind(
 
 Est.val
 
-# reshape- Est.val to combine with Anova table
-# add co2 column
+# reshape- Est.val and make a table
 Est.val <- within(data.frame(Est.val), {
   pred <- row.names(Est.val)
   co2 <- factor(ifelse(grepl("elev", pred), "elev", "amb"))
@@ -260,10 +263,12 @@ Est.val <- within(data.frame(Est.val), {
 names(Est.val)[c(1,2)] <- c("bCI", "tCI") 
 
 Est.val.mlt <- melt(Est.val, id = c("co2", "pred", "type"))
-Est.val.Cst <- cast(Est.val.mlt, type ~ co2 + variable)
+Est.val.Cst <- format(cast(Est.val.mlt, type + co2~ variable), 
+                      digits = 2, nsmall = 2)
+Est.val.Cst$val <- apply(Est.val.Cst, 1, function(x) 
+  paste(x["Estimate"], "(", x["bCI"], ", ",x["tCI"], ")", sep = ""))
 
-anvF <- Anova(Fml_ancv, test.statistic = "F")
-merge(Est.val.Cst, anvF)
+Est_P <- cast(Est.val.Cst, type ~ co2, value =  "val")
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
