@@ -130,8 +130,8 @@ Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean) +
                  data = postDF, na.action = "na.omit")
 Fml_ancv <- stepLmer(Iml_ancv)
 Anova(Fml_ancv)
-AnvF_NO <- Anova(Fml_ancv, test.statistic = "F")
-AnvF_NO
+AnvF_no <- Anova(Fml_ancv, test.statistic = "F")
+AnvF_no
 plot(Fml_ancv)
 qqnorm(resid(Fml_ancv))
 qqline(resid(Fml_ancv))

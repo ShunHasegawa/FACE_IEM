@@ -502,3 +502,20 @@ ANCV_Tbl <- function(df, digits = 2, nsmall = 2){
   tbl <- cast(Est.val.Cst, predictor ~ co2, value =  "val")
   return(tbl)
 }
+
+#######################################
+# Excel sheet for Summary Stats table #
+#######################################
+
+CrSheetAnvTbl <- function(workbook, sheetName, smmaryLst){
+  sheet <- createSheet(workbook, sheetName = sheetName)
+  addDataFrame(data.frame("ANOVA_F"), sheet, col.names = FALSE, row.names = FALSE)
+  addDataFrame(smmaryLst[[sheetName]][[1]], sheet, showNA = FALSE, 
+               row.names = TRUE, characterNA="NA",
+               startRow = 2)
+  addDataFrame(data.frame("Coef"), sheet, 
+               col.names = FALSE, row.names = FALSE,
+               startRow = 10)
+  addDataFrame(smmaryLst[[sheetName]][[2]], sheet, showNA = FALSE, 
+               row.names = FALSE, characterNA="NA", startRow = 11)
+}
