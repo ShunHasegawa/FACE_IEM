@@ -144,7 +144,7 @@ Anova(Iml_ancv)
 Fml_ancv <- stepLmer(Iml_ancv)
 Anova(Fml_ancv)
 AnvF_P <- Anova(Fml_ancv, test.statistic = "F")
-sAnvF_P
+AnvF_P
 
 # what if I allow this to reduce random factors
 Anova(ml <- stepLmer(Iml_ancv, red.rndm = TRUE))
@@ -252,23 +252,8 @@ Est.val <- rbind(
 
 Est.val
 
-# reshape- Est.val and make a table
-Est.val <- within(data.frame(Est.val), {
-  pred <- row.names(Est.val)
-  co2 <- factor(ifelse(grepl("elev", pred), "elev", "amb"))
-  type <- factor(ifelse(grepl("Temp", pred), "Temp",
-                        ifelse(grepl("Moist", pred), "Moist", 
-                               "co2")))
-})
-names(Est.val)[c(1,2)] <- c("bCI", "tCI") 
-
-Est.val.mlt <- melt(Est.val, id = c("co2", "pred", "type"))
-Est.val.Cst <- format(cast(Est.val.mlt, type + co2~ variable), 
-                      digits = 2, nsmall = 2)
-Est.val.Cst$val <- apply(Est.val.Cst, 1, function(x) 
-  paste(x["Estimate"], "(", x["bCI"], ", ",x["tCI"], ")", sep = ""))
-
-Est_P <- cast(Est.val.Cst, type ~ co2, value =  "val")
+# reshape Est.val and make a table
+Est_P <- ANCV_Tbl(Est.val)
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:

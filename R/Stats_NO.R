@@ -130,7 +130,8 @@ Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean) +
                  data = postDF, na.action = "na.omit")
 Fml_ancv <- stepLmer(Iml_ancv)
 Anova(Fml_ancv)
-Anova(Fml_ancv, test.statistic = "F")
+AnvF_NO <- Anova(Fml_ancv, test.statistic = "F")
+AnvF_NO
 plot(Fml_ancv)
 qqnorm(resid(Fml_ancv))
 qqline(resid(Fml_ancv))
@@ -145,15 +146,8 @@ ciDF <- CIdf(model = Fml_ancv)
 # calculate actual values
 Est.val <- ciDF
 
-
-a <- Anova(Fml_ancv, test.statistic = "F")
-Est.val
-nrow(a)
-nrow(Est.val)
-row.names(a)
-
-merge(a, Est.val, by = "row.names", all = TRUE)
-
+# reshape Est.val and make a table
+Est_no <- ANCV_Tbl(Est.val)
 
 ## ---- Stat_FACE_IEM_Nitrate_preCO2_Smmry
 
