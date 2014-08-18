@@ -129,7 +129,7 @@ Iml_ancv2 <- lmer(log(nh) ~ co2 * Moist + Temp_Mean +
 anova(Iml_ancv, Iml_ancv2)
   #Iml_ancv2's better
 Anova(Iml_ancv2)
-Anova(Iml_ancv2, test.statistic = "F")
+AnvF_nh <- Anova(Iml_ancv2, test.statistic = "F")
 Fml_ancv <- Iml_ancv2
 
 # main effects
@@ -151,6 +151,9 @@ Est.val <- rbind(
   Temp_Mean = ciDF[4, ],
   co2elev.Moist = ciDF[5, ] + ciDF[3, 3]
 )
+
+# reshape Est.val and make a table
+Est_nh <- ANCV_Tbl(Est.val)
 
 ########################
 # Plot predicted value #
