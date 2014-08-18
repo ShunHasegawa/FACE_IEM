@@ -479,3 +479,26 @@ BtsCI <- function(model, MoistVal, TempVal){
   df <- cbind(lci, uci, PredVal, expDF)
   return(df)
 } 
+
+#############################################
+# Reshape estimated value and creat a table #
+#############################################
+ANCV_Tbl <- function(df, digits = 2, nsmall = 2){
+  Est.val <- within(data.frame(df), {
+    pred <- row.names(Est.val)
+    co2 <- factor(ifelse(grepl("elev", pred), "elev", "amb"))
+    predictor <- factor(ifelse(grepl("Temp", pred), "Temp",
+                          ifelse(grepl("Moist", pred), "Moist", 
+                                 "co2")))
+  })
+  names(Est.val)[c(1,2)] <- c("bCI", "tCI") 
+  
+  Est.val.mlt <- melt(Est.val, id = c("co2", "pred", "predictor"))
+  Est.val.Cst <- format(cast(Est.val.mlt, predictor + co2~ variable), 
+                        digits = digits, nsmall = nsmall)
+  Est.val.Cst$val <- apply(Est.val.Cst, 1, function(x) 
+    paste(x["Estimate"], "(", x["bCI"], ", ",x["tCI"], ")", sep = ""))
+  
+  tbl <- cast(Est.val.Cst, predictor ~ co2, value =  "val")
+  return(tbl)
+}
