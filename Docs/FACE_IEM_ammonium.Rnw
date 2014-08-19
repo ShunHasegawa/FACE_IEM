@@ -11,23 +11,7 @@
 % @
 % 
 % <<readFiles, include=FALSE>>=
-% library(car)
-% library(gmodels)
-% library(lme4)
-% library(lubridate)
-% library(MASS)
-% library(nlme)
-% library(packrat)
-% library(plyr)
-% library(reshape)
-% library(xlsx)
-% library(contrast)
-% library(effects)
-% library(ggplot2)
-% library(scales)
-% library(xtable)
-% library(visreg)
-% 
+% source("R/pckg.R")
 % source("R//functions.R")
 % load("output/data/FACE_IEM.RData")
 % source("R/SummaryExlTable.R")
