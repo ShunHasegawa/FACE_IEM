@@ -24,9 +24,9 @@ l_ply(1:3, function(x) ggsavePP(filename = fls[x], plot = TrtFg[[x]], width = 6,
 ##################################
 # labels for facet_grid
 ylabs <- list(
-  'no' = expression(NO[3]^"-"-N),
-  'nh' = expression(NH[4]^"+"-N),
-  'po' = expression(PO[4]^"3-"-P))
+  'no' = expression(NO[3]^"-"),
+  'nh' = expression(NH[4]^"+"),
+  'po' = expression(PO[4]^"3-"))
 
 
 ylab_label <- function(variable, value){
@@ -35,7 +35,17 @@ ylab_label <- function(variable, value){
 
 pl <- PltMean(TrtMean) +
   facet_grid(variable~., scales= "free_y", labeller= ylab_label)
+
 ggsavePP(filename = "output//figs/FACE_IEM_CO2Trt", plot = pl, width = 6, height = 6)
+
+########################
+# Plot for publication #
+########################
+# theme
+theme_set(theme_bw())
+p <- WBFig(data = TrtMean, ylab = expression(IEM~adsorbed~nutrients~(ng~cm^"-2"~d^"-1")))
+ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM", plot = p, width = 6, height = 6)
+
 
 ########################################################
 # plot soil moist and temp for each incubation periods #
