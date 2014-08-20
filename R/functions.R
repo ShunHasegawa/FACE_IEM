@@ -320,11 +320,11 @@ cntrstTbl <- function(cntrstRes, data, ...){
   
   Df <- data.frame(
     date = ds,
-    contrast  =  cntrst$Contrast,
-    SE = cntrst$SE,
-    t = cntrst$testStat,
-    df = cntrst$df,
-    P.value = cntrst$Pvalue)
+    contrast  =  cntrstRes$Contrast,
+    SE = cntrstRes$SE,
+    t = cntrstRes$testStat,
+    df = cntrstRes$df,
+    P.value = cntrstRes$Pvalue)
   return(format(Df, ...))
 }
 
