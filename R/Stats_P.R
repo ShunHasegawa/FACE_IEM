@@ -199,20 +199,23 @@ Tval <- round(Tv[-4] + (Tv[2] - Tv[1])/2, 0)
 
 MTdf <- expand.grid(MoistVal = Mval,TempVal = Tval)
 
-# compute predicted values and CI intervals
-Lst_CI <- ddply(MTdf, .(MoistVal, TempVal), 
-                function(x) BtsCI(model = Fml_ancv,
-                                  MoistVal = x$MoistVal,
-                                  TempVal = x$TempVal),
-                .progress = "text")
-
-# re-format the data frame for plotting
-Lst_CI <- within(Lst_CI, {
-  MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)))
-  TempVal = factor(TempVal)
-})
-
-save(Lst_CI, file = "output//data/FACE_IEM_P_LstCI")
+#############################################
+# compute predicted values and CI intervals #
+#############################################
+# Lst_CI <- ddply(MTdf, .(MoistVal, TempVal), 
+#                 function(x) BtsCI(model = Fml_ancv,
+#                                   MoistVal = x$MoistVal,
+#                                   TempVal = x$TempVal),
+#                 .progress = "text")
+# 
+# # re-format the data frame for plotting
+# Lst_CI <- within(Lst_CI, {
+#   MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)))
+#   TempVal = factor(TempVal)
+# })
+# 
+# save(Lst_CI, file = "output//data/FACE_IEM_P_LstCI.RData")
+load("output//data/FACE_IEM_P_LstCI.RData")
 
 # Add moist and temp levels to postDF. e.g. when 14.5 < Temp < 17.5, TempVal =
 # 16 to overlay actual values on p2
