@@ -236,7 +236,7 @@ p2 <- p + geom_point(size = 3) +
   labs(y = "log(IEM-P)") +
   geom_point(data = postDF, aes(x = co2, y = log(p)), position  = "jitter", alpha = .5)
 p2
-ggsave(filename = "output//figs/FACE_IEM_P_TempMoist.pdf", plot = p2, width = 8, height = 8)
+ggsavePP(filename = "output//figs/FACE_IEM_P_TempMoist", plot = p2, width = 8, height = 8)
 
 ################################################
 # confidence interval for estimated parameters #
