@@ -58,29 +58,18 @@ NoRmOl <- subsetD(iem, post)
 NoRmOl <- subsetD(NoRmOl, no != min(no, na.rm = TRUE))
 bxplts(value= "no", data= NoRmOl)
 
-# different random factor strucures
-m1 <- lme(log(no) ~ co2 * time, random = ~1|block/ring/plot,  data = NoRmOl)
-RndmComp(m1)$anova
-  # model4 looks better
-RnMl <- RndmComp(m1)[[4]]
-
-# autocorelation
-atcr.cmpr(RnMl)$models
-  # model 4 looks better
-Iml_post <- atcr.cmpr(RnMl)[[4]]
-
-# The starting model is:
-Iml_post$call
-
-# model simplification
+# The initial model is:
+Iml_post <- lmer(log(no) ~ co2 * time + (1|block) + (1|ring) + (1|id), data = NoRmOl)
 Anova(Iml_post)
-
-Fml_post <- MdlSmpl(Iml_post)$model.reml
+# keep interaction
 
 # The final model is:
-Fml_post$call
+Fml_post <- Iml_post
+Fml_post@call
 
 Anova(Fml_post)
+AnvF_no <- Anova(Fml_post, test.statistic = "F")
+AnvF_no
 
 summary(Fml_post)
 
@@ -88,9 +77,8 @@ plot(allEffects(Fml_post))
 
 # model diagnosis
 plot(Fml_post)
-qqnorm(Fml_post, ~ resid(.)|id)
-qqnorm(residuals.lm(Fml_post))
-qqline(residuals.lm(Fml_post))
+qqnorm(resid(Fml_post))
+qqline(resid(Fml_post))
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_withSoilVar
 
@@ -162,12 +150,13 @@ Anova(Fml_pre)
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_Smmry
 
 # The starting model is:
-Iml_post$call
+Iml_post@call
 Anova(Iml_post)
 
 # The final model is:
-Fml_post$call
+Fml_post@call
 Anova(Fml_post)
+AnvF_no
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_withSoilVar_Smmry
 # The initial model
