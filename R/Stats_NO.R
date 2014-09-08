@@ -59,7 +59,8 @@ NoRmOl <- subsetD(NoRmOl, no != min(no, na.rm = TRUE))
 bxplts(value= "no", data= NoRmOl)
 
 # The initial model is:
-Iml_post <- lmer(log(no) ~ co2 * time + (1|block) + (1|ring) + (1|id), data = NoRmOl)
+Iml_post <- lmer(log(no) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
+                 data = NoRmOl)
 Anova(Iml_post)
 # keep interaction
 
@@ -68,8 +69,8 @@ Fml_post <- Iml_post
 Fml_post@call
 
 Anova(Fml_post)
-AnvF_no <- Anova(Fml_post, test.statistic = "F")
-AnvF_no
+AnvF_post_no <- Anova(Fml_post, test.statistic = "F")
+AnvF_post_no
 
 summary(Fml_post)
 
@@ -79,6 +80,17 @@ plot(allEffects(Fml_post))
 plot(Fml_post)
 qqnorm(resid(Fml_post))
 qqline(resid(Fml_post))
+
+# contrast
+
+# contrast doesn't work with lmer. so use lme
+lmeMod <- lme(log(no) ~ co2 * time, random = ~1|block/ring/id, data = NoRmOl)
+
+cntrst<- contrast(lmeMod, 
+                  a = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "amb"),
+                  b = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "elev"))
+FACE_IEM_PostCO2_NO_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], digit = 2)
+FACE_IEM_PostCO2_NO_CntrstDf
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_withSoilVar
 
@@ -155,8 +167,15 @@ Anova(Iml_post)
 
 # The final model is:
 Fml_post@call
+
+# Chi-square test
 Anova(Fml_post)
-AnvF_no
+
+# F-test
+AnvF_post_no
+
+# Contrast
+FACE_IEM_PostCO2_NO_CntrstDf
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_withSoilVar_Smmry
 # The initial model
@@ -165,8 +184,12 @@ Anova(Iml_ancv)
 
 # The final model
 Fml_ancv@call
+
+# Chi-square
 Anova(Fml_ancv)
-Anova(Fml_ancv, test.statistic = "F")
+
+# F-test
+AnvF_no
 
 # 95% CI for estimated parameter
 Est.val

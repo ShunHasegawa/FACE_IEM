@@ -59,29 +59,28 @@ qqline(residuals.lm(Fml_pre))
 bxplts(value= "nh", data= subsetD(iem, post))
   # log seems better
 
-# different random factor strucures
-m1 <- lme(log(nh) ~ co2 * time, random = ~1|block/ring/plot, data = subsetD(iem, post) )
-RndmComp(m1)$anova
-# m3 is better
-RnMl <- RndmComp(m1)[[3]]
-
-# autocorelation
-atcr.cmpr(RnMl)$models
-# model 5 looks better
-Iml_post <- atcr.cmpr(RnMl)[[5]]
-
-# The starting model is:
-Iml_post$call
-
-# model simplification
+# The initial model is:
+Iml_post <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
+                 data = subsetD(iem, post))
 Anova(Iml_post)
 
-Fml_post <- MdlSmpl(Iml_post)$model.reml
+# There isn't co2xtime interaction but may be co2 effect. re analysis with data
+# only after co2-switced-on.
+
+Iml_post_2 <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
+                 data = postDF)
+Anova(Iml_post_2)
 
 # The final model is:
-Fml_post$call
+Fml_post <- stepLmer(Iml_post_2)
+Fml_post@call
 
 Anova(Fml_post)
+AnvF_post_nh <- Anova(Fml_post, test.statistic = "F")
+AnvF_post_nh
+
+# confidence interval for estimated parameters
+CIdf_post <- CIdf(model = Fml_post)
 
 summary(Fml_post)
 
@@ -89,9 +88,8 @@ plot(allEffects(Fml_post))
 
 # model diagnosis
 plot(Fml_post)
-qqnorm(Fml_post, ~ resid(.)|id)
-qqnorm(residuals.lm(Fml_post))
-qqline(residuals.lm(Fml_post))
+qqnorm(resid(Fml_post))
+qqline(resid(Fml_post))
 
 ## ---- Stat_FACE_IEM_Ammonium_postCO2_withSoilVar
 ##########
@@ -174,12 +172,24 @@ Anova(Fml_pre)
 ## ---- Stat_FACE_IEM_Ammonium_postCO2_Smmry
 
 # The starting model is:
-Iml_post$call
+Iml_post@call
 Anova(Iml_post)
 
+# no interaction but may be co2 effect so remove the data becore co2-swtich on
+Iml_post_2@call
+Anova(Iml_post_2)
+
 # The final model is:
-Fml_post$call
+Fml_post@call
+
+# Chi-square test
 Anova(Fml_post)
+
+# F test
+AnvF_post_nh
+
+# 95 % CI (only difference from the base is shown)
+CIdf_post
 
 ## ---- Stat_FACE_IEM_Ammonium_postCO2_withSoilVar_Smmry
 # The initial model
@@ -190,7 +200,7 @@ Anova(Iml_ancv)
 # The final model
 Fml_ancv@call
 Anova(Fml_ancv)
-Anova(Fml_ancv, test.statistic = "F")
+AnvF_nh
 
 # 95 % CI for estimates
 Est.val
