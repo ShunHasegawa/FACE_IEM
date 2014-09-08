@@ -75,7 +75,7 @@ Anova(Iml_post)
 # simplification purposes.
 
 # The final model is:
-Fml_post <- stepLmer(Iml_post)
+Fml_post <- Iml_post
 Fml_post@call
 
 Anova(Fml_post)
