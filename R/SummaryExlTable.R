@@ -22,8 +22,8 @@ TrtSmmryTbl <- dlply(RngMean, .(variable), function(x) CreateTable(x, fac = "co2
 ## create xcel workbook ##
 wb <- createWorkbook()
 
-# worksheet for rowdata
-sheet <- createSheet(wb,sheetName="row_data")
+# worksheet for rawdata
+sheet <- createSheet(wb,sheetName="raw_data")
 addDataFrame(iem, sheet, showNA=TRUE, row.names=FALSE, characterNA="NA")
 
 # worksheets for ring summary
