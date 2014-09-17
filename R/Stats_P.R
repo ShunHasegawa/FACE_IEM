@@ -208,9 +208,8 @@ MTdf <- expand.grid(MoistVal = Mval,TempVal = Tval)
 # 
 # # re-format the data frame for plotting
 # Lst_CI <- within(Lst_CI, {
-#   MoistVal = factor(MoistVal, levels = rev(unique(MoistVal), 
-#                                            labels = c("Wet", "Moderately wet", "Dry")))
-#   TempVal = factor(TempVal)
+#   MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)),
+#                     labels = c("Wet", "Moderately wet", "Dry"))
 # })
 # 
 # save(Lst_CI, file = "output//data/FACE_IEM_P_LstCI.RData")
@@ -225,7 +224,7 @@ load("output//data/FACE_IEM_P_LstCI.RData")
 
 # scatterplot of x and y variables (P against temp at given moisture)
 MLev <- cut(postDF$Moist, breaks = M, include.lowest = TRUE)
-postDF$MoistVal <- factor(MLev, labels = c("Wet", "Moderately wet", "Dry"))
+postDF$MoistVal <- factor(MLev, labels = c("Dry", "Moderately wet", "Wet"))
 
 scatter <- ggplot(Lst_CI, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
   geom_line() +
