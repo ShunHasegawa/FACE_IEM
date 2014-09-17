@@ -239,7 +239,7 @@ scatter <- ggplot(Lst_CI, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2,
         legend.background = element_rect(fill = alpha('white', 0)),
         axis.title = element_text(face = "plain")) +
   labs(x = expression(Soil~temperature~(degree * C)), 
-       y = expression(log(IEM-adsorbed~PO[4]^"3-")))
+       y = expression(log(IEM*-adsorbed~PO[4]^"3-")))
 
 # moisture range
 MoistDF <- data.frame(x = c(1:3), ymin = M[1:3] * 100, ymax = M[2:4] * 100)
