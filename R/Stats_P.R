@@ -192,8 +192,8 @@ l_ply(c(.05, .25), function(x){
 M <- seq(range(postDF$Moist)[1], range(postDF$Moist)[2], length.out = 4)
 Mval <- round(M[-4] + (M[2] - M[1])/2, 2)
 
-Tv <- seq(range(postDF$Temp_Mean)[1], range(postDF$Temp_Mean)[2], length.out = 4)
-Tval <- round(Tv[-4] + (Tv[2] - Tv[1])/2, 0)
+range(postDF$Temp_Mean)
+Tval <- seq(10, 25, .1)
 
 MTdf <- expand.grid(MoistVal = Mval,TempVal = Tval)
 
@@ -208,33 +208,58 @@ MTdf <- expand.grid(MoistVal = Mval,TempVal = Tval)
 # 
 # # re-format the data frame for plotting
 # Lst_CI <- within(Lst_CI, {
-#   MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)))
+#   MoistVal = factor(MoistVal, levels = rev(unique(MoistVal), 
+#                                            labels = c("Wet", "Moderately wet", "Dry")))
 #   TempVal = factor(TempVal)
 # })
 # 
 # save(Lst_CI, file = "output//data/FACE_IEM_P_LstCI.RData")
 load("output//data/FACE_IEM_P_LstCI.RData")
 
-# Add moist and temp levels to postDF. e.g. when 14.5 < Temp < 17.5, TempVal =
-# 16 to overlay actual values on p2
+#############################
+# conditioning scatter plot #
+#############################
+# (P ~ temp at given moisture ragnes)
 
+# need to create multiple graphs on one graphic area with ggplot2
+
+# scatterplot of x and y variables (P against temp at given moisture)
 MLev <- cut(postDF$Moist, breaks = M, include.lowest = TRUE)
-TLev <- cut(postDF$Temp_Mean, breaks = Tv, include.lowest = TRUE)
+postDF$MoistVal <- factor(MLev, labels = c("Wet", "Moderately wet", "Dry"))
 
-postDF$MoistVal <- factor(MLev, labels = Mval)
-postDF$TempVal <- factor(TLev, labels = Tval)
+scatter <- ggplot(Lst_CI, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
+  geom_line() +
+  facet_grid(MoistVal ~ .) +
+  geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .3, size = .5) +
+  geom_point(data = postDF, aes(x = Temp_Mean, y = log(p)), alpha = .6) +
+  scale_color_manual(values = c("blue", "red"), labels =c("Ambient", expression(eCO[2]))) +
+  scale_fill_manual(values = c("blue", "red"), labels = c("Ambient", expression(eCO[2]))) +
+  theme(legend.position = c(.12, .96), 
+        legend.title = element_blank(),
+        legend.key.size = unit(.2, "inch"),
+        legend.background = element_rect(fill = alpha('white', 0)),
+        axis.title = element_text(face = "plain")) +
+  labs(x = expression(Soil~temperature~(degree * C)), 
+       y = expression(log(IEM-adsorbed~PO[4]^"3-")))
 
-## Plot
-theme_set(theme_bw())
-p <- ggplot(Lst_CI, aes(x = co2, y = PredVal, col = co2))
-p2 <- p + geom_point(size = 3) +
-  geom_errorbar(aes(ymin = lci, ymax = uci), width = .5) +
-  scale_color_manual(values = c("blue", "red"), expression(CO[2])) +
-  facet_grid(MoistVal ~ TempVal, labeller=label_both) +
-  labs(y = "log(IEM-P)") +
-  geom_point(data = postDF, aes(x = co2, y = log(p)), position  = "jitter", alpha = .5)
-p2
-ggsavePP(filename = "output//figs/FACE_IEM_P_TempMoist", plot = p2, width = 8, height = 8)
+# moisture range
+MoistDF <- data.frame(x = c(1:3), ymin = M[1:3] * 100, ymax = M[2:4] * 100)
+MoistPlt <- ggplot(MoistDF, 
+                   aes(xmin = x - 0.3, xmax = x + 0.3, ymin = ymin, ymax = ymax)) +
+  geom_rect(fill = "gray30") +
+  theme(legend.position = "none", 
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_blank()) +
+  labs(x = "", y = "Given soil moisture (%)")
+
+# merge the plots
+pl <- arrangeGrob(scatter, MoistPlt, ncol = 2, nrow = 1, 
+                  widths = unit(c(5, 1.5), "inches"))
+# grid.arrange creates graphs directly on the device, while arrangeGrob makes 
+# ggplot object which can be save using ggsave. but text font looks bold for
+# some reasons..
+
+ggsavePP(plot = pl, filename = "output//figs/FACE_Pred_IEM_P_Temp", width = 6.5, height = 6)
 
 ################################################
 # confidence interval for estimated parameters #
