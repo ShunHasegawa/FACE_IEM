@@ -78,6 +78,10 @@ Source: CRAN
 Version: 2.14.1
 Requires: caTools, gdata, gtools, KernSmooth
 
+Package: gridExtra
+Source: CRAN
+Version: 0.9.1
+
 Package: gtable
 Source: CRAN
 Version: 0.1.2
@@ -89,7 +93,7 @@ Version: 3.4.1
 Package: Hmisc
 Source: CRAN
 Version: 3.14-4
-Requires: Formula, lattice, latticeExtra, survival
+Requires: cluster, Formula, lattice, latticeExtra, survival
 
 Package: httr
 Source: CRAN
