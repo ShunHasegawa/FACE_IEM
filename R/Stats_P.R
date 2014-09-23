@@ -236,7 +236,9 @@ scatter <- ggplot(Lst_CI, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2,
                      labels =c("Ambient", expression(eCO[2]))) +
   scale_fill_manual(values = c("blue", "red"), 
                     labels = c("Ambient", expression(eCO[2]))) +
-  theme(legend.position = c(.12, .96), 
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = c(.12, .96), 
         legend.title = element_blank(),
         legend.key.size = unit(.2, "inch"),
         legend.background = element_rect(fill = alpha('white', 0)),
@@ -249,7 +251,9 @@ MoistDF <- data.frame(x = c(1:3), ymin = M[1:3] * 100, ymax = M[2:4] * 100)
 MoistPlt <- ggplot(MoistDF, 
                    aes(xmin = x - 0.3, xmax = x + 0.3, ymin = ymin, ymax = ymax)) +
   geom_rect(fill = "gray30") +
-  theme(legend.position = "none", 
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "none", 
         axis.ticks.x = element_blank(),
         axis.text.x = element_blank()) +
   labs(x = "", y = "Given soil moisture (%)")
@@ -261,7 +265,7 @@ pl <- arrangeGrob(scatter, MoistPlt, ncol = 2, nrow = 1,
 # ggplot object which can be save using ggsave. but text font looks bold for
 # some reasons..
 
-ggsavePP(plot = pl, filename = "output//figs/FACE_Pred_IEM_P_Temp", width = 6.5, height = 6)
+ggsavePP(plot = pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_P_Temp", width = 6.5, height = 6)
 
 ################################################
 # confidence interval for estimated parameters #
