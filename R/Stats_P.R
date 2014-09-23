@@ -229,10 +229,13 @@ postDF$MoistVal <- factor(MLev, labels = c("Dry", "Moderately wet", "Wet"))
 scatter <- ggplot(Lst_CI, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
   geom_line() +
   facet_grid(MoistVal ~ .) +
-  geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .3, size = .5) +
+  geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .2, color = NA) +
+  # color = NA removes the ribbon edge
   geom_point(data = postDF, aes(x = Temp_Mean, y = log(p)), alpha = .6) +
-  scale_color_manual(values = c("blue", "red"), labels =c("Ambient", expression(eCO[2]))) +
-  scale_fill_manual(values = c("blue", "red"), labels = c("Ambient", expression(eCO[2]))) +
+  scale_color_manual(values = c("blue", "red"), 
+                     labels =c("Ambient", expression(eCO[2]))) +
+  scale_fill_manual(values = c("blue", "red"), 
+                    labels = c("Ambient", expression(eCO[2]))) +
   theme(legend.position = c(.12, .96), 
         legend.title = element_blank(),
         legend.key.size = unit(.2, "inch"),
