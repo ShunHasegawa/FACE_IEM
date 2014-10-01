@@ -212,8 +212,8 @@ MTdf <- expand.grid(MoistVal = Mval,TempVal = Tval)
 #                     labels = c("Wet", "Moderately wet", "Dry"))
 # })
 # 
-# save(Lst_CI, file = "output//data/FACE_IEM_P_LstCI.RData")
-load("output//data/FACE_IEM_P_LstCI.RData")
+# save(Lst_CI, file = "output//data/FACE_IEM_PvsMoist_LstCI.RData")
+load("output//data/FACE_IEM_PvsMoist_LstCI.RData")
 
 #############################
 # conditioning scatter plot #
