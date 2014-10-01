@@ -195,25 +195,28 @@ Mval <- round(M[-4] + (M[2] - M[1])/2, 2)
 range(postDF$Temp_Mean)
 Tval <- seq(10, 25, .1)
 
-MTdf <- expand.grid(MoistVal = Mval,TempVal = Tval)
+# data frame to plot P against temperature given moisture
+MTdf_temp <- expand.grid(MoistVal = Mval,TempVal = Tval)
+MTdf_moist
+
 
 #############################################
 # compute predicted values and CI intervals #
 #############################################
-# Lst_CIvsMoist <- ddply(MTdf, .(MoistVal, TempVal), 
+# Lst_CIvsTemp <- ddply(MTdf, .(MoistVal, TempVal), 
 #                 function(x) BtsCI(model = Fml_ancv,
 #                                   MoistVal = x$MoistVal,
 #                                   TempVal = x$TempVal),
 #                 .progress = "text")
 # 
 # # re-format the data frame for plotting
-# Lst_CIvsMoist <- within(Lst_CIvsMoist, {
+# Lst_CIvsTemp <- within(Lst_CIvsTemp, {
 #   MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)),
 #                     labels = c("Wet", "Moderately wet", "Dry"))
 # })
 # 
-# save(Lst_CIvsMoist, file = "output//data/FACE_IEM_PvsMoist_LstCI.RData")
-load("output//data/FACE_IEM_PvsMoist_LstCI.RData")
+# save(Lst_CIvsTemp, file = "output//data/FACE_IEM_PvsTemp_LstCI.RData")
+load("output//data/FACE_IEM_PvsTemp_LstCI.RData")
 
 #############################
 # conditioning scatter plot #
@@ -226,7 +229,7 @@ load("output//data/FACE_IEM_PvsMoist_LstCI.RData")
 MLev <- cut(postDF$Moist, breaks = M, include.lowest = TRUE)
 postDF$MoistVal <- factor(MLev, labels = c("Dry", "Moderately wet", "Wet"))
 
-scatter <- ggplot(Lst_CIvsMoist, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
+scatter <- ggplot(Lst_CIvsTemp, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
   geom_line() +
   facet_grid(MoistVal ~ .) +
   geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .2, color = NA) +
