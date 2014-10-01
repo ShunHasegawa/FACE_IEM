@@ -248,6 +248,8 @@ scatter <- ggplot(Lst_CI, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2,
 
 # moisture range
 MoistDF <- data.frame(x = c(1:3), ymin = M[1:3] * 100, ymax = M[2:4] * 100)
+
+theme_set(theme_bw()) # set plot back ground as white
 MoistPlt <- ggplot(MoistDF, 
                    aes(xmin = x - 0.3, xmax = x + 0.3, ymin = ymin, ymax = ymax)) +
   geom_rect(fill = "gray30") +
