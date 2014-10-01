@@ -200,19 +200,19 @@ MTdf <- expand.grid(MoistVal = Mval,TempVal = Tval)
 #############################################
 # compute predicted values and CI intervals #
 #############################################
-# Lst_CI <- ddply(MTdf, .(MoistVal, TempVal), 
+# Lst_CIvsMoist <- ddply(MTdf, .(MoistVal, TempVal), 
 #                 function(x) BtsCI(model = Fml_ancv,
 #                                   MoistVal = x$MoistVal,
 #                                   TempVal = x$TempVal),
 #                 .progress = "text")
 # 
 # # re-format the data frame for plotting
-# Lst_CI <- within(Lst_CI, {
+# Lst_CIvsMoist <- within(Lst_CIvsMoist, {
 #   MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)),
 #                     labels = c("Wet", "Moderately wet", "Dry"))
 # })
 # 
-# save(Lst_CI, file = "output//data/FACE_IEM_PvsMoist_LstCI.RData")
+# save(Lst_CIvsMoist, file = "output//data/FACE_IEM_PvsMoist_LstCI.RData")
 load("output//data/FACE_IEM_PvsMoist_LstCI.RData")
 
 #############################
@@ -226,7 +226,7 @@ load("output//data/FACE_IEM_PvsMoist_LstCI.RData")
 MLev <- cut(postDF$Moist, breaks = M, include.lowest = TRUE)
 postDF$MoistVal <- factor(MLev, labels = c("Dry", "Moderately wet", "Wet"))
 
-scatter <- ggplot(Lst_CI, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
+scatter <- ggplot(Lst_CIvsMoist, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
   geom_line() +
   facet_grid(MoistVal ~ .) +
   geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .2, color = NA) +
