@@ -223,9 +223,8 @@ clusterExport(cl, c("BtsCI", "Fml_ancv"))
 registerDoSNOW(cl)
 getDoParWorkers()
 
-
 system.time(
-  Lst_CI <- llply(list(MTdf_temp, MTdf_moist), 
+  Lst_CI_new <- llply(list(MTdf_temp, MTdf_moist), 
                 function(x) ddply(x, .(MoistVal, TempVal), 
                                   function(y) BtsCI(model = Fml_ancv, 
                                                     MoistVal = y$MoistVal, 
