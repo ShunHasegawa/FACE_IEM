@@ -16,3 +16,7 @@ library(xtable)
 library(visreg)
 library(lmerTest)
 library(gridExtra)
+library(foreach)
+library(doParallel) # set up parallel backend for foreach
+library(snow) # require to difine makeCluster for foreach
+library(doSNOW)

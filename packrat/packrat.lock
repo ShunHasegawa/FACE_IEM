@@ -54,6 +54,11 @@ Source: CRAN
 Version: 0.5.5
 Requires: stringr
 
+Package: foreach
+Source: CRAN
+Version: 1.4.2
+Requires: iterators
+
 Package: Formula
 Source: CRAN
 Version: 1.1-1
@@ -99,6 +104,10 @@ Package: httr
 Source: CRAN
 Version: 0.4
 Requires: digest, jsonlite, RCurl, stringr
+
+Package: iterators
+Source: CRAN
+Version: 1.0.7
 
 Package: jsonlite
 Source: CRAN

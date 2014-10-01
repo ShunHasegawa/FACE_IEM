@@ -186,36 +186,78 @@ l_ply(c(.05, .25), function(x){
 # Plot all variables #
 ######################
 
-# Moist & Temperature data frame
+## Moist & Temperature data frame ##
 
-# Devide Moisture and Temperature by 6, then get the middle values
-M <- seq(range(postDF$Moist)[1], range(postDF$Moist)[2], length.out = 4)
-Mval <- round(M[-4] + (M[2] - M[1])/2, 2)
+# Split moisture and temperature into four then get the middle values and create
+# three levels
+MT_Split <- llply(list(postDF$Moist, postDF$Temp_Mean),
+                  function(x) seq(min(x), max(x), length.out = 4))
 
-range(postDF$Temp_Mean)
-Tval <- seq(10, 25, .1)
+MT_Lev <- llply(MT_Split, 
+                function(x) round(x[-4] + (x[2] - x[1])/2, 2))
 
-# data frame to plot P against temperature given moisture
-MTdf_temp <- expand.grid(MoistVal = Mval,TempVal = Tval)
-MTdf_moist
+# Create vecotr that contins continuous values from min to max
+MT_val <- llply(list(postDF$Moist, postDF$Temp_Mean),
+                     function(x) seq(min(x), max(x), length.out = 150))
 
+# using the above, create data frame with three levels of moisture (or temp) and
+# continuous temp (or moist)
+MTdf_temp <- expand.grid(MoistVal = MT_Lev[[1]], TempVal = MT_val[[2]])
+MTdf_moist <- expand.grid(MoistVal = MT_Lev[[2]], TempVal = MT_val[[1]])
 
 #############################################
 # compute predicted values and CI intervals #
 #############################################
-# Lst_CIvsTemp <- ddply(MTdf, .(MoistVal, TempVal), 
-#                 function(x) BtsCI(model = Fml_ancv,
-#                                   MoistVal = x$MoistVal,
-#                                   TempVal = x$TempVal),
-#                 .progress = "text")
-# 
-# # re-format the data frame for plotting
-# Lst_CIvsTemp <- within(Lst_CIvsTemp, {
-#   MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)),
-#                     labels = c("Wet", "Moderately wet", "Dry"))
-# })
-# 
-# save(Lst_CIvsTemp, file = "output//data/FACE_IEM_PvsTemp_LstCI.RData")
+
+# bootstrap takes quite long time so apply parallel processing
+
+## set up parallel backend
+
+# registerDoParallel() is normally use to set it up but this time I need to
+# export "BtsCI" and "Fml_ancv" so use the following
+
+cl <- makeCluster(3, type = "SOCK") 
+# 3 cores will be used. not sure the difference from 2
+clusterExport(cl, c("BtsCI", "Fml_ancv"))
+# exporting objects in the global environment
+registerDoSNOW(cl)
+getDoParWorkers()
+
+
+system.time(
+  Lst_CI <- llply(list(MTdf_temp, MTdf_moist), 
+                function(x) ddply(x, .(MoistVal, TempVal), 
+                                  function(y) BtsCI(model = Fml_ancv, 
+                                                    MoistVal = y$MoistVal, 
+                                                    TempVal = y$TempVal),
+                                  .parallel = TRUE,
+                                  .paropts = list(.export = c("BtsCI", "Fml_ancv"))),
+                .parallel = TRUE
+                )
+  )
+
+# I compared the followings
+  # 1. parallell = TRUE for ddply only
+  # 2. parallell = TRUE for both of ddply and llply
+  # 3. parallell = TRUE for llply only
+  # Result: 1 looked slower than the other two. there was no clear difference 
+  # between 2 and 3. but bootstrap is randomising data so the length is always
+  # different. so not 100 % sure
+ 
+
+stopCluster(cl) # clear the above setting of parallel backend
+getDoParWorkers()
+
+
+# re-format the data frame for plotting
+Lst_CIvsTemp <- within(Lst_CIvsTemp, {
+  MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)),
+                    labels = c("Wet", "Moderately wet", "Dry"))
+})
+
+save(Lst_CIvsTemp, file = "output//data/FACE_IEM_PvsTemp_LstCI.RData")
+
+
 load("output//data/FACE_IEM_PvsTemp_LstCI.RData")
 
 #############################
