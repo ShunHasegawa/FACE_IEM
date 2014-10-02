@@ -44,6 +44,16 @@ Package: digest
 Source: CRAN
 Version: 0.6.4
 
+Package: doParallel
+Source: CRAN
+Version: 1.0.8
+Requires: foreach, iterators
+
+Package: doSNOW
+Source: CRAN
+Version: 1.0.12
+Requires: foreach, iterators, snow
+
 Package: effects
 Source: CRAN
 Version: 3.0-0
@@ -249,6 +259,10 @@ Package: scales
 Source: CRAN
 Version: 0.2.4
 Requires: dichromat, labeling, munsell, plyr, RColorBrewer
+
+Package: snow
+Source: CRAN
+Version: 0.3-13
 
 Package: SparseM
 Source: CRAN
