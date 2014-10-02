@@ -230,7 +230,8 @@ system.time(
                                                     MoistVal = y$MoistVal, 
                                                     TempVal = y$TempVal),
                                   .parallel = TRUE,
-                                  .paropts = list(.export = c("BtsCI", "Fml_ancv"))),
+                                  .paropts = list(.export = c("BtsCI", "Fml_ancv"),
+                                                  .packages = "lme4")),
                 .parallel = TRUE
                 )
   )
