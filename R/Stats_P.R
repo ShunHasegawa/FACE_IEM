@@ -203,11 +203,11 @@ MT_val <- llply(list(postDF$Moist, postDF$Temp_Mean),
 # using the above, create data frame with three levels of moisture (or temp) and
 # continuous temp (or moist)
 MTdf_temp <- expand.grid(MoistVal = MT_Lev[[1]], TempVal = MT_val[[2]])
-MTdf_moist <- expand.grid(MoistVal = MT_Lev[[2]], TempVal = MT_val[[1]])
+MTdf_moist <- expand.grid(MoistVal = MT_val[[1]], TempVal = MT_Lev[[2]])
 
 #############################################
 # compute predicted values and CI intervals #
-#############################################
+#############################################a
 
 # bootstrap takes quite long time so apply parallel processing
 
@@ -244,14 +244,26 @@ system.time(
   # between 2 and 3. but bootstrap is randomising data so the length is always
   # different. so not 100 % sure
  
+# load("Data//Lst_CI_moist.RData")
+# load("Data//Lst_CI_Temp.RData")
+# Lst_CI_new <- list(Lst_CI_temp, Lst_CI_moist)
+  # I didn't have time so I run the above codes on Domino and downloaded.
 
 stopCluster(cl) # clear the above setting of parallel backend
 getDoParWorkers()
 
 
+lapply(Lst_CI_new, function(x) unique(x$Moist))
+lapply(Lst_CI_new, function(x) unique(x$Temp_Mean))
+lapply(Lst_CI_new, head, n = 20)
+
 # re-format the data frame for plotting
-Lst_CIvsTemp <- within(Lst_CIvsTemp, {
+Lst_CI_new[[1]] <- within(Lst_CI_new[[1]], {
   MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)),
+                    labels = c("Wet", "Moderately wet", "Dry"))
+})
+Lst_CI_new[[2]] <- within(Lst_CI_new[[2]], {
+  TempVal = factor(TempVal, levels = rev(unique(TempVal)),
                     labels = c("Wet", "Moderately wet", "Dry"))
 })
 
