@@ -186,25 +186,6 @@ l_ply(c(.05, .25), function(x){
 # Plot all variables #
 ######################
 
-## Moist & Temperature data frame ##
-
-# Split moisture and temperature into four then get the middle values and create
-# three levels
-MT_Split <- llply(list(postDF$Moist, postDF$Temp_Mean),
-                  function(x) seq(min(x), max(x), length.out = 4))
-
-MT_Lev <- llply(MT_Split, 
-                function(x) round(x[-4] + (x[2] - x[1])/2, 2))
-
-# Create vecotr that contins continuous values from min to max
-MT_val <- llply(list(postDF$Moist, postDF$Temp_Mean),
-                     function(x) seq(min(x), max(x), length.out = 150))
-
-# using the above, create data frame with three levels of moisture (or temp) and
-# continuous temp (or moist)
-MTdf_temp <- expand.grid(MoistVal = MT_Lev[[1]], TempVal = MT_val[[2]])
-MTdf_moist <- expand.grid(MoistVal = MT_val[[1]], TempVal = MT_Lev[[2]])
-
 #############################################
 # compute predicted values and CI intervals #
 #############################################a
@@ -251,11 +232,6 @@ system.time(
 
 stopCluster(cl) # clear the above setting of parallel backend
 getDoParWorkers()
-
-
-lapply(Lst_CI_new, function(x) unique(x$Moist))
-lapply(Lst_CI_new, function(x) unique(x$Temp_Mean))
-lapply(Lst_CI_new, head, n = 20)
 
 # re-format the data frame for plotting
 Lst_CI_new[[1]] <- within(Lst_CI_new[[1]], {
