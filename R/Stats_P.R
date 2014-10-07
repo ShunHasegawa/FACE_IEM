@@ -181,7 +181,6 @@ l_ply(c(.05, .25), function(x){
             data = postDF)
 })
 
-
 ######################
 # Plot all variables #
 ######################
