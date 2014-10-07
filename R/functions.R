@@ -235,7 +235,7 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme){
   
   p <- ggplot(data, aes(x = date, y = Mean, group = co2))
   
-  p2 <- p + geom_line(aes(linetype = co2)) + 
+  p2 <- p + geom_line(aes(linetype = co2), position = position_dodge(20)) + 
     geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), 
                   width = 15, size = .3,
                   position = position_dodge(20)) + 
