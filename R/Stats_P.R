@@ -306,6 +306,30 @@ ggsavePP(plot = pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_P_Tem
 ################################################
 ciDF <- CIdf(model = Fml_ancv)
 
+
+
+
+Est.val
+a1 <- Est.val[1, 3]
+a2 <- Est.val[2, 3]
+b1 <- Est.val[3, 3]
+b2 <- Est.val[5, 3]
+c1 <- Est.val[4, 3]
+c2 <- Est.val[6, 3]
+
+yvals <- function(moist, temp){
+  y1 <- a1 + b1 * moist + c1 * temp
+  y2 <- a2 + b2 * moist + c2 * temp
+  return(c(y1, y2))
+}
+yvals(moist = 0.06, temp = 10.1)
+
+head(Lst_CIvsTemp, n = 4)
+
+
+
+
+
 # calculate actual values
 Est.val <- rbind(
   int = ciDF[1, ],
@@ -315,6 +339,13 @@ Est.val <- rbind(
   co2elev.Moist = ciDF[5, ] + ciDF[3, 3],
   co2elev.Temp_Mean = ciDF [6, ] + ciDF[4, 3]
   )
+
+
+
+
+
+
+
 
 Est.val
 
