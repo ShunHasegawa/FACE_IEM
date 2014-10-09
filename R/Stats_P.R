@@ -86,6 +86,9 @@ summary(Fml_post)
 
 plot(allEffects(Fml_post))
 
+# compared  squared r
+rsquared.glmm(list(Iml_post, Fml_post))
+
 # model diagnosis
 plot(Fml_post)
 qqnorm(resid(Fml_post))
@@ -143,6 +146,9 @@ Fml_ancv <- stepLmer(Iml_ancv)
 Anova(Fml_ancv)
 AnvF_P <- Anova(Fml_ancv, test.statistic = "F")
 AnvF_P
+
+# compared  squared r
+rsquared.glmm(list(Iml_ancv, Fml_ancv, ml_Moist, ml_Temp, ml_co2))
 
 # what if I allow this to reduce random factors
 Anova(ml <- stepLmer(Iml_ancv, red.rndm = TRUE))

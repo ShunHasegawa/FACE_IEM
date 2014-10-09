@@ -76,6 +76,9 @@ summary(Fml_post)
 
 plot(allEffects(Fml_post))
 
+# compared  squared r
+rsquared.glmm(list(Iml_post, Fml_post, testml))
+
 # model diagnosis
 plot(Fml_post)
 qqnorm(resid(Fml_post))

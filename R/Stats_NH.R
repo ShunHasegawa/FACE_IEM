@@ -79,6 +79,9 @@ Anova(Fml_post)
 AnvF_post_nh <- Anova(Fml_post, test.statistic = "F")
 AnvF_post_nh
 
+# compared  squared r
+rsquared.glmm(list(Iml_post_2, Fml_post, mlco, mltime))
+
 # confidence interval for estimated parameters
 CIdf_post <- CIdf(model = Fml_post)
 
