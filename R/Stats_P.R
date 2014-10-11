@@ -148,8 +148,117 @@ AnvF_P <- Anova(Fml_ancv, test.statistic = "F")
 AnvF_P
 
 # compared  squared r
-rsquared.glmm(list(Iml_ancv, Fml_ancv, ml_Moist, ml_Temp, ml_co2))
+rsquared.glmm(Fml_ancv)
 
+# compute r^2 for each predictor
+cML <- lmer(log(p) ~ co2 + (1|block) + (1|ring) + (1|id), data = postDF) # for co2
+mML <- lmer(log(p) ~ Moist + (1|block) + (1|ring) + (1|id), data = postDF) # for Moist
+tML <- lmer(log(p) ~ Temp_Mean + (1|block) + (1|ring) + (1|id), data = postDF) # for Temp
+
+# models wihtough co2:Moist or co2:Temp_Mean
+
+sqr <- function(x) rsquared.glmm(x)$Marginal * 100
+
+# moist
+cmR <- sqr(cmML <- update(Fml_ancv, ~. -co2:Moist))
+mR <- sqr(mML <- (update(cmML, ~. -Moist)))
+
+sqR_cm <- sqr(Fml_ancv) - cmR
+sqR_moist <- cmR-mR
+
+# tmep
+ctR <- sqr(ctML <- update(Fml_ancv, ~. -co2:Temp_Mean))
+tR <- sqr(tML <- update(ctML, ~. -Temp_Mean))
+
+sqR_ct <- sqr(Fml_ancv) - ctR
+sqR_Temp <- ctR-tR
+
+# co2
+cML1 <- sqr(update(mML, ~. -co2 - co2:Temp_Mean))
+cR1 <- sqr(mML) - cML1
+
+cML2 <- sqr(update(tML, ~. -co2- co2:Moist))
+cR2 <- sqr(tML) - cML2
+
+sqr(lmer(log(p) ~ co2 + (1|block) + (1|ring) + (1|id), data = postDF)) # for co2
+
+
+sqR_cm
+sqR_moist
+sqR_ct
+sqR_Temp
+
+
+cml <- update(Fml_ancv, ~. -co2 -co2:Moist -co2:Temp_Mean)
+
+
+
+
+rsdf <- rsquared.glmm(list(Fml_ancv, cmML, ctML, cml, Mml, Tml))
+sum((rsdf$Marginal[1] - rsdf$Marginal)*100)
+rsdf$Marginal[1]*100
+
+
+rsdf <- rsquared.glmm(list(Fml_ancv, cmML, ctML, tML, mML, cML))
+cmr <- rsdf$Marginal[1]-rsdf$Marginal[2]
+ctr <- rsdf$Marginal[1]-rsdf$Marginal[3]
+sum(c(rsdf$Marginal[4:6],cmr, ctr))
+sum(rsdf$Marginal[4:6])
+
+
+cmML <- update(Fml_ancv, ~. -co2:Moist)
+ctML <- update(cmML, ~. -co2:Temp_Mean)
+mML <- update(ctML, ~. -Moist)
+tML <- update(mML, ~. -Temp_Mean)
+cML <- update(tML, ~. -co2)
+
+
+r2df_3 <- rsquared.glmm(list(Fml_ancv, cmML, ctML, mML, tML, cML))
+round(-diff(r2df_1$Marginal)*100, 1)
+round(-diff(r2df_2$Marginal)*100, 1)
+round(-diff(r2df_3$Marginal)*100, 1)
+# removig order matters, but if I round it not much difference...
+rsquared.glmm(mML)
+
+
+## the following is probably the most objective..
+cmML <- update(Fml_ancv, ~. -co2:Moist)
+ctML <- update(Fml_ancv, ~. -co2:Temp_Mean)
+
+# no interaction model
+NoInml <- lmer(log(p) ~ co2 + Moist + Temp_Mean + (1|block) + (1|ring) + (1|id), data = postDF)
+
+mML <- update(NoInml, ~. -Moist)
+tML <- update(NoInml, ~. -Temp_Mean)
+cML <- update(NoInml, ~. -co2)
+
+fR <- sqr(Fml_ancv)
+cmR <- fR - sqr(cmML)
+ctR <- fR - sqr(ctML)
+
+ntR <- sqr(NoInml)
+
+mR <- ntR - sqr(mML) 
+tR <- ntR - sqr(tML) 
+cR <- ntR - sqr(cML) 
+
+sum(cmR, ctR, mR, tR, cR)
+
+fR
+
+sum(cmR, ctR, ntR)
+sum(mR, tR, cR)
+
+
+
+
+r2df <- rsquared.glmm(list(Fml_ancv, cML, mML, tML, cmML, ctML))
+row.names(r2df) <- c("Full", "co2", "moist", "temp", "withoutCxT", "withoutCxM")
+
+rCM <- r2df$Marginal[1] - r2df$Marginal[5] # r2 for co2:Moist
+rCT <- r2df$Marginal[1] - r2df$Marginal[6] # r2 for co2:Temp_Mean
+sum(c(r2df$Marginal[2:4], rCM, rCT))
+r2df$Marginal[1]
 # what if I allow this to reduce random factors
 Anova(ml <- stepLmer(Iml_ancv, red.rndm = TRUE))
 ml@call 
