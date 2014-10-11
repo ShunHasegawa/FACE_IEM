@@ -140,6 +140,7 @@ Anova(Iml_ancv)
 
 # model simplification
 Fml_ancv <- stepLmer(Iml_ancv)
+Fml_ancv_P <- Fml_ancv
 Anova(Fml_ancv)
 AnvF_P <- Anova(Fml_ancv, test.statistic = "F")
 AnvF_P
@@ -207,7 +208,7 @@ registerDoSNOW(cl)
 getDoParWorkers()
 
 system.time(
-  Lst_CI_new <- llply(list(MTdf_temp, MTdf_moist), 
+  Lst_CI_P <- llply(list(MTdf_temp, MTdf_moist), 
                       function(y) BtsCI(model = Fml_ancv, 
                                         MoistVal = y$MoistVal, 
                                         TempVal = y$TempVal),
@@ -220,21 +221,21 @@ system.time(
 
 # load("Data//Lst_CI_moist.RData")
 # load("Data//Lst_CI_Temp.RData")
-# Lst_CI_new <- list(Lst_CI_temp, Lst_CI_moist)
+# Lst_CI_P <- list(Lst_CI_temp, Lst_CI_moist)
   # I didn't have time so I run the above codes on Domino and downloaded.
 
 stopCluster(cl) # clear the above setting of parallel backend
 getDoParWorkers()
 
 # re-format the data frame for plotting
-Lst_CI_new[[1]] <- within(Lst_CI_new[[1]], {
+Lst_CI_P[[1]] <- within(Lst_CI_P[[1]], {
   MoistLev = factor(Moist, labels = c("Dry", "Moderately wet", "Wet"))
 })
-Lst_CI_new[[2]] <- within(Lst_CI_new[[2]], {
+Lst_CI_P[[2]] <- within(Lst_CI_P[[2]], {
   TempLev = factor(Temp_Mean, labels = c("Cold", "Moderately warm", "Hot"))
 })
 
-save(Lst_CI_new, file  ="output//data/FACE_IEM_P_PredVal.RData")
+save(Lst_CI_P, file  ="output//data/FACE_IEM_P_PredVal.RData")
 
 load("output//data/FACE_IEM_P_PredVal.RData")
 
@@ -247,7 +248,7 @@ load("output//data/FACE_IEM_P_PredVal.RData")
 
 # scatterplot of x and y variables (P against temp at given moisture)
 
-scatter <- ggplot(Lst_CI_new[[1]], 
+scatter <- ggplot(Lst_CI_P[[1]], 
                   aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
   geom_line() +
   facet_grid(. ~ MoistLev) +
@@ -258,7 +259,7 @@ scatter <- ggplot(Lst_CI_new[[1]],
                      labels =c("Ambient", expression(eCO[2]))) +
   scale_fill_manual(values = c("blue", "red"), 
                     labels = c("Ambient", expression(eCO[2]))) +
-  scale_x_continuous(breaks = pretty(Lst_CI_new[[1]]$Temp_Mean)) +
+  scale_x_continuous(breaks = pretty(Lst_CI_P[[1]]$Temp_Mean)) +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.position = c(.12, .96), 

@@ -130,9 +130,10 @@ Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean) +
                  data = postDF, na.action = "na.omit")
 Fml_ancv <- stepLmer(Iml_ancv)
 Anova(Fml_ancv)
-# co2 is not significant so removed, but I would like to plot predicted vales
-# for each treatment anyway so keep co2 factor in the model.
+  # co2 is not significant so removed, but I would like to plot predicted vales
+  # for each treatment anyway so keep co2 factor in the model.
 Fml_ancv <- update(Fml_ancv,~. + co2)
+Fml_ancv_NO <- Fml_ancv
 Anova(Fml_ancv)
 
 AnvF_no <- Anova(Fml_ancv, test.statistic = "F")

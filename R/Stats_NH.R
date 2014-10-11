@@ -129,6 +129,7 @@ anova(Iml_ancv, Iml_ancv2)
 Anova(Iml_ancv2)
 AnvF_nh <- Anova(Iml_ancv2, test.statistic = "F")
 Fml_ancv <- Iml_ancv2
+Fml_ancv_NH <- Fml_ancv
 
 # main effects
 plot(allEffects(Fml_ancv))
