@@ -515,7 +515,7 @@ stepLmer <- function(model, red.rndm = FALSE, ddf = "Kenward-Roger", ...){
 
 # compute predicted values from the model using bootstrap. This process takes
 # time
-BtsCI <- function(model, MoistVal, TempVal){
+BtsCI <- function(model, MoistVal, TempVal, variable){
   expDF <- data.frame(co2 = c("amb", "elev"),
                       Moist = rep(MoistVal, 2),
                       Temp_Mean = rep(TempVal, 2))
@@ -525,7 +525,7 @@ BtsCI <- function(model, MoistVal, TempVal){
   lci <- apply(bb$t, 2, quantile, 0.025)
   uci <- apply(bb$t, 2, quantile, 0.975)
   PredVal <- bb$t0
-  df <- cbind(lci, uci, PredVal, expDF)
+  df <- cbind(lci, uci, PredVal, expDF, variable)
   return(df)
 } 
 
