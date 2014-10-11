@@ -228,12 +228,10 @@ getDoParWorkers()
 
 # re-format the data frame for plotting
 Lst_CI_new[[1]] <- within(Lst_CI_new[[1]], {
-  MoistLev = factor(Moist, levels = rev(unique(Moist)),
-                    labels = c("Wet", "Moderately wet", "Dry"))
+  MoistLev = factor(Moist, labels = c("Dry", "Moderately wet", "Wet"))
 })
 Lst_CI_new[[2]] <- within(Lst_CI_new[[2]], {
-  TempLev = factor(Temp_Mean, levels = rev(unique(Temp_Mean)),
-                    labels = c("Hot", "Moderately warm", "Cold"))
+  TempLev = factor(Temp_Mean, labels = c("Cold", "Moderately warm", "Hot"))
 })
 
 save(Lst_CI_new, file  ="output//data/FACE_IEM_P_PredVal.RData")
@@ -248,10 +246,11 @@ load("output//data/FACE_IEM_P_PredVal.RData")
 # need to create multiple graphs on one graphic area with ggplot2
 
 # scatterplot of x and y variables (P against temp at given moisture)
+
 scatter <- ggplot(Lst_CI_new[[1]], 
                   aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
   geom_line() +
-  facet_grid(MoistLev ~ .) +
+  facet_grid(. ~ MoistLev) +
   geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .2, color = NA) +
   # color = NA removes the ribbon edge
   geom_point(data = postDF, aes(x = Temp_Mean, y = log(p)), alpha = .6) +
@@ -259,6 +258,7 @@ scatter <- ggplot(Lst_CI_new[[1]],
                      labels =c("Ambient", expression(eCO[2]))) +
   scale_fill_manual(values = c("blue", "red"), 
                     labels = c("Ambient", expression(eCO[2]))) +
+  scale_x_continuous(breaks = pretty(Lst_CI_new[[1]]$Temp_Mean)) +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.position = c(.12, .96), 
@@ -274,19 +274,21 @@ M <- with(postDF, seq(min(Moist), max(Moist), length.out = 4))
 MoistDF <- data.frame(x = c(1:3), ymin = M[1:3] * 100, ymax = M[2:4] * 100)
 
 theme_set(theme_bw()) # set plot back ground as white
+
 MoistPlt <- ggplot(MoistDF, 
                    aes(xmin = x - 0.3, xmax = x + 0.3, ymin = ymin, ymax = ymax)) +
   geom_rect(fill = "gray30") +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.position = "none", 
-        axis.ticks.x = element_blank(),
-        axis.text.x = element_blank()) +
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) +
+  coord_flip() +
   labs(x = "", y = "Given soil moisture (%)")
 
 # merge the plots
-pl <- arrangeGrob(scatter, MoistPlt, ncol = 2, nrow = 1, 
-                  widths = unit(c(5, 1.5), "inches"))
+pl <- arrangeGrob(MoistPlt, scatter, ncol = 1, nrow = 2, 
+                  heights = unit(c(1.5, 5), "inches"))
 # grid.arrange creates graphs directly on the device, while arrangeGrob makes 
 # ggplot object which can be save using ggsave. but text font looks bold for
 # some reasons..
