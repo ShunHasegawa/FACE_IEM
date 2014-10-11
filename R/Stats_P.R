@@ -204,7 +204,7 @@ registerDoSNOW(cl)
 getDoParWorkers()
 
 system.time(
-  Lst_CI_new <- llply(list(MTdf_temp[1:3 ,], MTdf_moist[1:3, ]), 
+  Lst_CI_new <- llply(list(MTdf_temp, MTdf_moist), 
                       function(y) BtsCI(model = Fml_ancv, 
                                         MoistVal = y$MoistVal, 
                                         TempVal = y$TempVal),
