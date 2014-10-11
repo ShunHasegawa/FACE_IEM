@@ -270,6 +270,7 @@ scatter <- ggplot(Lst_CI_new[[1]],
        y = expression(log(IEM*-adsorbed~PO[4]^"3-")))
 
 # moisture range
+M <- with(postDF, seq(min(Moist), max(Moist), length.out = 4))
 MoistDF <- data.frame(x = c(1:3), ymin = M[1:3] * 100, ymax = M[2:4] * 100)
 
 theme_set(theme_bw()) # set plot back ground as white
