@@ -196,10 +196,13 @@ l_ply(c(.05, .25), function(x){
 # registerDoParallel() is normally use to set it up but this time I need to
 # export "BtsCI" and "Fml_ancv" so use the following
 
-cl <- makeCluster(3, type = "SOCK") 
-# 3 cores will be used. not sure the difference from 2
+cl <- makeCluster(2, type = "SOCK") 
+  # two cores will be used as two data frames will be processed simultaneously as
+  # below. but not sure if it makes difference when I use othere numbers
+
 clusterExport(cl, c("BtsCI", "Fml_ancv"))
-# exporting objects in the global environment
+  # exporting objects in the global environment
+
 registerDoSNOW(cl)
 getDoParWorkers()
 
@@ -215,8 +218,6 @@ system.time(
   )
 )
 
-save(Lst_CI_new, file  ="output//data/FACE_IEM_P_PredVal.RData")
- 
 # load("Data//Lst_CI_moist.RData")
 # load("Data//Lst_CI_Temp.RData")
 # Lst_CI_new <- list(Lst_CI_temp, Lst_CI_moist)
@@ -227,18 +228,17 @@ getDoParWorkers()
 
 # re-format the data frame for plotting
 Lst_CI_new[[1]] <- within(Lst_CI_new[[1]], {
-  MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)),
+  MoistLev = factor(Moist, levels = rev(unique(Moist)),
                     labels = c("Wet", "Moderately wet", "Dry"))
 })
 Lst_CI_new[[2]] <- within(Lst_CI_new[[2]], {
-  TempVal = factor(TempVal, levels = rev(unique(TempVal)),
-                    labels = c("Wet", "Moderately wet", "Dry"))
+  TempLev = factor(Temp_Mean, levels = rev(unique(Temp_Mean)),
+                    labels = c("Hot", "Moderately warm", "Cold"))
 })
 
-save(Lst_CIvsTemp, file = "output//data/FACE_IEM_PvsTemp_LstCI.RData")
+save(Lst_CI_new, file  ="output//data/FACE_IEM_P_PredVal.RData")
 
-
-load("output//data/FACE_IEM_PvsTemp_LstCI.RData")
+load("output//data/FACE_IEM_P_PredVal.RData")
 
 #############################
 # conditioning scatter plot #
@@ -248,19 +248,35 @@ load("output//data/FACE_IEM_PvsTemp_LstCI.RData")
 # need to create multiple graphs on one graphic area with ggplot2
 
 # scatterplot of x and y variables (P against temp at given moisture)
-MLev <- cut(postDF$Moist, breaks = M, include.lowest = TRUE)
-postDF$MoistVal <- factor(MLev, labels = c("Dry", "Moderately wet", "Wet"))
-
-scatter <- ggplot(Lst_CIvsTemp, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
+scatter <- ggplot(Lst_CI_new[[1]], 
+                  aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
   geom_line() +
-  facet_grid(MoistVal ~ .) +
+  facet_grid(MoistLev ~ .) +
   geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .2, color = NA) +
   # color = NA removes the ribbon edge
   geom_point(data = postDF, aes(x = Temp_Mean, y = log(p)), alpha = .6) +
   scale_color_manual(values = c("blue", "red"), 
                      labels =c("Ambient", expression(eCO[2]))) +
   scale_fill_manual(values = c("blue", "red"), 
-                    labels = c("Ambient", expression(eCO[2]))) +
+                    labels = c("Ambient", expression(eCO[2])))
+
+
+scatter <- ggplot(Lst_CI_new[[2]], 
+                  aes(x = Moist, y = PredVal, col = co2, fill = co2, group = co2)) +
+  geom_line() +
+  facet_grid(TempLev ~ .) +
+  geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .2, color = NA) +
+  # color = NA removes the ribbon edge
+  geom_point(data = postDF, aes(x = Moist, y = log(p)), alpha = .6) +
+  scale_color_manual(values = c("blue", "red"), 
+                     labels =c("Ambient", expression(eCO[2]))) +
+  scale_fill_manual(values = c("blue", "red"), 
+                    labels = c("Ambient", expression(eCO[2])))
+
+
+
+
++
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.position = c(.12, .96), 
