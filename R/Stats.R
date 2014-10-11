@@ -1,8 +1,15 @@
 #########################
 # Data frame for ancova #
 #########################
-# postDF <- subsetD(iem, !pre)
-# save(postDF, file = "output//data/postDF.RData")
+postDF <- subsetD(iem, !pre)
+
+# splite moist and temp into 3 levels
+postDF <- within(postDF, {
+  MoistVal <- cut(Moist, breaks = 3, labels = c("Dry", "Moderately wet", "Wet"))
+  TempVal <- cut(Temp_Mean, breaks = 3, labels = c("Cold", "Moderately warm", "Hot"))
+})
+
+save(postDF, file = "output//data/postDF.RData")
 load("output//data/postDF.RData")
 
 ##################################
