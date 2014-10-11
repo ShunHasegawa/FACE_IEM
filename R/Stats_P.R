@@ -204,25 +204,18 @@ registerDoSNOW(cl)
 getDoParWorkers()
 
 system.time(
-  Lst_CI_new <- llply(list(MTdf_temp, MTdf_moist), 
-                function(x) ddply(x, .(MoistVal, TempVal), 
-                                  function(y) BtsCI(model = Fml_ancv, 
-                                                    MoistVal = y$MoistVal, 
-                                                    TempVal = y$TempVal),
-                                  .parallel = TRUE,
-                                  .paropts = list(.export = c("BtsCI", "Fml_ancv"),
-                                                  .packages = "lme4")),
-                .parallel = TRUE
-                )
+  Lst_CI_new <- llply(list(MTdf_temp[1:3 ,], MTdf_moist[1:3, ]), 
+                      function(y) BtsCI(model = Fml_ancv, 
+                                        MoistVal = y$MoistVal, 
+                                        TempVal = y$TempVal),
+                                        .parallel = TRUE,
+                                        .paropts = list(.export = c("BtsCI", "Fml_ancv"),
+                                                        .packages = "lme4")
+                      
   )
+)
 
-# I compared the followings
-  # 1. parallell = TRUE for ddply only
-  # 2. parallell = TRUE for both of ddply and llply
-  # 3. parallell = TRUE for llply only
-  # Result: 1 looked slower than the other two. there was no clear difference 
-  # between 2 and 3. but bootstrap is randomising data so the length is always
-  # different. so not 100 % sure
+save(Lst_CI_new, file  ="output//data/FACE_IEM_P_PredVal.RData")
  
 # load("Data//Lst_CI_moist.RData")
 # load("Data//Lst_CI_Temp.RData")
