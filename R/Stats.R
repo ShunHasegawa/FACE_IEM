@@ -5,8 +5,8 @@ postDF <- subsetD(iem, !pre)
 
 # splite moist and temp into 3 levels
 postDF <- within(postDF, {
-  MoistVal <- cut(Moist, breaks = 3, labels = c("Dry", "Moderately wet", "Wet"))
-  TempVal <- cut(Temp_Mean, breaks = 3, labels = c("Cold", "Moderately warm", "Hot"))
+  MoistLev <- cut(Moist, breaks = 3, labels = c("Dry", "Moderately wet", "Wet"))
+  TempLev <- cut(Temp_Mean, breaks = 3, labels = c("Cold", "Moderately warm", "Hot"))
 })
 
 save(postDF, file = "output//data/postDF.RData")
@@ -26,7 +26,7 @@ load("output//data/postDF.RData")
 # MT_Lev <- llply(MT_Split, 
 #                 function(x) round(x[-4] + (x[2] - x[1])/2, 2))
 # 
-# # Create vecotr that contins continuous values from min to max
+# # Create vector that contins continuous values from min to max
 # MT_val <- llply(list(postDF$Moist, postDF$Temp_Mean),
 #                 function(x) seq(min(x), max(x), length.out = 150))
 # 
