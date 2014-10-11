@@ -258,25 +258,7 @@ scatter <- ggplot(Lst_CI_new[[1]],
   scale_color_manual(values = c("blue", "red"), 
                      labels =c("Ambient", expression(eCO[2]))) +
   scale_fill_manual(values = c("blue", "red"), 
-                    labels = c("Ambient", expression(eCO[2])))
-
-
-scatter <- ggplot(Lst_CI_new[[2]], 
-                  aes(x = Moist, y = PredVal, col = co2, fill = co2, group = co2)) +
-  geom_line() +
-  facet_grid(TempLev ~ .) +
-  geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .2, color = NA) +
-  # color = NA removes the ribbon edge
-  geom_point(data = postDF, aes(x = Moist, y = log(p)), alpha = .6) +
-  scale_color_manual(values = c("blue", "red"), 
-                     labels =c("Ambient", expression(eCO[2]))) +
-  scale_fill_manual(values = c("blue", "red"), 
-                    labels = c("Ambient", expression(eCO[2])))
-
-
-
-
-+
+                    labels = c("Ambient", expression(eCO[2]))) +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.position = c(.12, .96), 
