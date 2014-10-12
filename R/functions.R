@@ -571,3 +571,63 @@ CrSheetAnvTbl <- function(workbook, sheetName, smmaryLst){
   addDataFrame(smmaryLst[[sheetName]][[2]], sheet, showNA = FALSE, 
                row.names = FALSE, characterNA="NA", startRow = 11)
 }
+
+##########################
+# Plot predicated values #
+##########################
+
+## Scatter plot of predicated values and CI ##
+ScatterPlot <- function(df, xval, breakn = 5, xlab, gridval){
+  # breakn: spacing between xaxis ticks
+  
+  df$Moist <- df$Moist * 100
+  postDF_Mlt$Moist <- postDF_Mlt$Moist * 100
+  df$gridval <- df[, gridval]
+  postDF_Mlt$gridval <- postDF_Mlt[, gridval]
+  
+  scatter <- ggplot(df, 
+                    aes_string(x = xval, y = "PredVal", col = "co2",
+                               fill = "co2", group = "co2")) +
+    geom_line() +
+    geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .4, color = NA) +
+    # color = NA removes the ribbon edge
+    geom_point(data = postDF_Mlt, aes_string(x = xval, y = "log(value)"), 
+               alpha = .6, size = 1) +
+    scale_color_manual(values = c("blue", "red"), 
+                       labels =c("Ambient", expression(eCO[2]))) +
+    scale_fill_manual(values = c("blue", "red"), 
+                      labels = c("Ambient", expression(eCO[2]))) +
+    scale_x_continuous(breaks = pretty(df[, xval], n = breakn)) +
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          legend.position = c(.12, .96), 
+          legend.title = element_blank(),
+          legend.key.size = unit(.2, "inch"),
+          legend.background = element_rect(fill = alpha('white', 0)),
+          axis.title = element_text(face = "plain"),
+          plot.margin=unit(c(0, 0.5, 0, 0), "lines")) +
+    facet_grid(variable ~ gridval, scales = "free_y", labeller = label_parsed) +
+    labs(x = xlab, y = expression(log(IEM*-adsorbed~nutrients~(ng~cm^"-2"~d^"-1"))))
+  return(scatter)
+} 
+
+
+## Boxplot for environmental vairalbe (moisture and temperature) ##
+envPlot <- function(val, ylab){
+  postDF$Moist <- postDF$Moist * 100
+  
+  M <- seq(min(postDF[, val]), max(postDF[, val]), length.out = 4)
+  DF <- data.frame(x = c(1:3), ymin = M[1:3], ymax = M[2:4])
+  pl <- ggplot(DF, aes(xmin = x - .3, xmax = x + .3,
+                       ymin = ymin, ymax = ymax)) +
+    geom_rect(fill = "gray30") +
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          legend.position = "none", 
+          axis.ticks.y = element_blank(),
+          axis.text.y = element_blank(),
+          plot.margin=unit(c(0, 0.5, 0, 0), "lines")) +
+    coord_flip() +
+    labs(x = "", y = ylab)
+  return(pl)
+}

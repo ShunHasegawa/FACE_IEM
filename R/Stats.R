@@ -89,14 +89,14 @@ cl <- makeCluster(3, type = "SOCK")
 # three cores will be used as three models will be processed simultaneously as
 # below. 
 
-clusterExport(cl, c("MTdf_temp","BtsCI", "Lst_ml"))
+clusterExport(cl, c("MTdf_temp", "MTdf_moist", "BtsCI", "Lst_ml"))
 # exporting objects in the global environment
 
 registerDoSNOW(cl)
 getDoParWorkers()
 
-system.time(
-  ciDF_vsTemp <- ldply(1:3, 
+## against temperature ##
+ciDF_vsTemp <- ldply(1:3, 
                     function(x) BtsCI(model = Lst_ml[[x]], 
                                       MoistVal = MTdf_temp$MoistVal, 
                                       TempVal = MTdf_temp$TempVal, 
@@ -105,14 +105,44 @@ system.time(
                     .paropts = list(.export = c("MTdf_temp","BtsCI", "Lst_ml"),
                                     .packages = "lme4")
                     )
-)
 
 # add Moist level
-ciDF_vsTemp$MoistLev <- factor(ciDF_vsTemp$Moist, 
-                               labels = c("Dry", "Moderately wet", "Wet")) 
+MoistLabs <- c(expression(Dry),
+               expression(Moderately~wet),
+               expression(Wet))
+
+# labels for facet_grid
+ylabs <- c(expression(NO[3]^"-"),expression(NH[4]^"+"), expression(PO[4]^"3-"))
+
+ciDF_vsTemp <- within(ciDF_vsTemp, {
+  MoistLev <- factor(Moist, labels = MoistLabs)
+  variable <- factor(variable, labels = ylabs)
+})
+
+## agianst moisture ##
+ciDF_vsMoist <- ldply(1:3, 
+                     function(x) BtsCI(model = Lst_ml[[x]], 
+                                       MoistVal = MTdf_moist$MoistVal, 
+                                       TempVal = MTdf_moist$TempVal, 
+                                       variable = names(Lst_ml[x])),
+                     .parallel = TRUE,
+                     .paropts = list(.export = c("MTdf_moist","BtsCI", "Lst_ml"),
+                                     .packages = "lme4")
+)
+
+# add Temp level
+TempLabs <- c(expression(Cold),
+               expression(Moderately~warm),
+               expression(Hot))
+
+ciDF_vsMoist <- within(ciDF_vsMoist, {
+  TempLev <- factor(Temp_Mean, labels = TempLabs)
+  variable <- factor(variable, labels = ylabs)
+})
 
 # save
 save(ciDF_vsTemp, file = "output//data/ciDF_vsTemp.RData") 
+save(ciDF_vsMoist, file = "output//data/ciDF_vsMoist.RData") 
 
 #############################
 # conditioning scatter plot #
@@ -125,65 +155,51 @@ save(ciDF_vsTemp, file = "output//data/ciDF_vsTemp.RData")
 postDF_Mlt <- melt(postDF, 
                    id = names(postDF)[which(!(names(postDF) %in% c("no", "nh", "p")))])
 
-# labels for facet_grid
-ylabs <- c(expression(NO[3]^"-"),expression(NH[4]^"+"), expression(PO[4]^"3-"))
+postDF_Mlt <- within(postDF_Mlt, {
+  variable <- factor(variable, labels = ylabs)
+  MoistLev <- factor(MoistLev, labels = MoistLabs)
+  TempLev <- factor(TempLev, labels = TempLabs)
+})
 
-levels(ciDF_vsTemp$variable) <- ylabs
-levels(postDF_Mlt$variable) <- ylabs
+##############################################
+## Scatter plot of predicated values and CI ##
+##############################################
 
-MoistLabs <- c(expression(Dry),
-               expression(Moderately~wet),
-               expression(Wet))
+# Plot against moisture and temperature
 
-levels(ciDF_vsTemp$MoistLev) <- MoistLabs
-levels(postDF_Mlt$MoistLev) <- MoistLabs
+MoistSct <- ScatterPlot(df = ciDF_vsMoist, xval = "Moist", breakn = 5, 
+                        xlab = "Soil moisture (%)", gridval = "TempLev")
 
-scatter <- ggplot(ciDF_vsTemp, 
-                  aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
-  geom_line() +
-  geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .4, color = NA) +
-  # color = NA removes the ribbon edge
-  geom_point(data = postDF_Mlt, aes(x = Temp_Mean, y = log(value)), 
-             alpha = .6, size = 1) +
-  scale_color_manual(values = c("blue", "red"), 
-                     labels =c("Ambient", expression(eCO[2]))) +
-  scale_fill_manual(values = c("blue", "red"), 
-                    labels = c("Ambient", expression(eCO[2]))) +
-  scale_x_continuous(breaks = pretty(ciDF_vsTemp$Temp_Mean)) +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = c(.12, .96), 
-        legend.title = element_blank(),
-        legend.key.size = unit(.2, "inch"),
-        legend.background = element_rect(fill = alpha('white', 0)),
-        axis.title = element_text(face = "plain")) +
-  facet_grid(variable ~ MoistLev, scales = "free_y", labeller = label_parsed) +
-  labs(x = expression(Soil~temperature~(degree * C)), 
-       y = expression(log(IEM*-adsorbed~nutrients~(ng~cm^"-2"~d^"-1"))))
 
-# moisture range
-M <- with(postDF, seq(min(Moist), max(Moist), length.out = 4))
-MoistDF <- data.frame(x = c(1:3), ymin = M[1:3] * 100, ymax = M[2:4] * 100)
+TempSct <-  ScatterPlot(df = ciDF_vsTemp, xval = "Temp_Mean", breakn = 5, 
+                        xlab = expression(Soil~temperature~(degree * C)),
+                        gridval = "MoistLev")
+
+###################################################################
+## Boxplot for environmental vairalbe (moisture and temperature) ##
+###################################################################
+
+MoistPlot <- envPlot(val = "Moist", ylab = "Given soil moisture (%)")
+TempPlot <- envPlot(val = "Temp_Mean", ylab = expression(Given~soil~temperature~(degree * C)))
+
 
 theme_set(theme_bw()) # set plot back ground as white
 
-MoistPlt <- ggplot(MoistDF, 
-                   aes(xmin = x - 0.3, xmax = x + 0.3, ymin = ymin, ymax = ymax)) +
-  geom_rect(fill = "gray30") +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = "none", 
-        axis.ticks.y = element_blank(),
-        axis.text.y = element_blank()) +
-  coord_flip() +
-  labs(x = "", y = "Given soil moisture (%)")
 
 # merge the plots
-pl <- arrangeGrob(MoistPlt, scatter, ncol = 1, nrow = 2, 
-                  heights = unit(c(1.5, 5), "inches"))
-# grid.arrange creates graphs directly on the device, while arrangeGrob makes 
-# ggplot object which can be save using ggsave. but text font looks bold for
-# some reasons..
+Moist_pl <- arrangeGrob(TempPlot, MoistSct, ncol = 1, nrow = 2, 
+                        heights = unit(c(1, 6), "inches"))
 
-ggsavePP(plot = pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Temp", 
-         width = 6, height = 8)
+Temp_pl <- arrangeGrob(MoistPlot, TempSct, ncol = 1, nrow = 2, 
+                        heights = unit(c(1, 6), "inches"))
+
+  # grid.arrange creates graphs directly on the device, while arrangeGrob makes 
+  # ggplot object which can be save using ggsave. but text font looks bold for
+  # some reasons..
+
+# save
+ggsavePP(plot = Moist_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Moist", 
+         width = 6, height = 7.5)
+
+ggsavePP(plot = Temp_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Temp", 
+         width = 6, height = 7.5)
