@@ -144,6 +144,10 @@ ciDF_vsMoist <- within(ciDF_vsMoist, {
 save(ciDF_vsTemp, file = "output//data/ciDF_vsTemp.RData") 
 save(ciDF_vsMoist, file = "output//data/ciDF_vsMoist.RData") 
 
+# load
+load("output//data/ciDF_vsTemp.RData")
+load("output//data/ciDF_vsMoist.RData")
+
 #############################
 # conditioning scatter plot #
 #############################
