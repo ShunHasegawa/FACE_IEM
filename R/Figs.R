@@ -52,7 +52,7 @@ theme_set(theme_bw())
 # ymax value for each variable
 ymaxDF <- ddply(TrtMean, .(variable), function(x) max(x$Mean + x$SE, na.rm = TRUE))
 
-p <- WBFig(data = TrtMean, ylab = expression(IEM~adsorbed~nutrients~(ng~cm^"-2"~d^"-1")),
+p <- WBFig(data = TrtMean, ylab = expression(IEM*-adsorbed~nutrients~(ng~cm^"-2"~d^"-1")),
            StatRes = Stat_CO2Time, 
            StatY = ymaxDF[ , 2])
 ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM", plot = p, width = 6, height = 6)
