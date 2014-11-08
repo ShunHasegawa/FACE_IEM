@@ -631,3 +631,8 @@ envPlot <- function(val, ylab){
     labs(x = "", y = ylab)
   return(pl)
 }
+
+#######################
+# Compute R2 for GLMM #
+#######################
+source("R/rsquaredglmm.R")
