@@ -215,16 +215,17 @@ PltMean <- function(data){
 ############################################
 # Create df to add a stat table to figures #
 ############################################
-StatPositionDF <- function(StatRes, variable, ytop, ymax){
-  d <- data.frame(variable, ytop, gap = 0.08 * ymax) 
+StatPositionDF <- function(StatRes, variable, ytop, ylength, gap = .07){
+  d <- data.frame(variable, ytop, gap = gap * ylength) 
   # ytop is y coordinate for the top (i.e. CO2) of the table for each fig 
-  # (variable), ymax is the maximum value of the plot (i.e. max(mean+SE)).  
-  # 0.1 * ymax is used to determine the gap between each row of the table
+  # (variable), ylength is the difference of max and min value of the plot (i.e.
+  # max(mean+SE) - min(mean-SE)). 0.1 * ylength is used to determine the gap between each row
+  # of the table
   
   predictor <- levels(StatRes$predictor)
   
   # create df which contains variable, predictor and y coordinates for the other
-  # predictors (i.e. Time, CO2xTime) which is ymax*0.1 (= gap) lower than one above
+  # predictors (i.e. Time, CO2xTime) which is ylength*0.1 (= gap) lower than one above
   d2 <- ddply(d, .(variable),
               function(x){
                 data.frame(predictor, 
@@ -262,10 +263,14 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, S
   
   
   # df for stat table
-  ## compute ymax for each variable
-  ymaxDF <- ddply(TrtMean, 
-                  .(variable), 
-                  function(x) data.frame(ymax = max(x$Mean +x$SE, na.rm = TRUE)))
+  ## compute ylength for each variable
+  ylengthDF <- ddply(data, 
+                     .(variable), 
+                     function(x) 
+                       data.frame(ylength = max(x$Mean +x$SE, na.rm = TRUE) -
+                                    min(x$Mean - x$SE, na.rm = TRUE)))
+  # ylength is given as the difference between max and min
+  
   
   ## create df
   statDF <- StatPositionDF(StatRes = StatRes, 
@@ -731,30 +736,4 @@ StatTable <- function(x, variable) { # x is anova result
   result$variable <- variable
   result <- result[order(result$predictor), ]
   return(result)
-}
-
-############################################
-# Create df to add a stat table to figures #
-############################################
-StatPositionDF <- function(StatRes, variable, ytop, ymax, gap = .07){
-  d <- data.frame(variable, ytop, gap = gap * ymax) 
-  # ytop is y coordinate for the top (i.e. CO2) of the table for each fig 
-  # (variable), ymax is the maximum value of the plot (i.e. max(mean+SE)).  
-  # 0.1 * ymax is used to determine the gap between each row of the table
-  
-  predictor <- levels(StatRes$predictor)
-  
-  # create df which contains variable, predictor and y coordinates for the other
-  # predictors (i.e. Time, CO2xTime) which is ymax*0.1 (= gap) lower than one above
-  d2 <- ddply(d, .(variable),
-              function(x){
-                data.frame(predictor, 
-                           ldply(1:length(predictor), function(z) x$ytop - z * x$gap))
-              })
-  names(d2)[3] <- "yval"
-  
-  # mege every thing
-  d3 <- merge(d2, StatRes, by = c("variable", "predictor"))
-  d3$co2 <- "amb" # co2 column is required for ggplot
-  return(d3)
 }
