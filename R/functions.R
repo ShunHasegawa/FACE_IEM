@@ -212,6 +212,31 @@ PltMean <- function(data){
   }
 }
 
+############################################
+# Create df to add a stat table to figures #
+############################################
+StatPositionDF <- function(StatRes, variable, ytop, ymax){
+  d <- data.frame(variable, ytop, gap = 0.08 * ymax) 
+  # ytop is y coordinate for the top (i.e. CO2) of the table for each fig 
+  # (variable), ymax is the maximum value of the plot (i.e. max(mean+SE)).  
+  # 0.1 * ymax is used to determine the gap between each row of the table
+  
+  predictor <- levels(StatRes$predictor)
+  
+  # create df which contains variable, predictor and y coordinates for the other
+  # predictors (i.e. Time, CO2xTime) which is ymax*0.1 (= gap) lower than one above
+  d2 <- ddply(d, .(variable),
+              function(x){
+                data.frame(predictor, 
+                           ldply(1:length(predictor), function(z) x$ytop - z * x$gap))
+              })
+  names(d2)[3] <- "yval"
+  
+  # mege every thing
+  d3 <- merge(d2, StatRes, by = c("variable", "predictor"))
+  d3$co2 <- "amb" # co2 column is required for ggplot
+  return(d3)
+}
 
 #######################
 # Fig for publication #
@@ -220,12 +245,14 @@ PltMean <- function(data){
 science_theme <- theme(panel.grid.major = element_blank(),
                        panel.grid.minor = element_blank(),
                        axis.text.x  = element_text(angle=45, vjust= 1, hjust = 1),
-                       legend.position = c(.87, .93), 
+                       legend.position = c(.5, .93), 
                        legend.title = element_blank())
 
 # white-black figure
-WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme){
-  
+WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, StatRes, StatY){
+  # StatRes is stats tables to put on the figs; StatY is y coordinate for that tables
+    
+  # df for sub-labels
   subLabDF <- with(data, 
                    data.frame(xv = as.Date("2012-6-15"),
                               ddply(data, .(variable), summarise, yv = max(Mean + SE)),
@@ -233,6 +260,19 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme){
                               co2 = "amb"))
     # co2 is required as group = co2 is used in the main plot mapping
   
+  
+  # df for stat table
+  ## compute ymax for each variable
+  ymaxDF <- ddply(TrtMean, 
+                  .(variable), 
+                  function(x) data.frame(ymax = max(x$Mean +x$SE, na.rm = TRUE)))
+  
+  ## crease df
+  statDF <- StatPositionDF(StatRes = StatRes, 
+                           variable = levels(ymaxDF$variable), 
+                           ytop = StatY,
+                           ymax = ymaxDF$ymax)
+  # create a plot  
   p <- ggplot(data, aes(x = date, y = Mean, group = co2))
   
   p2 <- p + geom_line(aes(linetype = co2), position = position_dodge(20)) + 
@@ -256,7 +296,15 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme){
               hjust = 1,
               data = subLabDF) +
     facet_grid(variable~., scales= "free_y", labeller= facetLab) +
-    figTheme
+    figTheme +
+    geom_text(data = subset(statDF, predictor != ""), 
+              aes(x = as.Date("2014-1-20"), y = yval, label = predictor),
+              size = 2, hjust = 1, parse = TRUE) +
+    # unless remove [" "] with predictor != "", labels will be messed up due to
+    # this empty level
+    geom_text(data = statDF, 
+              aes(x = as.Date("2014-2-20"), y = yval, label = p), 
+              size = 2, parse = TRUE)
   return(p2)
 }
 
@@ -675,10 +723,8 @@ StatTable <- function(x, variable) { # x is anova result
     p <- ifelse(is.na(p), "ns", as.character(p)) 
       # ifelse tries to return factor, so use as.character
     stars <- ifelse(is.na(stars), "ns", as.character(stars))
-  })
-  
-  
-  
+    })
+    
   # relabel for plotting
   result$predictor <- factor(result$predictor, 
                              labels = c("", "CO[2]", "Time", "CO[2]*~x~Time"), 
@@ -691,8 +737,8 @@ StatTable <- function(x, variable) { # x is anova result
 ############################################
 # Create df to add a stat table to figures #
 ############################################
-StatPositionDF <- function(StatRes, variable, ytop, ymax){
-  d <- data.frame(variable, ytop, gap = 0.08 * ymax) 
+StatPositionDF <- function(StatRes, variable, ytop, ymax, gap = .06){
+  d <- data.frame(variable, ytop, gap = 0.06 * ymax) 
   # ytop is y coordinate for the top (i.e. CO2) of the table for each fig 
   # (variable), ymax is the maximum value of the plot (i.e. max(mean+SE)).  
   # 0.1 * ymax is used to determine the gap between each row of the table
