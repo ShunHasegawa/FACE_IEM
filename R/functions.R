@@ -267,7 +267,7 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, S
                   .(variable), 
                   function(x) data.frame(ymax = max(x$Mean +x$SE, na.rm = TRUE)))
   
-  ## crease df
+  ## create df
   statDF <- StatPositionDF(StatRes = StatRes, 
                            variable = levels(ymaxDF$variable), 
                            ytop = StatY,
@@ -684,7 +684,6 @@ envPlot <- function(val, ylab){
 # Compute R2 for GLMM #
 #######################
 source("R/rsquaredglmm.R")
-
 
 ################################
 # Return star based on P value #
