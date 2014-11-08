@@ -57,6 +57,11 @@ source("R/Stats_P.R")
 #######################
 # Summary Stats table #
 #######################
+
+########################
+## CO2 x Moist x Temp ##
+########################
+
 # create summary list
 StatSmmryLst <- list("Nitrate" = list(AnvF_no, Est_no),
                      "Ammonium" = list(AnvF_nh, Est_nh),
@@ -70,6 +75,24 @@ l_ply(c("Nitrate", "Ammonium", "Phosphate"),
                                 sheetName = x, 
                                 smmaryLst = StatSmmryLst))
 saveWorkbook(wb, "Output/Table/FACE_IEM_Ancv.xlsx")
+
+################
+## CO2 x Time ##
+################
+
+# create stat summary table for LMM with CO2 and time
+CO2TimeStatList <- list('Nitrate' = AnvF_post_no, 
+                        'Ammonium' = AnvF_post_nh, 
+                        'Phosphate' = AnvF) 
+
+Stat_CO2Time <- ldply(names(CO2TimeStatList), 
+                      function(x) StatTable(CO2TimeStatList[[x]], variable = x))
+save(Stat_CO2Time, file = "output//data/CO2Time_Stat.RData")
+
+
+
+
+
 
 ################################
 # Plot predicted values and CI #
