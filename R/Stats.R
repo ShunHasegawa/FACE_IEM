@@ -81,18 +81,13 @@ saveWorkbook(wb, "Output/Table/FACE_IEM_Ancv.xlsx")
 ################
 
 # create stat summary table for LMM with CO2 and time
-CO2TimeStatList <- list('Nitrate' = AnvF_post_no, 
-                        'Ammonium' = AnvF_post_nh, 
-                        'Phosphate' = AnvF) 
+CO2TimeStatList <- list('no' = AnvF_post_no, 
+                        'nh' = AnvF_post_nh, 
+                        'p' = AnvF_post_p) 
 
 Stat_CO2Time <- ldply(names(CO2TimeStatList), 
                       function(x) StatTable(CO2TimeStatList[[x]], variable = x))
 save(Stat_CO2Time, file = "output//data/CO2Time_Stat.RData")
-
-
-
-
-
 
 ################################
 # Plot predicted values and CI #
