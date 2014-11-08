@@ -316,7 +316,7 @@ bxplts <- function(value, ofst = 0, data, ...){
   data$y <- data[[value]] + ofst #ofst is added to make y >0
   a <- boxcox(y ~ co2 * time, data = data)
   par(mfrow = c(2, 3))
-  boxplot(y ~ co2*time, data, main = "row")
+  boxplot(y ~ co2*time, data, main = "raw")
   boxplot(log(y) ~ co2*time, main = "log", data)
   boxplot(sqrt(y) ~ co2*time, main = "sqrt", data)
   boxplot(y^(1/3) ~ co2*time, main = "power(1/3)", data)
@@ -515,7 +515,7 @@ stepLmer <- function(model, red.rndm = FALSE, ddf = "Kenward-Roger", ...){
 
 # compute predicted values from the model using bootstrap. This process takes
 # time
-BtsCI <- function(model, MoistVal, TempVal){
+BtsCI <- function(model, MoistVal, TempVal, variable){
   expDF <- data.frame(co2 = c("amb", "elev"),
                       Moist = rep(MoistVal, 2),
                       Temp_Mean = rep(TempVal, 2))
@@ -525,7 +525,7 @@ BtsCI <- function(model, MoistVal, TempVal){
   lci <- apply(bb$t, 2, quantile, 0.025)
   uci <- apply(bb$t, 2, quantile, 0.975)
   PredVal <- bb$t0
-  df <- cbind(lci, uci, PredVal, expDF)
+  df <- cbind(lci, uci, PredVal, expDF, variable)
   return(df)
 } 
 
@@ -570,4 +570,64 @@ CrSheetAnvTbl <- function(workbook, sheetName, smmaryLst){
                startRow = 10)
   addDataFrame(smmaryLst[[sheetName]][[2]], sheet, showNA = FALSE, 
                row.names = FALSE, characterNA="NA", startRow = 11)
+}
+
+##########################
+# Plot predicated values #
+##########################
+
+## Scatter plot of predicated values and CI ##
+ScatterPlot <- function(df, xval, breakn = 5, xlab, gridval){
+  # breakn: spacing between xaxis ticks
+  
+  df$Moist <- df$Moist * 100
+  postDF_Mlt$Moist <- postDF_Mlt$Moist * 100
+  df$gridval <- df[, gridval]
+  postDF_Mlt$gridval <- postDF_Mlt[, gridval]
+  
+  scatter <- ggplot(df, 
+                    aes_string(x = xval, y = "PredVal", col = "co2",
+                               fill = "co2", group = "co2")) +
+    geom_line() +
+    geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .4, color = NA) +
+    # color = NA removes the ribbon edge
+    geom_point(data = postDF_Mlt, aes_string(x = xval, y = "log(value)"), 
+               alpha = .6, size = 1) +
+    scale_color_manual(values = c("blue", "red"), 
+                       labels =c("Ambient", expression(eCO[2]))) +
+    scale_fill_manual(values = c("blue", "red"), 
+                      labels = c("Ambient", expression(eCO[2]))) +
+    scale_x_continuous(breaks = pretty(df[, xval], n = breakn)) +
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          legend.position = c(.12, .96), 
+          legend.title = element_blank(),
+          legend.key.size = unit(.2, "inch"),
+          legend.background = element_rect(fill = alpha('white', 0)),
+          axis.title = element_text(face = "plain"),
+          plot.margin=unit(c(0, 0.5, 0, 0), "lines")) +
+    facet_grid(variable ~ gridval, scales = "free_y", labeller = label_parsed) +
+    labs(x = xlab, y = expression(log(IEM*-adsorbed~nutrients~(ng~cm^"-2"~d^"-1"))))
+  return(scatter)
+} 
+
+
+## Boxplot for environmental vairalbe (moisture and temperature) ##
+envPlot <- function(val, ylab){
+  postDF$Moist <- postDF$Moist * 100
+  
+  M <- seq(min(postDF[, val]), max(postDF[, val]), length.out = 4)
+  DF <- data.frame(x = c(1:3), ymin = M[1:3], ymax = M[2:4])
+  pl <- ggplot(DF, aes(xmin = x - .3, xmax = x + .3,
+                       ymin = ymin, ymax = ymax)) +
+    geom_rect(fill = "gray30") +
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          legend.position = "none", 
+          axis.ticks.y = element_blank(),
+          axis.text.y = element_blank(),
+          plot.margin=unit(c(0, 0.5, 0, 0), "lines")) +
+    coord_flip() +
+    labs(x = "", y = ylab)
+  return(pl)
 }

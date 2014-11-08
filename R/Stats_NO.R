@@ -133,6 +133,12 @@ Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean) +
                  data = postDF, na.action = "na.omit")
 Fml_ancv <- stepLmer(Iml_ancv)
 Anova(Fml_ancv)
+  # co2 is not significant so removed, but I would like to plot predicted vales
+  # for each treatment anyway so keep co2 factor in the model.
+Fml_ancv <- update(Fml_ancv,~. + co2)
+Fml_ancv_NO <- Fml_ancv
+Anova(Fml_ancv)
+
 AnvF_no <- Anova(Fml_ancv, test.statistic = "F")
 AnvF_no
 plot(Fml_ancv)
@@ -147,7 +153,12 @@ plot(allEffects(Fml_ancv))
 ciDF <- CIdf(model = Fml_ancv)
 
 # calculate actual values
-Est.val <- ciDF
+Est.val <- rbind(
+  int = ciDF[1, ],
+  co2elev = ciDF[4, ] + ciDF[1, 3],
+  Moist = ciDF[2, ],
+  Temp_Mean = ciDF[3, ]
+  )
 
 # reshape Est.val and make a table
 Est_no <- ANCV_Tbl(Est.val)

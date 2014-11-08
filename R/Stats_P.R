@@ -143,6 +143,7 @@ Anova(Iml_ancv)
 
 # model simplification
 Fml_ancv <- stepLmer(Iml_ancv)
+Fml_ancv_P <- Fml_ancv
 Anova(Fml_ancv)
 AnvF_P <- Anova(Fml_ancv, test.statistic = "F")
 AnvF_P
@@ -186,126 +187,6 @@ l_ply(c(.05, .25), function(x){
             trans = exp,
             data = postDF)
 })
-
-######################
-# Plot all variables #
-######################
-
-#############################################
-# compute predicted values and CI intervals #
-#############################################a
-
-# bootstrap takes quite long time so apply parallel processing
-
-## set up parallel backend
-
-# registerDoParallel() is normally use to set it up but this time I need to
-# export "BtsCI" and "Fml_ancv" so use the following
-
-cl <- makeCluster(3, type = "SOCK") 
-# 3 cores will be used. not sure the difference from 2
-clusterExport(cl, c("BtsCI", "Fml_ancv"))
-# exporting objects in the global environment
-registerDoSNOW(cl)
-getDoParWorkers()
-
-system.time(
-  Lst_CI_new <- llply(list(MTdf_temp, MTdf_moist), 
-                function(x) ddply(x, .(MoistVal, TempVal), 
-                                  function(y) BtsCI(model = Fml_ancv, 
-                                                    MoistVal = y$MoistVal, 
-                                                    TempVal = y$TempVal),
-                                  .parallel = TRUE,
-                                  .paropts = list(.export = c("BtsCI", "Fml_ancv"),
-                                                  .packages = "lme4")),
-                .parallel = TRUE
-                )
-  )
-
-# I compared the followings
-  # 1. parallell = TRUE for ddply only
-  # 2. parallell = TRUE for both of ddply and llply
-  # 3. parallell = TRUE for llply only
-  # Result: 1 looked slower than the other two. there was no clear difference 
-  # between 2 and 3. but bootstrap is randomising data so the length is always
-  # different. so not 100 % sure
- 
-# load("Data//Lst_CI_moist.RData")
-# load("Data//Lst_CI_Temp.RData")
-# Lst_CI_new <- list(Lst_CI_temp, Lst_CI_moist)
-  # I didn't have time so I run the above codes on Domino and downloaded.
-
-stopCluster(cl) # clear the above setting of parallel backend
-getDoParWorkers()
-
-# re-format the data frame for plotting
-Lst_CI_new[[1]] <- within(Lst_CI_new[[1]], {
-  MoistVal = factor(MoistVal, levels = rev(unique(MoistVal)),
-                    labels = c("Wet", "Moderately wet", "Dry"))
-})
-Lst_CI_new[[2]] <- within(Lst_CI_new[[2]], {
-  TempVal = factor(TempVal, levels = rev(unique(TempVal)),
-                    labels = c("Wet", "Moderately wet", "Dry"))
-})
-
-save(Lst_CIvsTemp, file = "output//data/FACE_IEM_PvsTemp_LstCI.RData")
-
-
-load("output//data/FACE_IEM_PvsTemp_LstCI.RData")
-
-#############################
-# conditioning scatter plot #
-#############################
-# (P ~ temp at given moisture ragnes)
-
-# need to create multiple graphs on one graphic area with ggplot2
-
-# scatterplot of x and y variables (P against temp at given moisture)
-MLev <- cut(postDF$Moist, breaks = M, include.lowest = TRUE)
-postDF$MoistVal <- factor(MLev, labels = c("Dry", "Moderately wet", "Wet"))
-
-scatter <- ggplot(Lst_CIvsTemp, aes(x = Temp_Mean, y = PredVal, col = co2, fill = co2, group = co2)) +
-  geom_line() +
-  facet_grid(MoistVal ~ .) +
-  geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .2, color = NA) +
-  # color = NA removes the ribbon edge
-  geom_point(data = postDF, aes(x = Temp_Mean, y = log(p)), alpha = .6) +
-  scale_color_manual(values = c("blue", "red"), 
-                     labels =c("Ambient", expression(eCO[2]))) +
-  scale_fill_manual(values = c("blue", "red"), 
-                    labels = c("Ambient", expression(eCO[2]))) +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = c(.12, .96), 
-        legend.title = element_blank(),
-        legend.key.size = unit(.2, "inch"),
-        legend.background = element_rect(fill = alpha('white', 0)),
-        axis.title = element_text(face = "plain")) +
-  labs(x = expression(Soil~temperature~(degree * C)), 
-       y = expression(log(IEM*-adsorbed~PO[4]^"3-")))
-
-# moisture range
-MoistDF <- data.frame(x = c(1:3), ymin = M[1:3] * 100, ymax = M[2:4] * 100)
-
-theme_set(theme_bw()) # set plot back ground as white
-MoistPlt <- ggplot(MoistDF, 
-                   aes(xmin = x - 0.3, xmax = x + 0.3, ymin = ymin, ymax = ymax)) +
-  geom_rect(fill = "gray30") +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = "none", 
-        axis.ticks.x = element_blank(),
-        axis.text.x = element_blank()) +
-  labs(x = "", y = "Given soil moisture (%)")
-
-# merge the plots
-pl <- arrangeGrob(scatter, MoistPlt, ncol = 2, nrow = 1, 
-                  widths = unit(c(5, 1.5), "inches"))
-# grid.arrange creates graphs directly on the device, while arrangeGrob makes 
-# ggplot object which can be save using ggsave. but text font looks bold for
-# some reasons..
-
-ggsavePP(plot = pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_P_Temp", width = 6.5, height = 6)
 
 ################################################
 # confidence interval for estimated parameters #
