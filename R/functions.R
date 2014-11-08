@@ -737,8 +737,8 @@ StatTable <- function(x, variable) { # x is anova result
 ############################################
 # Create df to add a stat table to figures #
 ############################################
-StatPositionDF <- function(StatRes, variable, ytop, ymax, gap = .06){
-  d <- data.frame(variable, ytop, gap = 0.06 * ymax) 
+StatPositionDF <- function(StatRes, variable, ytop, ymax, gap = .07){
+  d <- data.frame(variable, ytop, gap = gap * ymax) 
   # ytop is y coordinate for the top (i.e. CO2) of the table for each fig 
   # (variable), ymax is the maximum value of the plot (i.e. max(mean+SE)).  
   # 0.1 * ymax is used to determine the gap between each row of the table
