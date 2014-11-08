@@ -274,9 +274,9 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, S
   
   ## create df
   statDF <- StatPositionDF(StatRes = StatRes, 
-                           variable = levels(ymaxDF$variable), 
+                           variable = levels(ylengthDF$variable), 
                            ytop = StatY,
-                           ymax = ymaxDF$ymax)
+                           ylength = ylengthDF$ylength)
   # create a plot  
   p <- ggplot(data, aes(x = date, y = Mean, group = co2))
   
