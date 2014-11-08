@@ -76,9 +76,6 @@ summary(Fml_post)
 
 plot(allEffects(Fml_post))
 
-# compared  squared r
-rsquared.glmm(list(Iml_post, Fml_post, testml))
-
 # model diagnosis
 plot(Fml_post)
 qqnorm(resid(Fml_post))
@@ -204,6 +201,9 @@ Anova(Fml_ancv)
 
 # F-test
 AnvF_no
+
+# squared R
+rsquared.glmm(Fml_ancv)
 
 # 95% CI for estimated parameter
 Est.val
