@@ -55,7 +55,7 @@ ymaxDF <- ddply(TrtMean, .(variable), function(x) max(x$Mean + x$SE, na.rm = TRU
 p <- WBFig(data = TrtMean, ylab = expression(IEM~adsorbed~nutrients~(ng~cm^"-2"~d^"-1")),
            StatRes = Stat_CO2Time, 
            StatY = ymaxDF[ , 2])
-ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM2", plot = p, width = 6, height = 6)
+ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM", plot = p, width = 6, height = 6)
 
 ########################################################
 # plot soil moist and temp for each incubation periods #
