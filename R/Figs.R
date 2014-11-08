@@ -42,11 +42,20 @@ ggsavePP(filename = "output//figs/FACE_IEM_CO2Trt", plot = pl, width = 6, height
 ########################
 # Plot for publication #
 ########################
+# load stat table, note that if you want the most updated one, you need to run
+# Stat.R first
+load("output//data//CO2Time_Stat.RData")
+
 # theme
 theme_set(theme_bw())
-p <- WBFig(data = TrtMean, ylab = expression(IEM~adsorbed~nutrients~(ng~cm^"-2"~d^"-1")))
-ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM", plot = p, width = 6, height = 6)
 
+# ymax value for each variable
+ymaxDF <- ddply(TrtMean, .(variable), function(x) max(x$Mean + x$SE, na.rm = TRUE))
+
+p <- WBFig(data = TrtMean, ylab = expression(IEM~adsorbed~nutrients~(ng~cm^"-2"~d^"-1")),
+           StatRes = Stat_CO2Time, 
+           StatY = ymaxDF[ , 2])
+ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM2", plot = p, width = 6, height = 6)
 
 ########################################################
 # plot soil moist and temp for each incubation periods #
