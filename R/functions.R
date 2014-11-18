@@ -737,3 +737,13 @@ StatTable <- function(x, variable) { # x is anova result
   result <- result[order(result$predictor), ]
   return(result)
 }
+
+###############################
+# Compute block ratio (e-a)/a #
+###############################
+BlockRatio <- function(data){
+  Rmean <- ddply(data, .(date, time, block, ring, co2, variable), summarise, Mean = mean(value, na.rm = TRUE))
+  blockR <- ddply(Rmean, .(date, time, block, variable), summarise, R = Mean[co2 == "elev"]/Mean[co2 == "amb"]-1)
+  blockRMean <- ddply(blockR, .(date, time, variable), summarise, value = mean(R, na.rm = TRUE))
+  dcast(blockRMean, date+time~variable)
+}

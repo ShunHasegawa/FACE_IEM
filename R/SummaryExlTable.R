@@ -12,6 +12,9 @@ iemRmOl$nh[which(iemRmOl$nh > 800)] <- NA
 # melt dataset
 iemMlt <- melt(iemRmOl, id = names(iem)[which(!(names(iem) %in% c("no", "nh", "p")))])
 
+# response ratio calculated for each block
+BlockRatio(iemMlt)
+
 # Ring summary table & mean
 RngSmmryTbl <- dlply(iemMlt, .(variable), function(x) CreateTable(x, fac = "ring", digit = 1, nsmall = 2))
 RngMean <- ddply(iemMlt, .(time, date, co2, ring, variable), summarise, value = mean(value, na.rm = TRUE)) 
