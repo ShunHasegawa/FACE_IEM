@@ -152,12 +152,12 @@ PltMean <- function(data){
   
   unt <- substitute((ng~cm^"-2" ~ d^"-1"))
   ylabs <- c(expression(),
-            bquote(IEM~adsorbed~nutrients~.(unt)),
-            bquote(atop(paste(IEM - adsorbed ~ NO[3]^"-" - N), 
+            bquote(IEM*-adsorbed~nutrients~.(unt)),
+            bquote(atop(paste(IEM *- adsorbed ~ NO[3]^"-"), 
                             paste(.(unt)))), 
-            bquote(atop(paste(IEM - adsorbed ~ NH[4]^"+" - N), 
+            bquote(atop(paste(IEM *- adsorbed ~ NH[4]^"+"), 
                             paste(.(unt)))), 
-            bquote(atop(paste(IEM - adsorbed ~ PO[4]^"3-" - N), 
+            bquote(atop(paste(IEM *- adsorbed ~ PO[4]^"3-"), 
                             paste(.(unt))))
             )
   # subsitute returens argument as it is without calculation (similar to expression())
@@ -183,7 +183,7 @@ PltMean <- function(data){
   
   p2 <- p + geom_line(size = 1) + 
     geom_errorbar(aes_string(ymin = "Mean - SE", ymax = "Mean + SE", col = colfactor), width = 5) + 
-    labs(x = "Time", y = ylab) +
+    labs(x = "Month", y = ylab) +
     geom_vline(xintercept = as.numeric(as.Date("2012-09-18")), linetype = "dashed", col = "black") +
     scale_x_date(breaks= date_breaks("2 month"),
                  labels = date_format("%b-%y"),
