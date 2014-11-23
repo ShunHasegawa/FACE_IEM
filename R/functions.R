@@ -181,9 +181,9 @@ PltMean <- function(data){
   
   p <- ggplot(data, aes_string(x = "date", y = "Mean", col = colfactor))
   
-  p2 <- p + geom_line(size = 1, position = position_dodge(10), alpha = .8) + 
+  p2 <- p + geom_line(size = 1.5, position = position_dodge(10), alpha = .8) + 
     geom_errorbar(aes_string(ymin = "Mean - SE", ymax = "Mean + SE", col = colfactor), 
-                  width = 15,
+                  width = 20,
                   position = position_dodge(10),
                   , alpha = .8) + 
     labs(x = "Month", y = ylab) +

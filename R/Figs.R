@@ -20,6 +20,23 @@ TrtFg <- dlply(TrtMean, .(variable), PltMean)
 fls <- paste("output//figs/FACE_IEM_CO2Trt_", vars, sep = "")
 l_ply(1:3, function(x) ggsavePP(filename = fls[x], plot = TrtFg[[x]], width = 6, height = 3))
 
+################
+## for poster ##
+################
+poster_theme <- theme(panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(),
+                     axis.text.x = element_text(angle=45, vjust= 1, hjust = 1, 
+                                                size = 13),
+                     legend.position = "non",
+                     axis.title.y = element_text(size = 15),
+                     plot.title = element_text(size = 25, face = "bold"))
+
+pl  <- PltMean(subsetD(TrtMean, variable == "p")) +
+  ggtitle("Plant accessible P") +
+  labs(x = NULL, y = expression(IEM*-adsorbed~PO[4]^"3-"~(ng~cm^"-2" ~ d^"-1")))+
+  poster_theme
+ggsavePP(filename = "output//figs/GSBI_Poster/FACE_IEM_CO2_P", plot = pl, width = 6, height = 4)
+
 ##################################
 # plot all nutrient in one graph #
 ##################################
