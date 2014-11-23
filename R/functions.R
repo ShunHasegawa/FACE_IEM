@@ -181,13 +181,16 @@ PltMean <- function(data){
   
   p <- ggplot(data, aes_string(x = "date", y = "Mean", col = colfactor))
   
-  p2 <- p + geom_line(size = 1) + 
-    geom_errorbar(aes_string(ymin = "Mean - SE", ymax = "Mean + SE", col = colfactor), width = 5) + 
+  p2 <- p + geom_line(size = 1, position = position_dodge(10), alpha = .8) + 
+    geom_errorbar(aes_string(ymin = "Mean - SE", ymax = "Mean + SE", col = colfactor), 
+                  width = 15,
+                  position = position_dodge(10),
+                  , alpha = .8) + 
     labs(x = "Month", y = ylab) +
     geom_vline(xintercept = as.numeric(as.Date("2012-09-18")), linetype = "dashed", col = "black") +
     scale_x_date(breaks= date_breaks("2 month"),
                  labels = date_format("%b-%y"),
-                 limits = as.Date(c("2012-7-1", "2014-4-2"))) +
+                 limits = as.Date(c("2012-6-15", "2014-4-2"))) +
     theme(axis.text.x  = element_text(angle=45, vjust= 1, hjust = 1))
   
   # change colors, linetype and associated legend according to plotting groups (ring or treatment)
