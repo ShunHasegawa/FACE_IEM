@@ -420,11 +420,10 @@ bxcxplts <- function(value, data, sval, fval){
 # create table of contrast results #
 ####################################
 cntrstTbl <- function(cntrstRes, data, ...){
-  d <- unique(data$date)
-  ds <- format(d, format = "%b-%Y")
-  
+  d <- unique(data[, c("date", "time")])
   Df <- data.frame(
-    date = ds,
+    time = d$time,
+    date = d$date,
     contrast  =  cntrstRes$Contrast,
     SE = cntrstRes$SE,
     t = cntrstRes$testStat,
