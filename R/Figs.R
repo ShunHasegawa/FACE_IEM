@@ -43,6 +43,7 @@ ggsavePP(filename = "output//figs/FACE_IEM_CO2Trt", plot = pl, width = 6, height
 # Plot for publication #
 ########################
 # load stat table, note that if you want the most updated one, you need to run
+
 # Stat.R first
 load("output//data//CO2Time_Stat.RData")
 
@@ -52,9 +53,20 @@ theme_set(theme_bw())
 # ymax value for each variable
 ymaxDF <- ddply(TrtMean, .(variable), function(x) max(x$Mean + x$SE, na.rm = TRUE))
 
+# load contrastDF to annotate stat result and combine with max values from
+# TrtMean as y position
+load("output//data/FACE_IEM_ContrastDF.RData")
+Antt_CntrstDF <- merge(ContrastDF, 
+                       ddply(TrtMean, .(date, variable), summarise, yval = max(Mean + SE)),
+                       # this return maximum values
+                       by = c("date", "variable"), all.x = TRUE)
+Antt_CntrstDF$co2 <- "amb" # co2 column is required as it's used for mapping
+
 p <- WBFig(data = TrtMean, ylab = expression(IEM*-adsorbed~nutrients~(ng~cm^"-2"~d^"-1")),
            StatRes = Stat_CO2Time, 
-           StatY = ymaxDF[ , 2])
+           StatY = ymaxDF[ , 2]) +
+  geom_text(data = Antt_CntrstDF, aes(x = date, y = yval, label = stars), vjust = 0)
+
 ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM", plot = p, width = 6, height = 6)
 
 ########################################################
