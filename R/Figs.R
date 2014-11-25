@@ -86,7 +86,7 @@ pl  <- PltMean(subsetD(TrtMean, variable == "p")) +
   poster_theme +
   geom_text(data = subset(Antt_CntrstDF, variable == "p"),
             aes(x = date, y = yval, label = stars), 
-            col = "black", vjust = 0)
+            col = "black", vjust = 0, size = 7)
 ggsavePP(filename = "output//figs/GSBI_Poster/FACE_IEM_CO2_P", plot = pl, width = 6, height = 4)
 
 
