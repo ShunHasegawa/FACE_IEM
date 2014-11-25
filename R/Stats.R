@@ -89,6 +89,13 @@ Stat_CO2Time <- ldply(names(CO2TimeStatList),
                       function(x) StatTable(CO2TimeStatList[[x]], variable = x))
 save(Stat_CO2Time, file = "output//data/CO2Time_Stat.RData")
 
+
+########################
+## Result of contrast ##
+########################
+ContrastDF <- rbind(FACE_IEM_PostCO2_P_CntrstDf, FACE_IEM_PostCO2_NO_CntrstDf)
+save(ContrastDF, file = "output//data/FACE_IEM_ContrastDF.RData")
+
 ################################
 # Plot predicted values and CI #
 ################################

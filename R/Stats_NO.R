@@ -89,7 +89,7 @@ lmeMod <- lme(log(no) ~ co2 * time, random = ~1|block/ring/id, data = NoRmOl)
 cntrst<- contrast(lmeMod, 
                   a = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "amb"),
                   b = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "elev"))
-FACE_IEM_PostCO2_NO_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], digit = 2)
+FACE_IEM_PostCO2_NO_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], variable = "no", digit = 2)
 FACE_IEM_PostCO2_NO_CntrstDf
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_withSoilVar

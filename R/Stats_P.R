@@ -100,7 +100,7 @@ lmeMod <- lme(log(p) ~ co2 * time, random = ~1|block/ring/id,
 cntrst<- contrast(lmeMod, 
                   a = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "amb"),
                   b = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "elev"))
-FACE_IEM_PostCO2_P_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], digit = 2)
+FACE_IEM_PostCO2_P_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], variable  = "p", digit = 2)
 FACE_IEM_PostCO2_P_CntrstDf
 
 ## ---- Stat_FACE_IEM_Phosphate_postCO2_withSoilVar

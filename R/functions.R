@@ -419,19 +419,19 @@ bxcxplts <- function(value, data, sval, fval){
 ####################################
 # create table of contrast results #
 ####################################
-cntrstTbl <- function(cntrstRes, data, ...){
+cntrstTbl <- function(cntrstRes, data, variable, ...){
   d <- unique(data[, c("date", "time")])
   Df <- data.frame(
-    time = d$time,
-    date = d$date,
+    d,
     contrast  =  cntrstRes$Contrast,
     SE = cntrstRes$SE,
     t = cntrstRes$testStat,
     df = cntrstRes$df,
-    P.value = cntrstRes$Pvalue)
-  return(format(Df, ...))
+    P.value = cntrstRes$Pvalue,
+    FormatPval(cntrstRes$Pvalue),
+    variable = variable)
+  return(Df)
 }
-
 
 ###############
 # Print table #
@@ -696,7 +696,7 @@ source("R/rsquaredglmm.R")
 # Return star based on P value #
 ################################
 FormatPval <- function(Pval) {
-  stars <- ifelse(Pval > .1, "ns",
+  stars <- ifelse(Pval > .1, "",
                   ifelse(Pval > .05, ".",
                          ifelse(Pval > .01, "*",
                                 ifelse(Pval > .001, "**",
