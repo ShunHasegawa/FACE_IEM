@@ -185,7 +185,7 @@ PltMean <- function(data){
     geom_rect(xmin = -Inf, 
             xmax = as.numeric(as.Date("2012-09-18")),
             ymin = -Inf, ymax = Inf,
-            fill = "grey90", col = "grey90") +
+            fill = "grey80", col = "grey80") +
     geom_line(size = 1.5, position = position_dodge(10), alpha = .8) + 
     geom_errorbar(aes_string(ymin = "Mean - SE", ymax = "Mean + SE", col = colfactor), 
                   width = 20,
