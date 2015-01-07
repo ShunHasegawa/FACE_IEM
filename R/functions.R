@@ -407,11 +407,11 @@ bxplts <- function(value, ofst = 0, data, ...){
 
 # multiple box-cox power plot for different constant values
 bxcxplts <- function(value, data, sval, fval){
+  par.def <- par() # current graphic conditions
   data$yval <- data[[value]]
   ranges <- seq(sval, fval, (fval - sval)/9)
   
   # store parameters given from box-cox plot
-  par(mfrow = c(5, 2))
   BCmax <- vector()
   for (i in 1:10){
     data$y <- data$yval + ranges[i]
@@ -421,8 +421,7 @@ bxcxplts <- function(value, data, sval, fval){
   
   # plot box plot with poer given from box-box for 
   # each contstant value
-  par(mfrow = c(5, 2))
-  par(omi = c(0, 0, 0, 0), mai = c(0.4, 0.4, 0.4, 0))
+  par(mfrow = c(5, 2), omi = c(0, 0, 0, 0), mai = c(0.4, 0.4, 0.4, 0))
   sapply(1:10, function(x) {
     boxplot((yval + ranges[x]) ^ BCmax[x] ~ co2 * time, 
             main = "", data = data)
@@ -431,7 +430,7 @@ bxcxplts <- function(value, data, sval, fval){
                        ", boxcox=", round(BCmax[x], 4)),
           col.main = texcol)
   })
-  par(mfrow = c(1,1))
+  par(par.def) # set the graphic conditions back
 }
 
 ####################################
@@ -715,7 +714,7 @@ source("R/rsquaredglmm.R")
 ################################
 FormatPval <- function(Pval) {
   stars <- ifelse(Pval > .1, "",
-                  ifelse(Pval > .05, ".",
+                  ifelse(Pval > .05, "scriptstyle('\u2020')",
                          ifelse(Pval > .01, "*",
                                 ifelse(Pval > .001, "**",
                                        c("***")))))
@@ -737,8 +736,8 @@ StatTable <- function(x, variable) { # x is anova result
   
   # add a row for column name of the table in the fig 
   df <- rbind(df, data.frame(predictor = "", 
-                             stars = "italic('P>F')", 
-                             p = "italic('P>F')"))
+                             stars = "italic('P')", 
+                             p = "italic('P')"))
   
   result <- merge(df, data.frame(predictor = c("co2", "time", "co2:time")), all = TRUE)
   
