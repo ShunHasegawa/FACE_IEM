@@ -163,24 +163,24 @@ qqline(resid(Fml_ancv))
 ##########################
 ## plot predicted value ##
 ##########################
-par(mfrow = c(1,2))
-# moist
-l_ply(c(12, 23), function(x){
-  PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = x),
-            ylab = paste("IEM-P (Temp = ", x, ")", sep = ""),
-            ylim = c(0, 6),
-            trans = exp,
-            data = postDF)
-})
-
-# temp
-l_ply(c(.05, .25), function(x){
-  PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = x),
-            ylab = paste("IEM-P (Moist = ", x, ")", sep = ""),
-            ylim = c(0, 6),
-            trans = exp,
-            data = postDF)
-})
+# par(mfrow = c(1,2))
+# # moist
+# l_ply(c(12, 23), function(x){
+#   PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = x),
+#             ylab = paste("IEM-P (Temp = ", x, ")", sep = ""),
+#             ylim = c(0, 6),
+#             trans = exp,
+#             data = postDF)
+# })
+# 
+# # temp
+# l_ply(c(.05, .25), function(x){
+#   PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = x),
+#             ylab = paste("IEM-P (Moist = ", x, ")", sep = ""),
+#             ylim = c(0, 6),
+#             trans = exp,
+#             data = postDF)
+# })
 
 ################################################
 # confidence interval for estimated parameters #
@@ -248,22 +248,22 @@ rsquared.glmm(Fml_ancv)
 # 95% CI for estimated parameter
 Est.val
 
-# plot the predicted values
-par(mfrow = c(1,2))
-# moist
-l_ply(c(12, 23), function(x){
-  PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = x),
-            ylab = paste("IEM-P (Temp = ", x, ")", sep = ""),
-            ylim = c(0, 6),
-            trans = exp,
-            data = postDF)
-})
-
-# temp
-l_ply(c(.05, .25), function(x){
-  PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = x),
-            ylab = paste("IEM-P (Moist = ", x, ")", sep = ""),
-            ylim = c(0, 6),
-            trans = exp,
-            data = postDF)
-})
+# # plot the predicted values
+# par(mfrow = c(1,2))
+# # moist
+# l_ply(c(12, 23), function(x){
+#   PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = x),
+#             ylab = paste("IEM-P (Temp = ", x, ")", sep = ""),
+#             ylim = c(0, 6),
+#             trans = exp,
+#             data = postDF)
+# })
+# 
+# # temp
+# l_ply(c(.05, .25), function(x){
+#   PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = x),
+#             ylab = paste("IEM-P (Moist = ", x, ")", sep = ""),
+#             ylim = c(0, 6),
+#             trans = exp,
+#             data = postDF)
+# })

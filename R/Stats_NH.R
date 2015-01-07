@@ -157,8 +157,8 @@ Est_nh <- ANCV_Tbl(Est.val)
 ########################
 # Plot predicted value #
 ########################
-PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF)
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
+# PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF)
+# PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
 
 ## ---- Stat_FACE_IEM_Ammonium_preCO2_Smmry
 
@@ -214,5 +214,5 @@ rsquared.glmm(Fml_ancv)
 Est.val
 
 # plot the predicted values
-PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF)
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
+# PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF)
+# PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
