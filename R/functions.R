@@ -116,8 +116,26 @@ CreateTable <- function(dataset, fac, ...){
   colnames(ses)[2:ncol(ses)] <- paste(colnames(ses)[2:ncol(ses)],"SE",sep=".")
   samples <- cast(a,date~variable,function(x) sum(!is.na(x))) #sample size
   colnames(samples)[2:ncol(samples)] <- paste(colnames(samples)[2:ncol(samples)],"N",sep=".")
-  mer <- Reduce(function(...) merge(..., by = "date"), list(means, ses, samples)) #merge datasets
-  mer <- mer[,c(1, order(names(mer)[-grep("date|N", names(mer))])+1, grep("N", names(mer)))] #re-order columns
+  
+  # CO2 effects
+  if(fac == "co2"){
+    # Response ratio (e/a-1) cluculated for each block
+    blockR <- ddply(dataset, .(date, block), summarise, R = value[co2 == "elev"]/value[co2 == "amb"]-1)
+    # remove Inf
+    blockR$R[is.infinite(blockR$R)] <- NA
+    # mean of Ratio for each date
+    blockRMean <- ddply(blockR, .(date), summarise, Ratio = mean(R, na.rm = TRUE))
+    
+    # merge datasets
+    mer <- Reduce(function(...) merge(..., by = "date"), list(means, ses, samples, blockRMean)) 
+  } else { # no need calculate Ratio for Ring summary table
+    mer <- Reduce(function(...) merge(..., by = "date"), list(means, ses, samples)) 
+  }
+  
+  # re-order columns
+  mer <- mer[,c(1, 
+                order(names(mer)[-grep("date|N|Ratio", names(mer))])+1, 
+                grep("N|Ratio", names(mer)))]
   mer$date <- as.character(mer$date) # date is turned into character for knitr output 
   return(format(mer, ...))
 }
@@ -738,14 +756,4 @@ StatTable <- function(x, variable) { # x is anova result
   result$variable <- variable
   result <- result[order(result$predictor), ]
   return(result)
-}
-
-###############################
-# Compute block ratio (e-a)/a #
-###############################
-BlockRatio <- function(data){
-  Rmean <- ddply(data, .(date, time, block, ring, co2, variable), summarise, Mean = mean(value, na.rm = TRUE))
-  blockR <- ddply(Rmean, .(date, time, block, variable), summarise, R = Mean[co2 == "elev"]/Mean[co2 == "amb"]-1)
-  blockRMean <- ddply(blockR, .(date, time, variable), summarise, value = mean(R, na.rm = TRUE))
-  dcast(blockRMean, date+time~variable)
 }
