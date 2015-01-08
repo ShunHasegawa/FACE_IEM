@@ -68,14 +68,19 @@ Anova(Iml_post)
 # only after co2-switced-on.
 
 Iml_post_2 <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
-                 data = postDF)
+                   data = postDF)
 Anova(Iml_post_2)
+Anova(Iml_post_2, test.statistic = "F")
 
 # The final model is:
 Fml_post <- stepLmer(Iml_post_2)
 Fml_post@call
+# CO2 is removed but it was marginally significant so keep
 
+Fml_post <- lmer(log(nh) ~ co2 + time + (1|block) + (1|ring) + (1|id), 
+                 data = postDF)
 Anova(Fml_post)
+
 AnvF_post_nh <- Anova(Fml_post, test.statistic = "F")
 AnvF_post_nh
 
