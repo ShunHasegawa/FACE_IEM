@@ -62,6 +62,7 @@ bxplts(value= "no", data= NoRmOl)
 Iml_post <- lmer(log(no) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
                  data = NoRmOl)
 Anova(Iml_post)
+Anova(Iml_post, test.statistic = "F")
 # keep interaction
 
 # The final model is:
