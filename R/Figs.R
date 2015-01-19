@@ -80,13 +80,16 @@ poster_theme <- theme(panel.grid.major = element_blank(),
                       axis.title.y = element_text(size = 15),
                       plot.title = element_text(size = 25, face = "bold"))
 
-pl  <- PltMean(subsetD(TrtMean, variable == "p")) +
-  ggtitle("Plant accessible P") +
+pl_Meeting  <- PltMean(subsetD(TrtMean, variable == "p")) +
   labs(x = NULL, y = expression(IEM*-adsorbed~PO[4]^"3-"~(ng~cm^"-2" ~ d^"-1")))+
   poster_theme +
   geom_text(data = subset(Antt_CntrstDF, variable == "p"),
             aes(x = date, y = yval, label = stars), 
             col = "black", vjust = 0, size = 7)
+ggsavePP(filename = "output//figs/GroupMeeting//FACE_IEM_CO2_P", plot = pl_Meeting,
+         width = 6, height = 4)
+
+pl  <- pl_Meeting + ggtitle("Plant accessible P")
 ggsavePP(filename = "output//figs/GSBI_Poster/FACE_IEM_CO2_P", plot = pl, width = 6, height = 4)
 
 
