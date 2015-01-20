@@ -22,6 +22,9 @@ source("R/Figs.R")
   # Don't worry about the warning message saying containing missing values. This
   # is due to missing soil variable data during 1st incubation period.
 
+# save all objects so far
+save.image(file = "output/data/Allobj.RData")
+
 #########
 # Stats #
 #########
