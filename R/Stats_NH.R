@@ -74,11 +74,13 @@ Anova(Iml_post_2, test.statistic = "F")
 
 # The final model is:
 Fml_post <- stepLmer(Iml_post_2)
+
 Fml_post@call
 # CO2 is removed but it was marginally significant so keep
 
 Fml_post <- lmer(log(nh) ~ co2 + time + (1|block) + (1|ring) + (1|id), 
                  data = postDF)
+
 Anova(Fml_post)
 
 AnvF_post_nh <- Anova(Fml_post, test.statistic = "F")
@@ -90,6 +92,16 @@ CIdf_post <- CIdf(model = Fml_post)
 summary(Fml_post)
 
 plot(allEffects(Fml_post))
+
+#########################################
+# Remove non-significant random factors #
+#########################################
+Fml_post2 <- stepLmer(Iml_post_2, red.rndm = TRUE)
+Anova(Fml_post2, test.statistic = "F")
+  # results are quiete different from above. DF for residual gets a lot larger
+  # after removing random factors
+
+
 
 # model diagnosis
 plot(Fml_post)
