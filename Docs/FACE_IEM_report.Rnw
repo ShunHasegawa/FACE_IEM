@@ -3,6 +3,7 @@
 \usepackage{fullpage}
 \usepackage{pdfpages}
 \usepackage{float}
+\usepackage[hidelinks]{hyperref} % add link on the list of contetns
 
 \title{FACE IEM-adsorbed nutrient results -Summary Stats-}
 \author{Shun Hasegawa}
@@ -16,15 +17,11 @@ opts_knit$set(root.dir=normalizePath('../'))
 @
 
 <<readFiles, include=FALSE>>=
-.libPaths("packrat/lib/x86_64-w64-mingw32//3.1.1") 
-# path to packrat library. knitr use local drive library as default
-
 source("R/pckg.R")
-source("R//functions.R")
-load("output/data/FACE_IEM.RData")
+load("output//data/Allobj.RData")
 load("output//data/postDF.RData")
-source("R/SummaryExlTable.R")
-source("R/Figs.R")
+load("output//data/MoistLev_TempCont_DF") # containes 3 levels of Moist & continuous Temp
+load("output//data/MoistCont_TempLev_DF") # containes continuous moist  & 3 levels of Temp
 @
 
 \maketitle

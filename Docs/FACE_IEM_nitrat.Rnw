@@ -11,30 +11,22 @@
 % @
 % 
 % <<readFiles, include=FALSE>>=
-% .libPaths("packrat/lib/x86_64-w64-mingw32//3.1.0") 
-% #path to packrat library. knitr use local drive library as
-% #default
 % source("R/pckg.R")
-% source("R//functions.R")
-% load("output/data/FACE_IEM.RData")
+% load("output//data/Allobj.RData")
 % load("output//data/postDF.RData")
-% source("R/SummaryExlTable.R")
-% source("R/Figs.R")
+% load("output//data/MoistLev_TempCont_DF") # containes 3 levels of Moist & continuous Temp
+% load("output//data/MoistCont_TempLev_DF") # containes continuous moist  & 3 levels of Temp
 % @
 
-\subsection{Nitrate}
+\section{Nitrate}
 
 %%% CO2 trt %%%
-\subsubsection{CO$_2$ trt}
+\subsection{CO$_2$ trt}
 
 \begin{figure}[!h]\label{figure:CO2IEM_Nitrate}
 
 \begin{center}
-
-<<Figco2Nitrate, echo=FALSE, fig.height=3, fig.width=6>>=
-TrtFg[[1]]
-@
-
+\includegraphics[width=6in]{../output//figs//FACE_IEM_CO2Trt_Nitrate.pdf}
 \caption{IEM-adsorbed nitrate at CO$_2$ treatments}
 \end{center}
 \end{figure}
@@ -49,7 +41,7 @@ printTbl(TrtSmmryTbl[[1]],
 %%% Stats %%%
 %%%%%%%%%%%%%
 \clearpage
-\paragraph{Stats}
+\subsection{Stats}
 
 <<ReadScript_FACE_IEM_Nitrate, echo=FALSE, cache=FALSE, include=FALSE>>=
 read_chunk('R/Stats_NO.R')
@@ -61,13 +53,13 @@ source("R/Stats_NO.R")
 %% Summary %%
 %%%%%%%%%%%%%
 
-\paragraph{Pre-CO$_2$}
+\subsubsection{Pre-CO$_2$}
 \noindent
 
 <<Stat_FACE_IEM_Nitrate_preCO2_Smmry, echo=TRUE, results='markup'>>=
 @
 
-\paragraph{Post-CO$_2$}
+\subsubsection{Post-CO$_2$}
 \noindent
 
 <<Stat_FACE_IEM_Nitrate_postCO2_Smmry, echo=TRUE, results='markup'>>=
@@ -84,14 +76,13 @@ source("R/Stats_NO.R")
 % %% Detail %%
 % %%%%%%%%%%%%
 % 
-% \paragraph{Pre-CO$_2$}
+% \subsubsection{Pre-CO$_2$}
 % \noindent
 % 
 % <<Stat_FACE_IEM_Nitrate_preCO2, echo=TRUE, results='markup'>>=
 % @
 % 
-% \paragraph{Stats}
-% \paragraph{Post-CO$_2$}
+% \subsubsection{Post-CO$_2$}
 % \noindent
 % 
 % <<Stat_FACE_IEM_Nitrate_postCO2, echo=TRUE, results='markup'>>=
@@ -104,14 +95,12 @@ source("R/Stats_NO.R")
 
 %%% Ring %%%
 \clearpage
-\subsubsection{Ring}
+\subsection{Ring}
 
 \begin{figure}[!h]\label{figure:RingIEM_nitrate}
 \begin{center}
 
-<<FigChNitrate, echo=FALSE, fig.height=3, fig.width=6>>=
-RngFg[[1]]
-@
+\includegraphics[width=6in]{../output//figs/FACE_IEM_Ring_Nitrate.pdf}
 
 \caption{IEM-adsorbed nitrate in each ring}
 \end{center}
