@@ -20,3 +20,4 @@ library(foreach)
 library(doParallel) # set up parallel backend for foreach
 library(snow) # require to difine makeCluster for foreach
 library(doSNOW)
+library(grid)
