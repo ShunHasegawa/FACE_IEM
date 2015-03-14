@@ -264,9 +264,12 @@ StatPositionDF <- function(StatRes, variable, ytop, ylength, gap = .07){
 # Fig for publication #
 #######################
 # define graphic background
-science_theme <- theme(panel.grid.major = element_blank(),
+science_theme <- theme(panel.border = element_rect(colour = "black"),
+                       panel.grid.major = element_blank(),
                        panel.grid.minor = element_blank(),
                        axis.text.x  = element_text(angle=45, vjust= 1, hjust = 1),
+                       axis.ticks.length = unit(-.2, "lines"),
+                       axis.ticks.margin = unit(.5, "lines"),
                        legend.position = c(.5, .93), 
                        legend.title = element_blank(),
                        legend.key.width = unit(2, "lines"),
@@ -278,9 +281,10 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, S
     
   # df for sub-labels
   subLabDF <- with(data, 
-                   data.frame(xv = as.Date("2012-6-15"),
+                   data.frame(xv = as.Date("2012-6-21"),
                               ddply(data, .(variable), summarise, yv = max(Mean + SE)),
-                              labels = LETTERS[1:length(levels(variable))],
+                              labels = paste("(", letters[1:length(levels(variable))], ")", 
+                                             sep = ""),
                               co2 = "amb"))
     # co2 is required as group = co2 is used in the main plot mapping
   
@@ -300,6 +304,7 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, S
                            variable = levels(ylengthDF$variable), 
                            ytop = StatY,
                            ylength = ylengthDF$ylength)
+  
   # create a plot  
   p <- ggplot(data, aes(x = date, y = Mean, group = co2))
   
@@ -311,7 +316,7 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, S
     labs(x = "Month", y = ylab) +
     geom_vline(xintercept = as.numeric(as.Date("2012-09-18")), 
                linetype = "dashed", col = "black") +
-    scale_x_date(breaks= date_breaks("2 month"),
+    scale_x_date(breaks= date_breaks("3 month"),
                  labels = date_format("%b-%y"),
                  limits = as.Date(c("2012-6-15", "2014-4-2"))) +
     scale_shape_manual(values = c(24, 21), labels = c("Ambient", expression(eCO[2]))) +
