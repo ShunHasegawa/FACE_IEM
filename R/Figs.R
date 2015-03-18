@@ -67,7 +67,8 @@ p <- WBFig(data = TrtMean, ylab = expression(IEM*-adsorbed~nutrients~(ng~cm^"-2"
            StatY = ymaxDF[ , 2]*1.08) +
   geom_text(data = Antt_CntrstDF, aes(x = date, y = yval, label = stars), vjust = 0)
 
-ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM", plot = p, width = 6, height = 6)
+ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM", 
+         plot = p, width = 6.65, height = 6.65)
 
 ########################################################
 # plot soil moist and temp for each incubation periods #
