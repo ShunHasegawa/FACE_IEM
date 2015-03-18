@@ -322,7 +322,7 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, S
     labs(x = "Month", y = ylab) +
     scale_x_date(breaks= date_breaks("3 month"),
                  labels = date_format("%b-%y"),
-                 limits = as.Date(c("2012-6-15", "2014-3-20"))) +
+                 limits = as.Date(c("2012-6-15", "2014-3-29"))) +
     scale_fill_manual(values = c("black", "white"), 
                       labels = c("Ambient", expression(eCO[2]))) +
     scale_linetype_manual(values = c("solid", "dashed"), 
