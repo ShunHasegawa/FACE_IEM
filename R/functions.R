@@ -674,16 +674,19 @@ ScatterPlot <- function(df, xval, breakn = 5, xlab, gridval){
     geom_ribbon(aes(ymin = lci, ymax = uci), alpha = .4, color = NA) +
     # color = NA removes the ribbon edge
     geom_point(data = postDF_Mlt, aes_string(x = xval, y = "log(value)"), 
-               alpha = .6, size = 1) +
+               alpha = .6, size = 2) +
     scale_color_manual(values = c("blue", "red"), 
                        labels =c("Ambient", expression(eCO[2]))) +
     scale_fill_manual(values = c("blue", "red"), 
                       labels = c("Ambient", expression(eCO[2]))) +
     scale_x_continuous(breaks = pretty(df[, xval], n = breakn)) +
-    theme(panel.grid.major = element_blank(),
+    theme(panel.border = element_rect(colour = "black"),
+          panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
-          legend.position = c(.12, .96), 
+          legend.key.width = unit(1.5, "lines"),
+          legend.position = c(.12, .73), 
           legend.title = element_blank(),
+          legend.key = element_blank(),
           legend.key.size = unit(.2, "inch"),
           legend.background = element_rect(fill = alpha('white', 0)),
           axis.title = element_text(face = "plain"),
