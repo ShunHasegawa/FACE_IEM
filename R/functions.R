@@ -683,10 +683,12 @@ ScatterPlot <- function(df, xval, breakn = 5, xlab, gridval){
     theme(panel.border = element_rect(colour = "black"),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
-          legend.key.width = unit(1.5, "lines"),
-          legend.position = c(.12, .73), 
+          axis.ticks.length = unit(-.2, "lines"),
+          axis.ticks.margin = unit(.5, "lines"),
           legend.title = element_blank(),
           legend.key = element_blank(),
+          legend.key.width = unit(1.5, "lines"),
+          legend.position = c(.12, .73), 
           legend.key.size = unit(.2, "inch"),
           legend.background = element_rect(fill = alpha('white', 0)),
           axis.title = element_text(face = "plain"),
@@ -695,7 +697,6 @@ ScatterPlot <- function(df, xval, breakn = 5, xlab, gridval){
     labs(x = xlab, y = expression(log(IEM*-adsorbed~nutrients~(ng~cm^"-2"~d^"-1"))))
   return(scatter)
 } 
-
 
 ## Boxplot for environmental vairalbe (moisture and temperature) ##
 envPlot <- function(val, ylab){
@@ -706,8 +707,14 @@ envPlot <- function(val, ylab){
   pl <- ggplot(DF, aes(xmin = x - .3, xmax = x + .3,
                        ymin = ymin, ymax = ymax)) +
     geom_rect(fill = "gray30") +
-    theme(panel.grid.major = element_blank(),
+    theme(panel.border = element_rect(colour = "black"),
+          panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
+          axis.ticks.length = unit(-.2, "lines"),
+          axis.ticks.margin = unit(.5, "lines"),
+          legend.title = element_blank(),
+          legend.key.width = unit(2.5, "lines"),
+          legend.key = element_blank(),      
           legend.position = "none", 
           axis.ticks.y = element_blank(),
           axis.text.y = element_blank(),
