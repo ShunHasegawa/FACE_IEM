@@ -18,7 +18,7 @@
 \section{Nitrate}
 
 %%% CO2 trt %%%
-\subsection{CO$_2$ trt}
+\subsection{CO$_2$ treatment}
 
 \begin{figure}[!h]\label{figure:CO2IEM_Nitrate}
 \includegraphics{../output/figs/FACE_IEM_CO2Trt_Nitrate.pdf}

@@ -22,7 +22,7 @@
 \section{Ammonium}
 
 %%% CO2 trt %%%
-\subsection{CO$_2$ trt}
+\subsection{CO$_2$ treatment}
 
 \begin{figure}[!h]\label{figure:CO2IEM_Ammonium}
 \includegraphics{../output/figs/FACE_IEM_CO2Trt_Ammonium.pdf}
