@@ -9,42 +9,30 @@ range(iem$no)
 bxplts(value= "no", data= subsetD(iem, pre))
 # sqrt seems slightly better
 
-# different random factor strucures
-m1 <- lme(sqrt(no) ~ co2 * time, random = ~1|block/ring/plot,  data = subsetD(iem, pre))
-RndmComp(m1)$anova
-# m3 is better
-RnMl <- RndmComp(m1)[[3]]
-
-# autocorelation
-atcr.cmpr(RnMl)$models
-# model 3 looks better
-Iml_pre <- atcr.cmpr(RnMl)[[3]]
+Iml_pre_no <- lmer(sqrt(no) ~ co2 * time + (1|block) + (1|ring) + (1|id), data = subsetD(iem, pre))
 
 # The starting model is:
-Iml_pre$call
+Iml_pre_no@call
+Anova(Iml_pre_no)
 
 # model simplification
-Anova(Iml_pre)
-
-MdlSmpl(Iml_pre)
-# time * co2 and co2 are removed
-
-Fml_pre <- MdlSmpl(Iml_pre)$model.reml
+Fml_pre_no <- stepLmer(Iml_pre_no)
 
 # The final model is:
-Fml_pre$call
+Fml_pre_no@call
 
-Anova(Fml_pre)
+Anova(Fml_pre_no)
+AnvF_pre_no <- Anova(Fml_pre_no, test.statistic = "F")
+AnvF_pre_no
 
-summary(Fml_pre)
+summary(Fml_pre_no)
 
-plot(allEffects(Fml_pre))
+plot(allEffects(Fml_pre_no))
 
 # model diagnosis
-plot(Fml_pre)
-qqnorm(Fml_pre, ~ resid(.)|id)
-qqnorm(residuals.lm(Fml_pre))
-qqline(residuals.lm(Fml_pre))
+plot(Fml_pre_no)
+qqnorm(resid(Fml_pre_no))
+qqline(resid(Fml_pre_no))
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2
 
@@ -59,27 +47,27 @@ NoRmOl <- subsetD(NoRmOl, no != min(no, na.rm = TRUE))
 bxplts(value= "no", data= NoRmOl)
 
 # The initial model is:
-Iml_post <- lmer(log(no) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
+Iml_post_no <- lmer(log(no) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
                  data = NoRmOl)
-Anova(Iml_post)
+Anova(Iml_post_no)
 # keep interaction
 
 # The final model is:
-Fml_post <- Iml_post
-Fml_post@call
+Fml_post_no <- Iml_post_no
+Fml_post_no@call
 
-Anova(Fml_post)
-AnvF_post_no <- Anova(Fml_post, test.statistic = "F")
+Anova(Fml_post_no)
+AnvF_post_no <- Anova(Fml_post_no, test.statistic = "F")
 AnvF_post_no
 
-summary(Fml_post)
+summary(Fml_post_no)
 
-plot(allEffects(Fml_post))
+plot(allEffects(Fml_post_no))
 
 # model diagnosis
-plot(Fml_post)
-qqnorm(resid(Fml_post))
-qqline(resid(Fml_post))
+plot(Fml_post_no)
+qqnorm(resid(Fml_post_no))
+qqline(resid(Fml_post_no))
 
 # contrast
 
@@ -108,79 +96,83 @@ print(xyplot(log(no) ~ Moist | ring + plot, postDF, type = c("r", "p")))
 print(xyplot(log(no) ~ Temp_Mean | ring + plot, postDF, type = c("r", "p")))
 
 ## Analysis ##
-Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean) + 
+Iml_ancv_no <- lmer(log(no) ~ co2 * (Moist + Temp_Mean) + 
                    (1|block) + (1|ring) + (1|id),  data = postDF)
 # model simplification
-Fml_ancv <- stepLmer(Iml_ancv)
-AnvF_no <- Anova(Fml_ancv)
-Anova(Fml_ancv, test.statistic = "F")
-plot(Fml_ancv)
-qqnorm(resid(Fml_ancv))
-qqline(resid(Fml_ancv))
+Fml_ancv_no <- stepLmer(Iml_ancv_no)
+AnvF_no <- Anova(Fml_ancv_no)
+Anova(Fml_ancv_no, test.statistic = "F")
+plot(Fml_ancv_no)
+qqnorm(resid(Fml_ancv_no))
+qqline(resid(Fml_ancv_no))
 # looking at qqplot, there's one outlier so remove
 
 # identifi the outlier and remove
-qqval <- qqnorm(resid(Fml_ancv))[[2]]
+qqval <- qqnorm(resid(Fml_ancv_no))[[2]]
 min(qqval)
 postDF[which(qqval == min(qqval)), "no"] <- NA
 
 # rerun analysis
-Iml_ancv <- lmer(log(no) ~ co2 * (Moist + Temp_Mean) + 
+Iml_ancv_no <- lmer(log(no) ~ co2 * (Moist + Temp_Mean) + 
                    (1|block) + (1|ring) + (1|id),  
                  data = postDF, na.action = "na.omit")
-Fml_ancv <- stepLmer(Iml_ancv)
-Anova(Fml_ancv)
-  # co2 is not significant so removed, but I would like to plot predicted vales
+Fml_ancv_no <- stepLmer(Iml_ancv_no)
+Anova(Fml_ancv_no)
+  # co2 is not significant so removed, but I would like to plot predicted values
   # for each treatment anyway so keep co2 factor in the model.
-Fml_ancv <- update(Fml_ancv,~. + co2)
-Fml_ancv_NO <- Fml_ancv
-Anova(Fml_ancv)
+Fml_ancv_no <- update(Fml_ancv_no,~. + co2)
+Anova(Fml_ancv_no)
 
-AnvF_no <- Anova(Fml_ancv, test.statistic = "F")
+AnvF_no <- Anova(Fml_ancv_no, test.statistic = "F")
 AnvF_no
-plot(Fml_ancv)
-qqnorm(resid(Fml_ancv))
-qqline(resid(Fml_ancv))
+plot(Fml_ancv_no)
+qqnorm(resid(Fml_ancv_no))
+qqline(resid(Fml_ancv_no))
 # looks prety good
 
 # main effect
-plot(allEffects(Fml_ancv))
+plot(allEffects(Fml_ancv_no))
 
 # confidence interval for estimated parameters
-ciDF <- CIdf(model = Fml_ancv)
+ciDF <- CIdf(model = Fml_ancv_no)
 
 # calculate actual values
-Est.val <- rbind(
+Est.val_no <- rbind(
   int = ciDF[1, ],
   co2elev = ciDF[4, ] + ciDF[1, 3],
   Moist = ciDF[2, ],
   Temp_Mean = ciDF[3, ]
   )
 
-# reshape Est.val and make a table
-Est_no <- ANCV_Tbl(Est.val)
+# reshape Est.val_no and make a table
+Est_no <- ANCV_Tbl(df = Est.val_no)
 
 ## ---- Stat_FACE_IEM_Nitrate_preCO2_Smmry
 
 # The starting model is:
-Iml_pre$call
-Anova(Iml_pre)
+Iml_pre_no@call
+Anova(Iml_pre_no)
 
 # The final model is:
-Fml_pre$call
-Anova(Fml_pre)
+Fml_pre_no@call
+
+# Chi test
+Anova(Fml_pre_no)
+
+# F test
+AnvF_pre_no
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_Smmry
 
 # The starting model is:
-Iml_post@call
-Anova(Iml_post)
+Iml_post_no@call
+Anova(Iml_post_no)
 
 # The final model is:
-Fml_post@call
+Fml_post_no@call
 
 # Chi-square test
-Anova(Fml_post)
+Anova(Fml_post_no)
 
 # F-test
 AnvF_post_no
@@ -190,24 +182,24 @@ FACE_IEM_PostCO2_NO_CntrstDf
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_withSoilVar_Smmry
 # The initial model
-Iml_ancv@call
-Anova(Iml_ancv)
+Iml_ancv_no@call
+Anova(Iml_ancv_no)
 
 # The final model
-Fml_ancv@call
+Fml_ancv_no@call
 
 # Chi-square
-Anova(Fml_ancv)
+Anova(Fml_ancv_no)
 
 # F-test
 AnvF_no
 
 # squared R
-rsquared.glmm(Fml_ancv)
+rsquared.glmm(Fml_ancv_no)
 
 # 95% CI for estimated parameter
-Est.val
+Est.val_no
 
 # plot the predicted values
-visreg(Fml_ancv, "Moist")
-visreg(Fml_ancv, "Temp_Mean")
+visreg(Fml_ancv_no, "Moist")
+visreg(Fml_ancv_no, "Temp_Mean")

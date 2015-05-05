@@ -15,40 +15,31 @@ bxplts(value= "nh", ofst= 10, data= subsetD(nhRmOl, pre))
   # none of the transformation seems to be working well, but let's carry on with
   # log anyway
 
-# different random factor strucures
-m1 <- lme(log(nh + 10) ~ co2 * time, random = ~1|block/ring/plot, data = subsetD(nhRmOl, pre))
-RndmComp(m1)$anova
-  # m3 is better
-RnMl <- RndmComp(m1)[[3]]
-
-# autocorelation
-atcr.cmpr(RnMl)$models
-# model 5 looks better
-Iml_pre <- atcr.cmpr(RnMl)[[5]]
+Iml_pre_nh <- lmer(log(nh + 10) ~ co2 * time+ (1|block) + (1|ring) + (1|id), data = subsetD(nhRmOl, pre))
 
 # The starting model is:
-Iml_pre$call
+Iml_pre_nh@call
+Anova(Iml_pre_nh)
 
 # model simplification
-Anova(Iml_pre)
-
-Fml_pre <- MdlSmpl(Iml_pre)$model.reml
+Fml_pre_nh <- stepLmer(Iml_pre_nh)
 
 # The final model is:
-Fml_pre$call
+Fml_pre_nh@call
+Anova(Fml_pre_nh)
+AnvF_pre_nh <- Anova(Fml_pre_nh, test.statistic = "F")
+AnvF_pre_nh
 
-Anova(Fml_pre)
 
-summary(Fml_pre)
+summary(Fml_pre_nh)
 
-plot(allEffects(Fml_pre))
+plot(allEffects(Fml_pre_nh))
 
 # model diagnosis
-plot(Fml_pre)
-qqnorm(Fml_pre, ~ resid(.)|id)
-qqnorm(residuals.lm(Fml_pre))
-qqline(residuals.lm(Fml_pre))
+plot(Fml_pre_nh)
   # as expected,, not great...
+qqnorm(resid(Fml_pre_nh))
+qqline(resid(Fml_pre_nh))
 
 ## ---- Stat_FACE_IEM_Ammonium_postCO2
 
@@ -60,36 +51,37 @@ bxplts(value= "nh", data= subsetD(iem, post))
   # log seems better
 
 # The initial model is:
-Iml_post <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
+Iml_post_nh <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
                  data = subsetD(iem, post))
-Anova(Iml_post)
+Anova(Iml_post_nh)
 
 # There isn't co2xtime interaction but may be co2 effect. re analysis with data
 # only after co2-switced-on.
 
-Iml_post_2 <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
+Iml_post_nh_2 <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
                  data = postDF)
-Anova(Iml_post_2)
+Anova(Iml_post_nh_2)
 
 # The final model is:
-Fml_post <- stepLmer(Iml_post_2)
-Fml_post@call
+Fml_post_nh <- stepLmer(Iml_post_nh_2)
 
-Anova(Fml_post)
-AnvF_post_nh <- Anova(Fml_post, test.statistic = "F")
+Fml_post_nh@call
+
+Anova(Fml_post_nh)
+AnvF_post_nh <- Anova(Fml_post_nh, test.statistic = "F")
 AnvF_post_nh
 
 # confidence interval for estimated parameters
-CIdf_post <- CIdf(model = Fml_post)
+CIdf_post_nh <- CIdf(model = Fml_post_nh)
 
-summary(Fml_post)
+summary(Fml_post_nh)
 
-plot(allEffects(Fml_post))
+plot(allEffects(Fml_post_nh))
 
 # model diagnosis
-plot(Fml_post)
-qqnorm(resid(Fml_post))
-qqline(resid(Fml_post))
+plot(Fml_post_nh)
+qqnorm(resid(Fml_post_nh))
+qqline(resid(Fml_post_nh))
 
 ## ---- Stat_FACE_IEM_Ammonium_postCO2_withSoilVar
 ##########
@@ -109,41 +101,39 @@ print(xyplot(log(nh) ~ Temp_Mean | ring + plot, postDF, type = c("r", "p")))
 ############
 # Analysis #
 ############
-Iml_ancv <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean) + 
+Iml_ancv_nh <- lmer(log(nh) ~ co2 * (Moist + Temp_Mean) + 
                    (1|block) + (1|ring) + (1|id), data = postDF)
-Anova(Iml_ancv)
+Anova(Iml_ancv_nh)
 # model simplification
 
-
-# Fml_ancv <- stepLmer(Iml_ancv)
+# Fml_ancv_nh <- stepLmer(Iml_ancv_nh)
 #   error message saying no random effects,,,?
 
-summary(Iml_ancv)
+summary(Iml_ancv_nh)
   # Yes no random effect... May I remove them..
 
 # remove nonsignificant factos by hands
-Iml_ancv2 <- lmer(log(nh) ~ co2 * Moist + Temp_Mean + 
+Iml_ancv_nh2 <- lmer(log(nh) ~ co2 * Moist + Temp_Mean + 
                     (1|block) + (1|ring) + (1|id), data = postDF)
-anova(Iml_ancv, Iml_ancv2)
-  #Iml_ancv2's better
-Anova(Iml_ancv2)
-AnvF_nh <- Anova(Iml_ancv2, test.statistic = "F")
-Fml_ancv <- Iml_ancv2
-Fml_ancv_NH <- Fml_ancv
+anova(Iml_ancv_nh, Iml_ancv_nh2)
+  #Iml_ancv_nh2's better
+Anova(Iml_ancv_nh2)
+AnvF_nh <- Anova(Iml_ancv_nh2, test.statistic = "F")
+Fml_ancv_nh <- Iml_ancv_nh2
 
 # main effects
-plot(allEffects(Fml_ancv))
+plot(allEffects(Fml_ancv_nh))
 
 # model diagnosis
-plot(Fml_ancv)
-qqnorm(resid(Fml_ancv))
-qqline(resid(Fml_ancv))
+plot(Fml_ancv_nh)
+qqnorm(resid(Fml_ancv_nh))
+qqline(resid(Fml_ancv_nh))
 
 # confidence interval for estimated parameters
-ciDF <- CIdf(model = Fml_ancv)
+ciDF <- CIdf(model = Fml_ancv_nh)
 
 # calculate actual values
-Est.val <- rbind(
+Est.val_nh <- rbind(
   int = ciDF[1, ],
   co2elev = ciDF[2, ] + ciDF[1, 3],
   Moist = ciDF[3, ],
@@ -151,68 +141,73 @@ Est.val <- rbind(
   co2elev.Moist = ciDF[5, ] + ciDF[3, 3]
 )
 
-# reshape Est.val and make a table
-Est_nh <- ANCV_Tbl(Est.val)
+# reshape Est.val_nh and make a table
+Est_nh <- ANCV_Tbl(Est.val_nh)
 
 ########################
 # Plot predicted value #
 ########################
-PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF)
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
+PltPrdVal(model = Fml_ancv_nh, variable = "Moist", data = postDF)
+PltPrdVal(model = Fml_ancv_nh, variable = "Temp_Mean", data = postDF)
 
 ## ---- Stat_FACE_IEM_Ammonium_preCO2_Smmry
 
 # The starting model is:
-Iml_pre$call
-Anova(Iml_pre)
+Iml_pre_nh@call
+Anova(Iml_pre_nh)
 
 # The final model is:
-Fml_pre$call
-Anova(Fml_pre)
+Fml_pre_nh@call
+
+# Chi-square test
+Anova(Fml_pre_nh)
+
+# F test
+AnvF_pre_nh
 
 ## ---- Stat_FACE_IEM_Ammonium_postCO2_Smmry
 
 # The starting model is:
-Iml_post@call
-Anova(Iml_post)
+Iml_post_nh@call
+Anova(Iml_post_nh)
 
 # no interaction but may be co2 effect so remove the data becore co2-swtich on
-Iml_post_2@call
-Anova(Iml_post_2)
+Iml_post_nh_2@call
+Anova(Iml_post_nh_2)
 
 # The final model is:
-Fml_post@call
+Fml_post_nh@call
 
 # Chi-square test
-Anova(Fml_post)
+Anova(Fml_post_nh)
 
 # F test
 AnvF_post_nh
 
 # 95 % CI (only difference from the base is shown)
-CIdf_post
+CIdf_post_nh
 
 ## ---- Stat_FACE_IEM_Ammonium_postCO2_withSoilVar_Smmry
 # The initial model
-Iml_ancv@call
+Iml_ancv_nh@call
 # use @ instead $ for lmer model
-Anova(Iml_ancv)
+Anova(Iml_ancv_nh)
 
 # The final model
-Fml_ancv@call
+Fml_ancv_nh@call
 
 # Chi-square
-Anova(Fml_ancv)
+Anova(Fml_ancv_nh)
 
 # F test
 AnvF_nh
 
 # squared R
-rsquared.glmm(Fml_ancv)
+rsquared.glmm(Fml_ancv_nh)
 
 # 95 % CI for estimates
-Est.val
+Est.val_nh
 
 # plot the predicted values
-PltPrdVal(model = Fml_ancv, variable = "Moist", data = postDF)
-PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", data = postDF)
+PltPrdVal(model = Fml_ancv_nh, variable = "Moist", data = postDF)
+PltPrdVal(model = Fml_ancv_nh, variable = "Temp_Mean", data = postDF)

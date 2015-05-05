@@ -12,43 +12,30 @@ PRmOl <- subset(iem, p < max(p))
 bxplts(value= "p", data= subsetD(PRmOl, pre))
 # log transformation seems slightly better
 
-# different random factor strucures
-m1 <- lme(log(p) ~ co2 * time, random = ~1|block/ring/plot,  data = subsetD(PRmOl, pre))
-RndmComp(m1)$anova
-m2 <- RndmComp(m1)[[2]]
-# m2 is slightly better
-
-# autocorelation
-atcr.cmpr(m2)$models
-# model 4 looks better
-
-Iml_pre <- atcr.cmpr(m2)[[4]]
+Iml_pre_p <- lmer(log(p) ~ co2 * time + (1|block) + (1|ring) + (1|id),  data = subsetD(PRmOl, pre))
 
 # The starting model is:
-Iml_pre$call
+Iml_pre_p@call
+Anova(Iml_pre_p)
 
 # model simplification
-Anova(Iml_pre)
-
-MdlSmpl(Iml_pre)
-# time * co2 and co2 are removed
-
-Fml_pre <- MdlSmpl(Iml_pre)$model.reml
+Fml_pre_p <- stepLmer(Iml_pre_p)
 
 # The final model is:
-Fml_pre$call
+Fml_pre_p@call
 
-Anova(Fml_pre)
+Anova(Fml_pre_p)
+AnvF_pre_p <- Anova(Fml_pre_p, test.statistic = "F")
+AnvF_pre_p
 
-summary(Fml_pre)
+summary(Fml_pre_p)
 
-plot(allEffects(Fml_pre))
+plot(allEffects(Fml_pre_p))
 
 # model diagnosis
-plot(Fml_pre)
-qqnorm(Fml_pre, ~ resid(.)|ring)
-qqnorm(residuals.lm(Fml_pre))
-qqline(residuals.lm(Fml_pre))
+plot(Fml_pre_p)
+qqnorm(resid(Fml_pre_p))
+qqline(resid(Fml_pre_p))
 
 ## ---- Stat_FACE_IEM_Phosphate_postCO2
 ############
@@ -60,22 +47,21 @@ bxcxplts(value= "p", data= subsetD(iem, post), sval = 0.9, fval = 2)
 
 bxplts(value= "p", ofst = 1.6, data= subsetD(iem, post))
 
-
 # The initial model is
 
 # box-cox lambda
-Iml_post <- lmer((p + 1.6)^(-1.1515) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
+Iml_post_p <- lmer((p + 1.6)^(-1.1515) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
            data = subsetD(iem, post))
 
 # log transformation
-Iml_post <- lmer(log(p) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
+Iml_post_p <- lmer(log(p) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
            data = subsetD(iem, post))
-Anova(Iml_post)
+Anova(Iml_post_p)
 # not much difference between the above two tranformations. so just use log for
 # simplification purposes.
 
 # The final model is:
-Fml_post <- Iml_post
+Fml_post <- Iml_post_p
 Fml_post@call
 
 Anova(Fml_post)
@@ -133,32 +119,31 @@ print(xyplot((p + 1.6)^(-1.1515) ~ Temp_Max | ring + plot, postDF, type = c("r",
 ############
 
 # use lmer to get confidence intervals for predicted values
-Iml_ancv <- lmer(log(p) ~ co2 * (Moist + Temp_Mean) + 
+Iml_ancv_p <- lmer(log(p) ~ co2 * (Moist + Temp_Mean) + 
                    (1|block) + (1|ring) + (1|id), data = postDF)
   # random factor needs to be coded separatedly as above to use "step"
-Anova(Iml_ancv)
+Anova(Iml_ancv_p)
 
 # model simplification
-Fml_ancv <- stepLmer(Iml_ancv)
-Fml_ancv_P <- Fml_ancv
-Anova(Fml_ancv)
-AnvF_P <- Anova(Fml_ancv, test.statistic = "F")
+Fml_ancv_p <- stepLmer(Iml_ancv_p)
+Anova(Fml_ancv_p)
+AnvF_P <- Anova(Fml_ancv_p, test.statistic = "F")
 AnvF_P
 
 # what if I allow this to reduce random factors
-Anova(ml <- stepLmer(Iml_ancv, red.rndm = TRUE))
+Anova(ml <- stepLmer(Iml_ancv_p, red.rndm = TRUE))
 ml@call 
   # ring is removed. main effects are more significant than
   # before but there're interactions so it doesn't really
   # matter too much
 
 # main effects
-plot(allEffects(Fml_ancv))
+plot(allEffects(Fml_ancv_p))
 
 # model diagnosis
-plot(Fml_ancv)
-qqnorm(resid(Fml_ancv))
-qqline(resid(Fml_ancv))
+plot(Fml_ancv_p)
+qqnorm(resid(Fml_ancv_p))
+qqline(resid(Fml_ancv_p))
 
 ##########################
 ## plot predicted value ##
@@ -166,29 +151,31 @@ qqline(resid(Fml_ancv))
 par(mfrow = c(1,2))
 # moist
 l_ply(c(12, 23), function(x){
-  PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = x),
+  PltPrdVal(model = Fml_ancv_p, variable = "Moist", cond = list(Temp_Mean = x),
             ylab = paste("IEM-P (Temp = ", x, ")", sep = ""),
-            ylim = c(0, 6),
+#             ylim = c(0, 6),
             trans = exp,
             data = postDF)
 })
 
 # temp
 l_ply(c(.05, .25), function(x){
-  PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = x),
+  PltPrdVal(model = Fml_ancv_p, variable = "Temp_Mean", cond = list(Moist = x),
             ylab = paste("IEM-P (Moist = ", x, ")", sep = ""),
-            ylim = c(0, 6),
+#             ylim = c(0, 6),
             trans = exp,
             data = postDF)
 })
 
+# For some reasons, ylim doesn't work...
+
 ################################################
 # confidence interval for estimated parameters #
 ################################################
-ciDF <- CIdf(model = Fml_ancv)
+ciDF <- CIdf(model = Fml_ancv_p)
 
 # calculate actual values
-Est.val <- rbind(
+Est.val_p <- rbind(
   int = ciDF[1, ],
   co2elev = ciDF[2, ] + ciDF[1, 3],
   Moist = ciDF[3, ],
@@ -197,24 +184,24 @@ Est.val <- rbind(
   co2elev.Temp_Mean = ciDF [6, ] + ciDF[4, 3]
   )
 
-Est.val
+Est.val_p
 
 # reshape Est.val and make a table
-Est_P <- ANCV_Tbl(Est.val)
+Est_P <- ANCV_Tbl(Est.val_p)
 
 ## ---- Stat_FACE_IEM_Phosphate_preCO2_Smmry
 # The starting model is:
-Iml_pre$call
-Anova(Iml_pre)
+Iml_pre_p@call
+Anova(Iml_pre_p)
 
 # The final model is:
-Fml_pre$call
-Anova(Fml_pre)
+Fml_pre_p@call
+Anova(Fml_pre_p)
 
 ## ---- Stat_FACE_IEM_Phosphate_postCO2_Smmry
 # The starting model is:
-Iml_post@call
-Anova(Iml_post)
+Iml_post_p@call
+Anova(Iml_post_p)
 
 # The final model is:
 Fml_post@call
@@ -230,40 +217,40 @@ FACE_IEM_PostCO2_P_CntrstDf
 
 ## ---- Stat_FACE_IEM_Phosphate_postCO2_withSoilVar_Smmry
 # The initial model
-Iml_ancv@call
-Anova(Iml_ancv)
+Iml_ancv_p@call
+Anova(Iml_ancv_p)
 
 # The final model
-Fml_ancv@call
+Fml_ancv_p@call
 
 # Chisq
-Anova(Fml_ancv)
+Anova(Fml_ancv_p)
 
 # F-test
 AnvF_P
 
 # squared R
-rsquared.glmm(Fml_ancv)
+rsquared.glmm(Fml_ancv_p)
 
 # 95% CI for estimated parameter
-Est.val
+Est.val_p
 
 # plot the predicted values
 par(mfrow = c(1,2))
 # moist
 l_ply(c(12, 23), function(x){
-  PltPrdVal(model = Fml_ancv, variable = "Moist", cond = list(Temp_Mean = x),
+  PltPrdVal(model = Fml_ancv_p, variable = "Moist", cond = list(Temp_Mean = x),
             ylab = paste("IEM-P (Temp = ", x, ")", sep = ""),
-            ylim = c(0, 6),
+#             ylim = c(0, 6),
             trans = exp,
             data = postDF)
 })
 
 # temp
 l_ply(c(.05, .25), function(x){
-  PltPrdVal(model = Fml_ancv, variable = "Temp_Mean", cond = list(Moist = x),
+  PltPrdVal(model = Fml_ancv_p, variable = "Temp_Mean", cond = list(Moist = x),
             ylab = paste("IEM-P (Moist = ", x, ")", sep = ""),
-            ylim = c(0, 6),
+#             ylim = c(0, 6),
             trans = exp,
             data = postDF)
 })
