@@ -23,19 +23,15 @@
 % @
 
 
-\subsection{Phosphate}
+\section{Phosphate}
 
 %%% CO2 trt %%%
-\subsubsection{CO$_2$ trt}
+\subsection{CO$_2$ treatment}
 
 \begin{figure}[!h]\label{figure:CO2IEM_Phosphate}
 
 \begin{center}
-
-<<Figco2Phosphate, echo=FALSE, fig.height=3, fig.width=6>>=
-TrtFg[[3]]
-@
-
+\includegraphics{../output/figs/FACE_IEM_CO2Trt_Phosphate.pdf}
 \caption{IEM-adsorbed Phosphate at CO$_2$ treatments}
 \end{center}
 \end{figure}
@@ -50,11 +46,11 @@ printTbl(TrtSmmryTbl[[3]],
 %%% Stats %%%
 %%%%%%%%%%%%%
 \clearpage
-\paragraph{Stats}
+\subsection{Stats}
 
 <<ReadScript_FACE_IEM_Phosphate, echo=FALSE, cache=FALSE, include=FALSE>>=
 read_chunk('R/Stats_P.R')
-source("R/Stats_P.R")
+# source("R/Stats_P.R")
 @
 
 
@@ -62,22 +58,22 @@ source("R/Stats_P.R")
 %% Summary %%
 %%%%%%%%%%%%%
 
-\paragraph{Pre-CO$_2$}
+\subsubsection{Pre-CO$_2$}
 \noindent
 
 <<Stat_FACE_IEM_Phosphate_preCO2_Smmry, echo=TRUE, results='markup'>>=
 @
 
-\paragraph{Post-CO$_2$}
+\subsubsection{Post-CO$_2$}
 \noindent
 
 <<Stat_FACE_IEM_Phosphate_postCO2_Smmry, echo=TRUE, results='markup'>>=
 @
 
-\paragraph{Post-CO$_2$ -ANCOVA with soil variables}
+\subsubsection{Post-CO$_2$ -ANCOVA with soil variables}
 \noindent
 
-<<Stat_FACE_IEM_Phosphate_postCO2_withSoilVar_Smmry, echo=TRUE, results='markup'>>=
+<<Stat_FACE_IEM_Phosphate_postCO2_withSoilVar_Smmry, echo=TRUE, results='markup', fig.show='asis', fig.width = 6, fig.height = 4>>=
 @
 
 
@@ -85,20 +81,20 @@ source("R/Stats_P.R")
 % %% Detail %%
 % %%%%%%%%%%%%
 % 
-% \paragraph{Pre-CO$_2$}
+% \subsubsection{Pre-CO$_2$}
 % \noindent
 % 
 % <<Stat_FACE_IEM_Phosphate_preCO2, echo=TRUE, results='markup'>>=
 % @
 % 
-% \paragraph{Stats}
-% \paragraph{Post-CO$_2$}
+% \subsection{Stats}
+% \subsubsection{Post-CO$_2$}
 % \noindent
 % 
 % <<Stat_FACE_IEM_Phosphate_postCO2, echo=TRUE, results='markup'>>=
 % @
 % 
-% \paragraph{Post-CO$_2$ -ANCOVA with soil variables}
+% \subsubsection{Post-CO$_2$ -ANCOVA with soil variables}
 % \noindent
 % 
 % <<Stat_FACE_IEM_Phosphate_postCO2_withSoilVar, echo=TRUE, results='markup'>>=
@@ -106,17 +102,11 @@ source("R/Stats_P.R")
 
 %%% Ring %%%
 \clearpage
-\subsubsection{Ring}
+\subsection{Ring}
 
 \begin{figure}[!h]\label{figure:RingIEM_Phosphate}
-\begin{center}
-
-<<FigChPhosphate, echo=FALSE, fig.height=3, fig.width=6>>=
-RngFg[[3]]
-@
-
+\includegraphics{../output/figs/FACE_IEM_Ring_Phosphate.pdf}
 \caption{IEM-adsorbed Phosphate in each ring}
-\end{center}
 \end{figure}
 
 <<TableRingPhosphate, echo=FALSE, results='asis'>>=
