@@ -1,0 +1,62 @@
+---
+title: "EucFACE_SummaryStats"
+author: "Shun Hasegawa"
+date: "Tuesday, May 05, 2015"
+output: pdf_document
+---
+
+```{r package_options, include = FALSE}
+knitr::opts_knit$set(root.dir=normalizePath('../'))
+```
+You can find these files at https://github.com/ShunHasegawa/FACE_IEM/tree/master/R
+
+```{r read_packages, echo=TRUE, message=FALSE}
+source("R/pckg.R") # load packages. 
+source("R/functions.R") # load functions
+```
+
+```{r runstats}
+load("output/data/FACE_IEM.RData") # read data
+
+head(iem)
+str(iem)
+
+# Choose transformation
+bxplts(value= "p", ofst = 1.6, data= subsetD(iem, post))
+
+# Run lmer
+Fml_post <- lmer(log(p) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
+           data = subsetD(iem, post))
+
+# Chi-square test
+require(car)
+require(lmerTest)
+Anova(Fml_post)
+
+# F test
+AnvF_post_p <- Anova(Fml_post, test.statistic = "F")
+AnvF_post_p
+
+summary(Fml_post)
+
+require(effects)
+plot(allEffects(Fml_post))
+
+# model diagnosis
+plot(Fml_post)
+qqnorm(resid(Fml_post))
+qqline(resid(Fml_post))
+
+# contrast
+
+# contrast doesn't work with lmer. so use lme
+lmeMod <- lme(log(p) ~ co2 * time, random = ~1|block/ring/id, 
+              data = subsetD(iem, post))
+
+require(contrast)
+cntrst<- contrast(lmeMod, 
+                  a = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "amb"),
+                  b = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "elev"))
+FACE_IEM_PostCO2_P_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], variable  = "p", digit = 2)
+FACE_IEM_PostCO2_P_CntrstDf
+```
