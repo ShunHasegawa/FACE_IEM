@@ -14,6 +14,7 @@ Iml_pre_no <- lmer(sqrt(no) ~ co2 * time + (1|block) + (1|ring) + (1|id), data =
 # The starting model is:
 Iml_pre_no@call
 Anova(Iml_pre_no)
+Anova(Iml_pre_no, test.statistic = "F")
 
 # model simplification
 Fml_pre_no <- stepLmer(Iml_pre_no)
@@ -151,7 +152,12 @@ Est_no <- ANCV_Tbl(df = Est.val_no)
 
 # The starting model is:
 Iml_pre_no@call
+
+# Chi test
 Anova(Iml_pre_no)
+
+# F test
+Anova(Iml_pre_no, test.statistic = "F")
 
 # The final model is:
 Fml_pre_no@call
