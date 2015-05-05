@@ -398,7 +398,7 @@ RndmComp <- function(model){
 # log OR sqrt OR power(1/3) OR inverse OR box-cox
 bxplts <- function(value, ofst = 0, data, ...){
   data$y <- data[[value]] + ofst #ofst is added to make y >0
-  a <- boxcox(y ~ co2 * time, data = data)
+  a <- boxcox(y ~ co2 * time, data = data, plotit = FALSE)
   par(mfrow = c(2, 3))
   boxplot(y ~ co2*time, data, main = "raw")
   boxplot(log(y) ~ co2*time, main = "log", data)
@@ -425,7 +425,7 @@ bxcxplts <- function(value, data, sval, fval){
   BCmax <- vector()
   for (i in 1:10){
     data$y <- data$yval + ranges[i]
-    a <- boxcox(y ~ co2 * time, data = data)
+    a <- boxcox(y ~ co2 * time, data = data, plotit = FALSE)
     BCmax[i] <- a$x[a$y == max(a$y)]
   }
   
@@ -565,8 +565,8 @@ PltPrdVal <- function(data, model, variable, ...){
               points.par = list(col = c("blue", "red")),
               ...)
   
-  timePos <- seq(min(a[[1]][[2]][["r"]]), # min of predicted values
-                 max(a[[1]][[2]][["r"]]), 
+  timePos <- seq(min(a$res$visregRes), # min of predicted values
+                 max(a$res$visregRes), 
                  length.out = 10)
   times <- c(5:14)
   data$yval <- data[, variable]
@@ -616,7 +616,7 @@ BtsCI <- function(model, MoistVal, TempVal, variable){
 #############################################
 ANCV_Tbl <- function(df, digits = 2, nsmall = 2){
   Est.val <- within(data.frame(df), {
-    pred <- row.names(Est.val)
+    pred <- row.names(df)
     co2 <- factor(ifelse(grepl("elev", pred), "elev", "amb"))
     predictor <- factor(ifelse(grepl("Temp", pred), "Temp",
                                ifelse(grepl("Moist", pred), "Moist", 
