@@ -27,4 +27,5 @@ source("R/Figs.R")
 #########
 source("R/Stats.R")
 
-
+# save all ovjects
+save.image(file = "output//data/AllObj.RData")
