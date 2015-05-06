@@ -1,0 +1,84 @@
+---
+title: "TypeII SS and F values for lme object"
+author: "Shun Hasegawa"
+date: "Wednesday, May 06, 2015"
+output: html_document
+---
+
+As default lmer (or lme) objects only give F values but not associated P values. So using Chi-square was one of the ways to obtain P values. Chi-square tests in linear-mixed effects models compare two models using difference in residual and degrees of freedom of residuals (I could be wrong for this...) between the two models, so they don't need to estimate degrees of freedom for error terms for each terms (or fixed factors). This is why you don't get denominator degree of freedom when testing one model against another. One can drop one term of interest from a model and compare two models with and without that term and see if there's significant difference between two models using chi-square test. If removing the term doesn't significantly change the explanatory power of the model, then the term is not important. 
+
+\noindent
+Chi-square and F tests normally give identical results for linear models with balanced design, but according to Jeff, for linear-mixed effects models, chi-square normally gives smaller P values (or more highly significant) compared to F test (as you can see in your analysis as well). I'm afraid I don't really know what causes this difference. Some people report Chi-square test and some F tests. I don't think which is wrong or correct as far as you clarify, but I found chi-square test are generally quite generous about giving significant P values especially for interaction terms, so I decided to use F tests over chi-test (also F tests are more commonly reported). 
+
+\noindent
+In your analysis, I think obtaining significant CO2 effect with Chi-square is not because you used TypeII SS but because used Chi-square instead of F tests. I still prefer TypeII over TypeI as results don't change with the order of the terms you fit in the model especially when you have missing or unbalanced data.
+
+\noindent
+As far as I know, there are two ways to get F statistics with TypeII SS. The simplest option is to use lmer and `Anova(lmer.model, test.statistic = "F")`. If you need to use lme, you need to manually extract F and P values by yourself as `Anova` doesn't do F test with lme objects for some reasons.. Please see the example below
+
+
+```{r, message=FALSE}
+library(lme4)
+library(nlme)
+library(plyr)
+library(lmerTest)
+library(car)
+load("../output//data/Temp.RData")
+```
+
+Let's fit the same main effects but different orders using lme and do F test with TypeI SS with unbalanced data to see if the order matters.
+
+```{r}
+str(tdf)
+
+# make data frame unbalanced, remove rondom rows
+tdf <- some(tdf, n = nrow(tdf) - 10) 
+
+lme1 <- lme(log(p) ~ co2 + time, random = ~1|block/ring/id, data = tdf)
+lme2 <- lme(log(p) ~ time + co2, random = ~1|block/ring/id, data = tdf)
+
+# F test with typeI SS
+llply(list(lme1, lme2), anova)
+```
+F values are slightly different between the models. It's because data is unbalanced and SS were sequentially allocated. anova.lme has "type" argument which allows you to choose TypeI or TypeIII SS, but not TypeII for some reasons..
+
+Fit the same model using lmer and get TypeII SS-associated F with `Anova`.
+```{r}
+# Fit the same models usign lmer
+lmer1 <- lmer(log(p) ~ co2 + time + (1|block) + (1|ring)  + (1|id), data = tdf)
+lmer2 <- lmer(log(p) ~ time + co2 + (1|block) + (1|ring)  + (1|id), data = tdf)
+
+# F test with type II SS
+llply(list(lmer1, lmer2), function(x) Anova(x, test.statistic = "F"))
+```
+The results were consistent and the order of main terms doesn't matter when TypeII SS was used.
+
+What if I use TypeI SS.
+```{r}
+llply(list(lmer1, lmer2), function(x) anova(x, type = 1, ddf = "Kenward-Roger"))
+```
+SS and associated F values differ between the two models. But note that SS and associated F value for `time` in the 1st model and `co2` in the 2nd models are identical to TypeII SS given by `Anova` above.
+
+```{r}
+llply(list(lmer1, lmer2), function(x) anova(x, type = 1, ddf = "Kenward-Roger")[2, ])
+Anova(lmer1, test.statistic = "F")
+```
+
+This is how TypeII is calculated. The term of interest is always fit after the other  terms, as such order of main terms in a model doesn't matter in `Anova`.
+
+### Manually extract TypeII SS-associated F and P values from lme
+```{r}
+llply(list(lme1, lme2), anova)
+```
+As described above the F value for `time` in the 1st model and for `co2` in the second model should be same as the F values you would've gotten with TypeII SS.But these values are slightly different than the values given by lmer. It's simply because different method to approximate denominator degrees of freedom is used in `Anova` and `anova`. `Anova` uses "Kenward-Roger" and `anova` uses "Satterthwaite approximation" (don't really know the difference to be honest..).
+
+So let's recalculate F values using Satterthwaite approximation for each of `time` and `co2`. (I don't know how to change this with `Anova`, so need to run two models with TypeI SS in order to get TypeII SS for each term) 
+```{r}
+llply(list(lmer1, lmer2), function(x) anova(x, type = 1, ddf="Satterthwaite")[2, ])
+```
+
+They are identical to lme results.
+```{r}
+anova(lme1)[3, ]
+anova(lme2)[3, ]
+```
