@@ -1,5 +1,184 @@
 load("output//data/Temp.RData")
+library(lme4)
+library(nlme)
+library(plyr)
 str(tdf)
+
+sbdf <- ddply(subsetD(tdf, time == "4"), .(ring, block, co2), summarise, p = mean(p, na.rm = TRUE))
+aov3 <- aov(log(p) ~ co2 * time + Error(block/co2), data = sbdf1)
+aov2 <- aov(log(p) ~ co2 + time + Error(block), data = sbdf1)
+# aov3 <- aov(log(p) ~ co2 + Error(block), data = sbdf1)
+# aov4 <- aov(log(p) ~ co2 + Error(block/co2), data = sbdf1)
+summary(aov1)
+summary(aov2)
+summary(aov3)
+
+tdf$bt <- tdf$block:tdf$time
+
+#############
+
+# tdf$plotEN <- with(tdf,interaction(co2,block))
+# tdf$dateEN <- with(tdf,interaction(time,plotEN))
+# lme2 <- lme(log(p)~block+co2*time,random=list(~1|plotEN,~1|dateEN),data=tdf)
+# anova(lme2) # note the altered denDF AND the altered F-value for the time and co2:time terms
+
+# The above is same as:
+tdf$bt <- with(tdf, block:time)
+lme3 <- lme(log(p) ~ co2 * time, 
+            random = list(~1|block,~1|ring, ~1|bt), data = tdf)
+anova(lme3)
+
+# This is fundamentally same as below
+
+# Remove subplots by taking mean for each ring, avoinding pseudo-replication 
+# within each ring
+sbdf <- ddply(tdf, .(block, time, co2), summarise, p = mean(p, na.rm = TRUE))
+xtabs(~block + time, data = sbdf)
+aov1 <- aov(log(p) ~ co2 * time + Error(block/co2), data = sbdf)
+summary(aov1)
+# DF is the same as above. This is how psuedoreplications were treated in the 
+# above model. Note that DF for residual for time and co2:time is given in
+# Error:Within. This structure is the same as split-plot design, spliting block
+# into two rings (amb vs. eCO2), and split each ring into 11 (Time1 - Time11).
+# In Error Within: 
+  # Total DF is 11 time points x 2 co2 rings x 3 blocks - 1 = 65
+  # DF for is block:co2 is 2 rings x 3 blocks - 1 = 5
+  # DF for time and time:co2 is 10 + 10 = 20 
+  # DF for residuals is 65 - (5 + 20) = 40
+
+# But time is not directly within co2, but actually within subplot within co2 
+# within block. In orther words, split ring into 8 subplots, and split subplot 
+# into 11 subsubplots. So the number of replicates for time is larger yet plot
+# size is smaller than difined in the above models.
+
+# If I add subplot within co2 within block:
+aov2 <- aov(log(p) ~ co2 * time + Error(block/co2/plot), data = tdf)
+summary(aov2)
+# Error: block:co2:plot is added and DF for time and time:co2 is now 460. 
+# In Error: Within:
+  # Total DF is 11 time points x 8 subplots x 2 co2 rings x 3 block -1 = 527
+  # DF for subplot is 8 x 2 x 3 = 47
+  # DF for time, co2:time is 10 + 10 = 20
+  # So that DF for residuals is 527 - (47 + 20) = 460
+
+
+
+
+# or
+aov4 <- aov(log(p) ~ co2 * time + Error(block/co2/plot), data = tdf)
+summary(aov4)
+# residual for time and co2:time is given in Within subject (i.e. subplot)
+
+
+aov5 <- lme(log(p) ~ co2 * time, random=list(~1|block,~1|ring, ~1|bt2, ~1|id), data = tdf)
+aov6 <- lme(log(p) ~ co2 * time, random=list(~1|block,~1|ring, ~1|id), data = tdf)
+anova(aov4)
+anova(aov5)
+anova(aov6)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+aov1 <- aov(log(p) ~ co2 * time + Error(block/co2/plot), data = tdf)
+summary(aov1)
+
+
+
+
+lme2 <- lme(log(p) ~ time, random = ~1|block/time, data = sbdf1)
+summary(lme2)
+
+aov1 <- aov(log(p) ~ co2 + Error(block/co2), data = sbdf)
+aov2 <- aov(log(p) ~ time + Error(block/time), data = sbdf)
+
+
+summary(aov2)
+
+
+lme1 <- lme(log(p) ~ co2 * time, random = ~1|block/co2, data = sbdf)
+anova(lme1)
+
+
+anova(lme1)
+summary(lme1)
+
+
+
+lmer3 <- lme(log(p) ~ co2, random =~1|block, data = sbdf)
+summary(lmer3)
+anova(lmer3)
+
+ml1 <- lme(log(p) ~ time * co2, random = ~1|block/ring/id, data = tdf)
+anova(ml1)
+
+ml2 <- lme(log(p) ~ time, random = ~1|block/ring/id, data = tdf)
+
+
+
+
+
+ml2 <- lme(log(p) ~ time * co2, random = list(~1|block, ~1|ring, ~1| ~1|id), data = tdf)
+anova(ml2)
+
+tdf$plotEN <- with(tdf,interaction(co2,block))
+tdf$dateEN <- with(tdf,interaction(time,plotEN))
+lme2 <- lme(log(p)~block+co2*time,random=list(~1|plotEN,~1|dateEN),data=tdf)
+
+
+lmer1 <- lmer(log(p) ~ co2 * time +  (1|block/co2) + (1|id), data = tdf)
+lmer2 <- lmer(log(p) ~ co2 * time +  (1|block/co2) + (1|id), data = tdf)
+lmer3 <- lmer(log(p) ~ co2 * time +  (1|block) + (1|ring) + (1|id), data = tdf)
+
+summary(lmer1)
+anova(lmer1)
+anova(lmer2)
+anova(lmer3)
+
+
+###
+tdf <- within(tdf, {
+  bc <- block:co2
+  bcp <- block:co2:plot
+})
+m1 <- lmer(log(p) ~ co2 * time + (1|block) +(1|bc) + (1|bcp), data = tdf)
+m2 <- lmer(log(p) ~ co2 * time + (1|block) +(1|ring) + (1|id), data = tdf)
+
+anova(m1)
+anova(m2)
+summary(m2)
+
+###
+
+
+
+
+
+aov1 <- aov(log(p) ~ co2 * time + Error(block/co2 + block/time), data = tdf)
+aov1 <- aov(log(p) ~ co2 * time + Error(block/co2 + block/time + id), data = tdf)
+summary(aov1)
+
+
+anova(ml2)
+
+lmer1 <- lmer(log(p) ~ time + (1|block) + (1|ring) + (1|id), data = tdf)
+summary(lmer1)
 
 # to make data frame unbalanced, remove rondom rows
 tdf <- some(tdf, n = nrow(tdf) - 20) 
