@@ -54,6 +54,11 @@ source("R/Stats_NH.R")
 #############
 source("R/Stats_P.R")
 
+############
+# NP ratio #
+############
+source("R/Stats_NPRatio.R")
+
 #######################
 # Summary Stats table #
 #######################
