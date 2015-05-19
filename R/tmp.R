@@ -2,6 +2,71 @@ load("output//data/Temp.RData")
 library(lme4)
 library(nlme)
 library(plyr)
+library(lattice)
+
+
+tdf <- within(tdf,{
+  bc <- block:co2
+  bct <- bc:time
+})
+m1 <- aov(log(p) ~ co2 * time + Error(block/co2/time), data = tdf)
+summary(m1)
+# If we ignore Time x Block interaction (within CO2), DF 40  is merged to
+# residuals in "Within" (40 + 462)
+m2 <- aov(log(p) ~ co2 * time + Error(block/co2), data = tdf)
+summary(m2)
+
+
+
+
+
+
+tdf$timepol10 <- poly(as.numeric(tdf$time), 10)
+tdf$timepol9 <- poly(as.numeric(tdf$time), 9)
+tdf$date2 <- scale(as.numeric(tdf$date))
+
+fff <- function(x){
+  df <- tdf
+  df$timepol <- poly(as.numeric(df$time), x)
+  m1 <- lmer(log(p) ~ co2 * timepol + (date2|block/co2/plot), data = df)
+  return(m1)
+}
+
+
+an <- llply(1:10, fff)
+anova(fff(1),
+      fff(2), 
+      fff(3), 
+      fff(4), 
+      fff(5), 
+      fff(6), 
+      fff(7), 
+      fff(8), 
+      fff(9), 
+      fff(10))
+lapply(an, AIC)
+
+summary(m1)
+
+
+
+tdf$timeN <-  as.numeric(as.character(tdf$time))
+xyplot(log(p) ~ as.numeric(date) | plot + block , data=tdf, group=co2)
+
+m2 <- lmer(log(p) ~ co2 + (date2|block) + (1|ring/plot), data = tdf)
+m3 <- lmer(log(p) ~ co2 + (1|block) + (1|ring) + (date2|plot), data = tdf)
+anova(m1, m2)
+summary(m1)
+summary(m2)
+anova(m2)
+library(lmerTest)
+
+summary(m1)
+anova(m1)
+anova(m2)
+
+
+
 str(tdf)
 
 sbdf <- ddply(subsetD(tdf, time == "4"), .(ring, block, co2), summarise, p = mean(p, na.rm = TRUE))
@@ -24,9 +89,54 @@ tdf$bt <- tdf$block:tdf$time
 
 # The above is same as:
 tdf$bt <- with(tdf, block:time)
+tdf$bc <- with(tdf, block:co2)
+tdf$bct <- with(tdf, bc:time)
 lme3 <- lme(log(p) ~ co2 * time, 
             random = list(~1|block,~1|ring, ~1|bt), data = tdf)
 anova(lme3)
+
+
+lme4 <- lme(log(p) ~ co2 * time, 
+            random = list(~1|block, ~1|ring, ~1|bct), data = tdf)
+anova(lme4)
+
+
+tdf$rt <- with(tdf, ring:time)
+lme5 <- lme(log(p) ~ co2 * time, 
+            random = list(~1|block, ~1|ring, ~1|id, ~1|rt), data = tdf)
+lme6 <- lme(log(p) ~ co2 * time, 
+            random = list(~1|block, ~1|ring, ~1|rt), data = tdf)
+anova(lme5)
+anova(lme6)
+lme7 <- lme(log(p) ~ co2 * time, random = list(~1|block), data = tdf)
+lme8 <- lme(log(p) ~ co2 * time, random = list(~1|block, ~1|id), data = tdf)
+
+# if subplots are randomly located everytime
+
+
+##########################
+tdf <- tdf[, c("time", "block", "co2", "plot", "p")]
+save(tdf, file = "output//data/tdf.RData")
+str(tdf)
+aov1 <- aov(log(p) ~ co2 * time + Error(block/co2/plot), data = tdf)
+summary(aov1)
+aov2 <- aov(log(p) ~ co2 * time + Error(block/co2/time), data = tdf)
+summary(aov2)
+###########################
+
+
+summary(lme5)
+aov1 <- aov(log(p) ~ co2 * time + Error(block/co2 + block/co2/time), data = tdf)
+
+aov2 <- aov(log(p) ~ co2 * time + Error(block/co2/plot + block/co2/time), data = tdf)
+summary(aov1)
+summary(aov2)
+
+aov1 <- aov(log(p) ~ co2 * time + Error(block/co2 + block/co2/plot + block/time), data = tdf)
+
+
+aov1 <- aov(log(p) ~ co2 * time + Error(block/co2/plot + block/time), data = tdf)
+summary(aov1)
 
 # This is fundamentally same as below
 
@@ -35,7 +145,9 @@ anova(lme3)
 sbdf <- ddply(tdf, .(block, time, co2), summarise, p = mean(p, na.rm = TRUE))
 xtabs(~block + time, data = sbdf)
 aov1 <- aov(log(p) ~ co2 * time + Error(block/co2), data = sbdf)
+aov2 <- aov(log(p) ~ co2 * time + Error(block/co2 + block/time), data = sbdf)
 summary(aov1)
+summary(aov2)
 # DF is the same as above. This is how psuedoreplications were treated in the 
 # above model. Note that DF for residual for time and co2:time is given in
 # Error:Within. This structure is the same as split-plot design, spliting block
