@@ -31,21 +31,24 @@ bxplts(value= "NP", data= subsetD(iem, post))
 Iml_post_NP <- lmer(log(NP) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
                     data = subsetD(iem, post))
 Anova(Iml_post_NP, test.statistic = "F")
-
-# The final model is:
-Fml_post_NP <- stepLmer(Iml_post_NP)
-Fml_post_NP@call
-
-Anova(Fml_post_NP)
-AnvF_post_NP <- Anova(Fml_post_NP, test.statistic = "F")
-AnvF_post_NP
-
-summary(Fml_post)
+# no co2 effect
 
 # model diagnosis
-plot(Fml_post_NP)
-qqnorm(resid(Fml_post_NP))
-qqline(resid(Fml_post_NP))
+plot(Iml_post_NP)
+qqnorm(resid(Iml_post_NP))
+qqline(resid(Iml_post_NP))
+  # one obvious outlier at the left bottom
+
+# Remove the outlier and re-run
+a <- which(qqnorm(resid(Fml_post_NP))$y == min(qqnorm(resid(Fml_post_NP))$y))
+Iml_post_NP3 <- lmer(log(NP) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
+                    data = subsetD(iem, post), subset = -a)
+plot(Iml_post_NP3)
+qqnorm(resid(Iml_post_NP3))
+qqline(resid(Iml_post_NP3))
+  # improved
+Anova(Iml_post_NP3, test.statistic = "F")
+  # no co2 effect anyway
 
 ##############################
 # NP ratio of Percent change #
@@ -55,7 +58,9 @@ bxplts(value= "pcNP", data= subsetD(iem, post))
 # The initial model is
 Iml_post_pcNP <- lmer(log(pcNP) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
                       data = subsetD(iem, post))
-Anova(Iml_post_pcNP)
+Anova(Iml_post_pcNP, test.statistic = "F")
+# no co2 effect
+
 # model diagnosis
 plot(Iml_post_pcNP)
 qqnorm(resid(Iml_post_pcNP))
