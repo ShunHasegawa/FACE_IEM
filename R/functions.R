@@ -776,3 +776,15 @@ StatTable <- function(x, variable) { # x is anova result
   result <- result[order(result$predictor), ]
   return(result)
 }
+
+##################
+# percent change #
+##################
+PerChange <- function(data, ...){
+  d  <- data[order(data$date), ]
+  df <- within(d, {
+    pcN = Delt(d$SumN, ...)
+    pcP = Delt(d$p, ...)
+  })
+  return(df)
+}
