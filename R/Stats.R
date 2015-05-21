@@ -226,19 +226,6 @@ Temp_pl <- arrangeGrob(MoistPlot, TempSct, ncol = 1, nrow = 2,
   # ggplot object which can be save using ggsave. but text font looks bold for
   # some reasons..
 
-#Conditional scatter plot of ion exchange membrane (IEM)-adsorbed nutrient 
-#concentrations (NO[3]'-', NH[4]'+' and PO[4]'3-') against soil moisture for a 
-#given soil temperature 
-# range: Cold (12 to 16 degree C), Moderately warm (16 to 20 degree C) and Hot (20 to 24 degree C), plotted with 
-
-# predicted lines and associated 95% confidence intervals. Predicted values were estimated\n 
-# from linear-mixed effects models with two covariates (soil moisture and temperature;
-
-#LMM[cov]), demonstrating treatment-specific correlations with soil temperature and moisture 
-# (Table 1). Bootstrap analyses were employed to approximate 95% confidence intervals for 
-# coefficients estimated by LMM[cov].
-
-
 # save
 ggsavePP(plot = Moist_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Moist", 
          width = 6, height = 7.5)
