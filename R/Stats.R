@@ -226,9 +226,56 @@ Temp_pl <- arrangeGrob(MoistPlot, TempSct, ncol = 1, nrow = 2,
   # ggplot object which can be save using ggsave. but text font looks bold for
   # some reasons..
 
+p <- Moist_pl
+
+#Conditional scatter plot of ion exchange membrane (IEM)-adsorbed nutrient 
+#concentrations (NO[3]'-', NH[4]'+' and PO[4]'3-') against soil moisture for a 
+#given soil temperature 
+# range: Cold (12 to 16 degree C), Moderately warm (16 to 20 degree C) and Hot (20 to 24 degree C), plotted with 
+
+# predicted lines and associated 95% confidence intervals. Predicted values were estimated\n 
+# from linear-mixed effects models with two covariates (soil moisture and temperature;
+
+#LMM[cov]), demonstrating treatment-specific correlations with soil temperature and moisture 
+# (Table 1). Bootstrap analyses were employed to approximate 95% confidence intervals for 
+# coefficients estimated by LMM[cov].
+
+
 # save
 ggsavePP(plot = Moist_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Moist", 
          width = 6, height = 7.5)
 
 ggsavePP(plot = Temp_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Temp", 
          width = 6, height = 7.5)
+
+# Add figure caption
+
+# ggplot is not very well designed to add text, especieally multiple lines, so
+# add each line one by one
+string1 <- "Figure S2. Conditional scatter plot of ion exchange membrane (IEM)-adsorbed nutrient"
+string2 <- expression(paste("concentrations (", NO[3]^'-', ", ", NH[4]^'+'~and~PO[4]^'3-', ") against soil moisture for a given soil temperature"))
+string3 <- expression(paste("range: Cold (12 to 16 ", degree*C, "), Moderately warm (16 to 20 ", degree*C, ") and Hot (20 to 24 ", degree*C, "), plotted with"))
+string4 <- "predicted lines and associated 95% confidence intervals. Predicted values were estimated"
+string5 <- "from linear-mixed effects models with two covariates (soil moisture and temperature;"
+string6 <- expression(paste(LMM[cov], "), demonstrating treatment-specific correlations with soil temperature and moisture"))
+string7 <- "(Table 1). Bootstrap analyses were employed to approximate 95% confidence intervals for"
+string8 <- expression(paste("coefficients estimated by ", LMM[cov], ".                                                                             "))
+stringList <- list(string1, string2, string3, string4, string5, string6, string7, string8)
+
+# formart for ggplot
+textLst <- llply(stringList, 
+                 function(x) textGrob(x, just = c("left", "centre"),
+                                      hjust = -.05, 
+                                      x = 0, y = unit(.6, "line"),
+                                      gp = gpar(fontsize = 10)))
+linNum <- length(textLst)
+# plot all together
+p2 <- arrangeGrob(TempPlot, MoistSct, 
+                  textLst[[1]], textLst[[2]], textLst[[3]], textLst[[4]], 
+                  textLst[[5]], textLst[[6]], textLst[[7]], textLst[[8]], 
+                  ncol = 1, nrow = linNum + 2, 
+                  heights = unit(c(1, 6, rep(.2, linNum)), "inches"))
+sum(c(1, 6, rep(.2, linNum)))
+ggsavePP(plot = p2, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Moist_caption", 
+         width = 6, height = 9)
+
