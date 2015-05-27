@@ -22,3 +22,4 @@ library(snow) # require to difine makeCluster for foreach
 library(doSNOW)
 library(grid)
 library(quantmod) # compute % change
+library(boot)

@@ -788,3 +788,12 @@ PerChange <- function(data, ...){
   })
   return(df)
 }
+
+##################
+# Geometric mean #
+##################
+gm_mean = function(x, na.rm=TRUE){
+  exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
+}
+
+geoCI <- function(x) exp(ci(log(x))[c(2, 3, 4)])
