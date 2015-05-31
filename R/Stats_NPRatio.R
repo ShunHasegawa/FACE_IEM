@@ -96,7 +96,7 @@ p2 <- p +
 p2
 ggsavePP(filename = "output//figs/FACE_ResponseRatio_NPRatio", plot = p2, width = 6.65, height = 3)
 
-# vs temp
+# vs temp ----
 # merge data frame
 MT_df <- ddply(iem, .(date, pre, post), summarise, 
                temp = mean(Temp_Mean, na.rm = TRUE), 
@@ -117,10 +117,13 @@ p3 <- arrangeGrob(p2, plot_Temp, nrow = 2)
 ggsavePP(filename = "output//figs/FACE_ResponseRatio_NPRatio.pdf", plot = p3, 
          width = 6.65, height = 6.65)
 
-
+# Stats
+m1 <- lm(original ~ temp + Moist, data = dd, subset = !pre)
+m2 <- update(m1, ~. - Moist)
+anova(m1, m2)
+summary(m2)
+anova(m2)
 ########
-expression(R^2==0.503)
-
 plot(original ~ temp, type = "n", ylim = c(-.7, 1.5), data = dd)
 points(original ~ temp, pch = 19, cex = 2, ylim = c(-.7, 1.5), 
      data = dd, subset = co2on)
