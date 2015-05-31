@@ -104,13 +104,14 @@ MT_df <- ddply(iem, .(date, pre, post), summarise,
 dd <- merge(MT_df, NP_ring_boot, by = "date")
 p <- ggplot(subset(dd, !pre), aes(x = temp, y = original))
 plot_Temp <- p + 
+  geom_errorbar(aes(ymin = original - bootSE, ymax = original + bootSE), width = 0) + 
   geom_hline(yintercept = 0, linetype = "longdash") +
   geom_point(size = 4) + 
   geom_smooth(method = lm, colour = "black", se = FALSE, alpha = .7, size = .7) + 
   science_theme +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) +
-  annotate("text", x = 19.2, y = .4, label = "italic(R)^2==0.5*0", parse = TRUE, hjust = 0) + 
-  annotate("text", x = 19.2, y = .32, label = "italic(P)<0.05", parse = TRUE, hjust = 0) + 
+  annotate("text", x = 19.2, y = .65, label = "italic(R)^2==0.5*0", parse = TRUE, hjust = 0) + 
+  annotate("text", x = 19.2, y = .52, label = "italic(P)<0.05", parse = TRUE, hjust = 0) + 
   labs(x = expression(Soil~temperature~(degree*C)), 
        y = expression(log(italic(R[NP_eCO2])/italic(R[NP_amb]))))
 plot_Temp
