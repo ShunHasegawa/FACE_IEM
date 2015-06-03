@@ -110,17 +110,18 @@ plot_Temp <- p +
   geom_smooth(method = lm, colour = "black", se = FALSE, alpha = .7, size = .7) + 
   science_theme +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) +
-  annotate("text", x = 19.2, y = .65, label = "italic(R)^2==0.5*0", parse = TRUE, hjust = 0) + 
-  annotate("text", x = 19.2, y = .52, label = "italic(P)<0.05", parse = TRUE, hjust = 0) + 
+  annotate("text", x = 22.2, y = .65, label = "italic(R)^2==0.5*0", parse = TRUE, hjust = 0, size = 3) + 
+  annotate("text", x = 22.2, y = .52, label = "italic(P)<0.05", parse = TRUE, hjust = 0, size = 3) + 
   labs(x = expression(Soil~temperature~(degree*C)), 
-       y = expression(log(italic(R[NP_eCO2])/italic(R[NP_amb]))))
+       y = expression(log(italic(R[NP_eCO2])/italic(R[NP_amb])))) +
+  scale_x_continuous(breaks = seq(12, 24, 3), labels = seq(12, 24, 3), limits = c(12, 24))
 plot_Temp
 p3 <- arrangeGrob(p2, plot_Temp, nrow = 2)
 ggsavePP(filename = "output//figs/FACE_ResponseRatio_NPRatio.pdf", plot = p3, 
          width = 6.65, height = 6.65)
 ggsavePP(filename = "output//figs/FACE_manuscript/FACE_ResponseRatio_NPvsTemp", 
          plot = plot_Temp,
-         width = 3.14, height = 3.14)
+         width = 5, height = 3)
 
 # Stats
 m1 <- lm(original ~ temp + Moist, data = dd, subset = !pre)
