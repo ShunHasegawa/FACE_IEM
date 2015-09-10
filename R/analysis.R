@@ -9,6 +9,8 @@ source("R//functions.R")
 ################
 # source("R/ProcessData.R")
 load("output//data//FACE_IEM.RData")
+# add NP ratio
+iem$NP <- with(iem, (no + nh)/p)
 
 #################
 # Summary table #

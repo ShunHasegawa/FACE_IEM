@@ -3,20 +3,32 @@ iemRmOl <- iem
 
 # P
 boxplot(iem$p)
-iemRmOl$p[which(iemRmOl$p == max(iemRmOl$p))] <- NA
+iemRmOl$p[which(iem$p == max(iem$p))] <- NA
 
 # nh
 boxplot(iem$nh)
-iemRmOl$nh[which(iemRmOl$nh > 800)] <- NA
+iemRmOl$nh[which(iem$nh > 800)] <- NA
+
+# NP
+# remove the values calculated from the above values
+iemRmOl$NP[is.na(iemRmOl$nh)|is.na(iemRmOl$p)] <- NA
 
 # melt dataset
-iemMlt <- melt(iemRmOl, id = names(iem)[which(!(names(iem) %in% c("no", "nh", "p")))])
+iemMlt <- melt(iemRmOl, id = names(iem)[which(!(names(iem) %in% c("no", "nh", "p", "NP")))])
 
 # Ring summary table & mean
 RngSmmryTbl <- dlply(iemMlt, .(variable), function(x) CreateTable(x, fac = "ring", digit = 1, nsmall = 2))
-RngMean <- ddply(iemMlt, .(time, date, co2, ring, block, variable), summarise, value = mean(value, na.rm = TRUE)) 
+RngMean <- ddply(iemMlt, .(time, date, co2, ring, block, variable), 
+                 function(x) {
+                   if(unique(x$variable) != "NP"){
+                     m <- mean(x$value, na.rm = TRUE)
+                   } else {
+                     m <- gm_mean(x$value) # geometric mean for NP ratios
+                     }
+                   return(data.frame(value = m))
+                   }) 
 
-# treat summary table $ mean
+# treat summary table & mean
 TrtSmmryTbl <- dlply(RngMean, .(variable), function(x) CreateTable(x, fac = "co2",  digit = 1, nsmall =2))
 
 ## create xcel workbook ##
@@ -27,13 +39,12 @@ sheet <- createSheet(wb,sheetName="raw_data")
 addDataFrame(iem, sheet, showNA=TRUE, row.names=FALSE, characterNA="NA")
 
 # worksheets for ring summary
-shnames <- paste("Ring_mean.",c("Nitrate", "Ammonium","Phosphate", sep=""))
-l_ply(1:3, function(x) crSheet(sheetname = shnames[x], dataset = RngSmmryTbl[[x]]))
+shnames <- paste("Ring_mean.",c("Nitrate", "Ammonium","Phosphate", "NPRatio", sep=""))
+l_ply(1:4, function(x) crSheet(sheetname = shnames[x], dataset = RngSmmryTbl[[x]]))
 
 # worksheets for co2 trt summary
-shnames <- paste("CO2_mean.", c("Nitrate", "Ammonium","Phosphate"), sep = "")
-l_ply(1:3, function(x) crSheet(sheetname = shnames[x], dataset = TrtSmmryTbl[[x]]))
+shnames <- paste("CO2_mean.", c("Nitrate", "Ammonium","Phosphate", "NPRatio"), sep = "")
+l_ply(1:4, function(x) crSheet(sheetname = shnames[x], dataset = TrtSmmryTbl[[x]]))
 
 #save file
 saveWorkbook(wb,"Output/Table/FACE_IEM.xlsx")
-
