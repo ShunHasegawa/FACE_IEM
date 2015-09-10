@@ -27,6 +27,23 @@ plot(Iml_post_NP)
 qqnorm(resid(Iml_post_NP))
 qqline(resid(Iml_post_NP))
 
+# contrast
+
+# contrast doesn't work with lmer. so use lme
+tdf <- subsetD(iem, post)
+tdf$co2 <- relevel(tdf$co2, "elev")
+# tdf$time <- relevel(tdf$time, 5)
+
+lmeMod <- lme(log(NP) ~ co2 * time, random = ~1|block/ring/id, data = tdf)
+
+cntrst<- contrast(lmeMod, 
+                  a = list(time = levels(tdf$time), co2 = "amb"),
+                  b = list(time = levels(tdf$time), co2 = "elev"))
+
+FACE_IEM_PostCO2_NP_CntrstDf <- cntrstTbl(cntrst, data = tdf, variable  = "NP", digit = 2)
+FACE_IEM_PostCO2_NP_CntrstDf
+
+
 ## ---- FACE_IEM_Analyse_NP_figure
 
 # Geometric mean for each treatment----
