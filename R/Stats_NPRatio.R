@@ -19,13 +19,20 @@ Iml_post_NP <- lmer(log(NP) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
 summary(Iml_post_NP)
 Anova(Iml_post_NP, test.statistic = "F")
 # co2 x time interaction
-plot(allEffects(Iml_post_NP))
+
+# The final model is:
+Fml_post_NP <- Iml_post_NP
+AnvF_post_np <- Anova(Fml_post_NP, test.statistic = "F")
+AnvF_post_np
+
+
+plot(allEffects(Fml_post_NP))
 
 ## ---- Stat_FACE_IEM_Analyse_NP_plot
 # model diagnosis
-plot(Iml_post_NP)
-qqnorm(resid(Iml_post_NP))
-qqline(resid(Iml_post_NP))
+plot(Fml_post_NP)
+qqnorm(resid(Fml_post_NP))
+qqline(resid(Fml_post_NP))
 
 # contrast
 
