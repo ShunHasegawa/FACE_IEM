@@ -111,8 +111,15 @@ cmbn.fls <- function(file){
 CreateTable <- function(dataset, fac, ...){
   a <- dataset[c("date", fac, "value")] #extract required columns
   colnames(a) <- c("date","variable","value") #change column names for cast
-  means <- cast(a, date~variable, mean, na.rm = TRUE) 
-  ses <- cast(a,date~variable,function(x) ci(x,na.rm=TRUE)[4])
+  
+  if(unique(dataset$variable) != "NP"){
+    means <- cast(a, date~variable, mean, na.rm = TRUE) 
+    ses <- cast(a,date~variable,function(x) ci(x,na.rm=TRUE)[4])
+  } else {
+    means <- cast(a, date~variable, gm_mean) 
+    ses <- cast(a,date~variable,function(x) geoCI(x,na.rm=TRUE)[3])
+  } 
+  
   colnames(ses)[2:ncol(ses)] <- paste(colnames(ses)[2:ncol(ses)],"SE",sep=".")
   samples <- cast(a,date~variable,function(x) sum(!is.na(x))) #sample size
   colnames(samples)[2:ncol(samples)] <- paste(colnames(samples)[2:ncol(samples)],"N",sep=".")
@@ -120,12 +127,16 @@ CreateTable <- function(dataset, fac, ...){
   # CO2 effects
   if(fac == "co2"){
     # Response ratio (e/a-1) cluculated for each block
-    blockR <- ddply(dataset, .(date, block), summarise, R = value[co2 == "elev"]/value[co2 == "amb"]-1)
+    blockR <- ddply(dataset, .(date, block), summarise, R = value[co2 == "elev"]/value[co2 == "amb"])
     # remove Inf
     blockR$R[is.infinite(blockR$R)] <- NA
     # mean of Ratio for each date
-    blockRMean <- ddply(blockR, .(date), summarise, Ratio = mean(R, na.rm = TRUE))
     
+    if(unique(dataset$variable) != "NP"){
+      blockRMean <- ddply(blockR, .(date), summarise, Ratio = mean(R, na.rm = TRUE) - 1)
+      } else { # geometric mean for NP ratios
+        blockRMean <- ddply(blockR, .(date), summarise, Ratio = gm_mean(R) - 1)
+      }
     # merge datasets
     mer <- Reduce(function(...) merge(..., by = "date"), list(means, ses, samples, blockRMean)) 
   } else { # no need calculate Ratio for Ring summary table
@@ -796,4 +807,4 @@ gm_mean = function(x, na.rm=TRUE){
   exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
 }
 
-geoCI <- function(x) exp(ci(log(x))[c(2, 3, 4)])
+geoCI <- function(x, ...) exp(ci(log(x), ...)[c(2, 3, 4)])
