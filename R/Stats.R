@@ -70,12 +70,13 @@ source("R/Stats_NPRatio.R")
 # create summary list
 StatSmmryLst <- list("Nitrate" = list(AnvF_no, Est_no),
                      "Ammonium" = list(AnvF_nh, Est_nh),
-                     "Phosphate" = list(AnvF_P, Est_P))
+                     "Phosphate" = list(AnvF_P, Est_P), 
+                     "NPRatio" = list(AnvF_post_NP, Est_NP))
 
 
 # save in a single excel file
 wb <- createWorkbook()
-l_ply(c("Nitrate", "Ammonium", "Phosphate"), 
+l_ply(c("Nitrate", "Ammonium", "Phosphate", "NPRatio"), 
       function(x) CrSheetAnvTbl(workbook = wb, 
                                 sheetName = x, 
                                 smmaryLst = StatSmmryLst))
@@ -88,7 +89,8 @@ saveWorkbook(wb, "Output/Table/FACE_IEM_Ancv.xlsx")
 # create stat summary table for LMM with CO2 and time
 CO2TimeStatList <- list('no' = AnvF_post_no, 
                         'nh' = AnvF_post_nh, 
-                        'p' = AnvF_post_p) 
+                        'p' = AnvF_post_p, 
+                        'np' = AnvF_post_NP) 
 
 Stat_CO2Time <- ldply(names(CO2TimeStatList), 
                       function(x) StatTable(CO2TimeStatList[[x]], variable = x))
@@ -98,7 +100,8 @@ save(Stat_CO2Time, file = "output//data/CO2Time_Stat.RData")
 ########################
 ## Result of contrast ##
 ########################
-ContrastDF <- rbind(FACE_IEM_PostCO2_P_CntrstDf, FACE_IEM_PostCO2_NO_CntrstDf)
+ContrastDF <- rbind(FACE_IEM_PostCO2_P_CntrstDf, FACE_IEM_PostCO2_NO_CntrstDf, 
+                    FACE_IEM_PostCO2_NP_CntrstDf)
 save(ContrastDF, file = "output//data/FACE_IEM_ContrastDF.RData")
 
 ################################
@@ -106,7 +109,7 @@ save(ContrastDF, file = "output//data/FACE_IEM_ContrastDF.RData")
 ################################
 
 # list of ancova models
-Lst_ml <- list(no = Fml_ancv_NO, nh = Fml_ancv_NH, p = Fml_ancv_P) 
+Lst_ml <- list(no = Fml_ancv_no, nh = Fml_ancv_nh, p = Fml_ancv_p, np = Fml_ancv_np) 
 
 # bootstrap takes quite long time so apply parallel processing
 
@@ -115,7 +118,7 @@ Lst_ml <- list(no = Fml_ancv_NO, nh = Fml_ancv_NH, p = Fml_ancv_P)
 # registerDoParallel() is normally use to set it up but this time I need to
 # export "BtsCI" and "Fml_ancv" so use the following
 
-cl <- makeCluster(3, type = "SOCK") 
+cl <- makeCluster(4, type = "SOCK") 
 # three cores will be used as three models will be processed simultaneously as
 # below. 
 
@@ -126,7 +129,7 @@ registerDoSNOW(cl)
 getDoParWorkers()
 
 ## against temperature ##
-ciDF_vsTemp <- ldply(1:3, 
+ciDF_vsTemp <- ldply(1:4, 
                     function(x) BtsCI(model = Lst_ml[[x]], 
                                       MoistVal = MTdf_temp$MoistVal, 
                                       TempVal = MTdf_temp$TempVal, 
@@ -142,7 +145,9 @@ MoistLabs <- c(expression(Dry),
                expression(Wet))
 
 # labels for facet_grid
-ylabs <- c(expression(NO[3]^"-"),expression(NH[4]^"+"), expression(PO[4]^"3-"))
+ylabs <- c(expression(NO[3]^"-"*-N),expression(NH[4]^"+"*-N), expression(PO[4]^"3-"*-P), 
+           expression(N:P~ratios))
+
 
 ciDF_vsTemp <- within(ciDF_vsTemp, {
   MoistLev <- factor(Moist, labels = MoistLabs)
@@ -150,7 +155,7 @@ ciDF_vsTemp <- within(ciDF_vsTemp, {
 })
 
 ## agianst moisture ##
-ciDF_vsMoist <- ldply(1:3, 
+ciDF_vsMoist <- ldply(1:4, 
                      function(x) BtsCI(model = Lst_ml[[x]], 
                                        MoistVal = MTdf_moist$MoistVal, 
                                        TempVal = MTdf_moist$TempVal, 
@@ -187,7 +192,7 @@ load("output//data/ciDF_vsMoist.RData")
 
 # melt postDF to plot them all together with facet_grid
 postDF_Mlt <- melt(postDF, 
-                   id = names(postDF)[which(!(names(postDF) %in% c("no", "nh", "p")))])
+                   id = names(postDF)[which(!(names(postDF) %in% c("no", "nh", "p", "NP")))])
 
 postDF_Mlt <- within(postDF_Mlt, {
   variable <- factor(variable, labels = ylabs)
@@ -232,10 +237,10 @@ Temp_pl <- arrangeGrob(MoistPlot, TempSct, ncol = 1, nrow = 2,
   # some reasons..
 
 # save
-ggsavePP(plot = Moist_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Moist", 
+ggsavePP(plot = Moist_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Moist_withNP", 
          width = 6, height = 7.5)
 
-ggsavePP(plot = Temp_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Temp", 
+ggsavePP(plot = Temp_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Temp_withNP", 
          width = 6, height = 7.5)
 
 # Add figure caption

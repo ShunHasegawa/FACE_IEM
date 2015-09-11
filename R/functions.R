@@ -168,8 +168,13 @@ crSheet <- function(sheetname, dataset){
 ############################
 Crt_SmryDF <- function(data, val = "value"){
   x <- data[ ,val]
-  Mean <- mean(x, na.rm = TRUE)
-  SE <- ci(x, na.rm = TRUE)[[4]]
+  if(unique(data$variable) != "NP"){
+    Mean <- mean(x, na.rm = TRUE)
+    SE <- ci(x, na.rm = TRUE)[[4]]
+  } else {# use geometric mean for NP ratios in log scale
+      Mean <- log(gm_mean(x))
+      SE <- geoCI(x, na.rm = TRUE)[3]
+    }
   N  <- sum(!is.na(x))
   data.frame(Mean, SE, N)
 }
@@ -187,7 +192,8 @@ PltMean <- function(data){
             bquote(atop(paste(IEM *- adsorbed ~ NH[4]^"+"), 
                             paste(.(unt)))), 
             bquote(atop(paste(IEM *- adsorbed ~ PO[4]^"3-"), 
-                            paste(.(unt))))
+                            paste(.(unt)))),
+            "log(N:P ratios)"
             )
   # subsitute returens argument as it is without calculation (similar to expression())
   
@@ -204,7 +210,8 @@ PltMean <- function(data){
   ylab <- ifelse(length(unique(data$variable)) > 1, ylabs[1],
                  ifelse(unique(data$variable) == "no", ylabs[2], 
                         ifelse(unique(data$variable) == "nh", ylabs[3],
-                               ylabs[4])))
+                               ifelse(unique(data$variable) == "p", ylabs[4],
+                               ylabs[5]))))
   
   colfactor <- ifelse(any(names(data) == "ring"), "ring", "co2")
   

@@ -6,19 +6,20 @@ theme_set(theme_bw()) # graphic backgroud is white
 RngMean <- ddply(iemMlt, .(time, date, co2, ring, variable), Crt_SmryDF) 
 TrtMean <- ddply(RngMean, .(time, date, co2, variable), function(x) Crt_SmryDF(x, val = "Mean"))
 save(TrtMean, file = "output//data/FACE_IEM_CO2Mean.RData")
+subset(TrtMean, variable == "NP" & co2 == "amb")
 
 #################################
 # plot each nutrient separately #
 #################################
-vars <- c("Nitrate", "Ammonium", "Phosphate")
+vars <- c("Nitrate", "Ammonium", "Phosphate", "NPratios")
 
 RngFg <- dlply(RngMean, .(variable), PltMean)
 fls <- paste("output//figs/FACE_IEM_Ring_", vars, sep = "")
-l_ply(1:3, function(x) ggsavePP(filename = fls[x], plot = RngFg[[x]], width = 6, height = 3))
+l_ply(1:4, function(x) ggsavePP(filename = fls[x], plot = RngFg[[x]], width = 6, height = 3))
 
 TrtFg <- dlply(TrtMean, .(variable), PltMean)
 fls <- paste("output//figs/FACE_IEM_CO2Trt_", vars, sep = "")
-l_ply(1:3, function(x) ggsavePP(filename = fls[x], plot = TrtFg[[x]], width = 6, height = 3))
+l_ply(1:4, function(x) ggsavePP(filename = fls[x], plot = TrtFg[[x]], width = 6, height = 3))
 
 ##################################
 # plot all nutrient in one graph #
