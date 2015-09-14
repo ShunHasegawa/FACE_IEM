@@ -111,28 +111,30 @@ cmbn.fls <- function(file){
 CreateTable <- function(dataset, fac, ...){
   a <- dataset[c("date", fac, "value")] #extract required columns
   colnames(a) <- c("date","variable","value") #change column names for cast
-  
-  if(unique(dataset$variable) != "NP"){
-    means <- cast(a, date~variable, mean, na.rm = TRUE) 
-    ses <- cast(a,date~variable,function(x) ci(x,na.rm=TRUE)[4])
-  } else {
-    means <- cast(a, date~variable, gm_mean) 
-    ses <- cast(a,date~variable,function(x) geoCI(x,na.rm=TRUE)[3])
-  } 
-  
+  means <- cast(a, date~variable, mean, na.rm = TRUE) 
+  ses <- cast(a,date~variable,function(x) ci(x,na.rm=TRUE)[4])
   colnames(ses)[2:ncol(ses)] <- paste(colnames(ses)[2:ncol(ses)],"SE",sep=".")
   samples <- cast(a,date~variable,function(x) sum(!is.na(x))) #sample size
   colnames(samples)[2:ncol(samples)] <- paste(colnames(samples)[2:ncol(samples)],"N",sep=".")
   
   # CO2 effects
+  
+  if(unique(dataset$variable) != "logNP"){
+    ddf <- dataset 
+  } else {
+      ddf <- within(dataset,{
+        value <- exp(value) # back transform to calculate response ratios
+      })
+    }
+  
   if(fac == "co2"){
     # Response ratio (e/a-1) cluculated for each block
-    blockR <- ddply(dataset, .(date, block), summarise, R = value[co2 == "elev"]/value[co2 == "amb"])
+    blockR <- ddply(ddf, .(date, block), summarise, R = value[co2 == "elev"]/value[co2 == "amb"])
     # remove Inf
     blockR$R[is.infinite(blockR$R)] <- NA
     # mean of Ratio for each date
     
-    if(unique(dataset$variable) != "NP"){
+    if(unique(dataset$variable) != "logNP"){
       blockRMean <- ddply(blockR, .(date), summarise, Ratio = mean(R, na.rm = TRUE) - 1)
       } else { # geometric mean for NP ratios
         blockRMean <- ddply(blockR, .(date), summarise, Ratio = gm_mean(R) - 1)
@@ -168,13 +170,8 @@ crSheet <- function(sheetname, dataset){
 ############################
 Crt_SmryDF <- function(data, val = "value"){
   x <- data[ ,val]
-  if(unique(data$variable) != "NP"){
-    Mean <- mean(x, na.rm = TRUE)
-    SE <- ci(x, na.rm = TRUE)[[4]]
-  } else {# use geometric mean for NP ratios in log scale
-      Mean <- log(gm_mean(x))
-      SE <- geoCI(x, na.rm = TRUE)[3]
-    }
+  Mean <- mean(x, na.rm = TRUE)
+  SE <- ci(x, na.rm = TRUE)[[4]]
   N  <- sum(!is.na(x))
   data.frame(Mean, SE, N)
 }
@@ -291,6 +288,7 @@ science_theme <- theme(panel.border = element_rect(colour = "black"),
                        legend.position = c(.5, .93), 
                        legend.title = element_blank(),
                        legend.key.width = unit(2.5, "lines"),
+                       legend.key.height = unit(.8, "lines"),
                        legend.key = element_blank())
 
 # white-black figure
@@ -299,7 +297,7 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, S
     
   # df for sub-labels
   subLabDF <- with(data, 
-                   data.frame(xv = as.Date("2012-6-21"),
+                   data.frame(xv = as.Date("2012-7-25"),
                               ddply(data, .(variable), summarise, yv = max(Mean + SE)),
                               labels = paste("(", letters[1:length(levels(variable))], ")", 
                                              sep = ""),
@@ -321,22 +319,25 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, S
   statDF <- StatPositionDF(StatRes = StatRes, 
                            variable = levels(ylengthDF$variable), 
                            ytop = StatY,
-                           ylength = ylengthDF$ylength)
+                           ylength = ylengthDF$ylength, 
+                           gap = .08)
   
   # create a plot  
   p <- ggplot(data, aes(x = date, y = Mean, group = co2))
   
   p2 <- p + 
     geom_vline(xintercept = as.numeric(as.Date("2012-09-18")), 
-               linetype = "dashed", col = "black") +
+               linetype = "dashed", col = "black", 
+               size = .6) +
     geom_line(aes(linetype = co2), position = position_dodge(20)) + 
     geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE),
                   width = 0,
-                  position = position_dodge(20)) + 
+                  position = position_dodge(20), 
+                  size = .4) + 
     geom_point(aes(fill = co2),
                shape = 21, 
                position = position_dodge(20),
-               size = 4) +
+               size = 3) +
     labs(x = "Month", y = ylab) +
     scale_x_date(breaks= date_breaks("3 month"),
                  labels = date_format("%b-%y"),
@@ -345,14 +346,14 @@ WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, S
                       labels = c("Ambient", expression(eCO[2]))) +
     scale_linetype_manual(values = c("solid", "dashed"), 
                           labels = c("Ambient", expression(eCO[2]))) +
-    geom_text(aes(x = xv, y = yv * .95, label = labels),
+    geom_text(aes(x = xv, y = yv * 1.06, label = labels),
               fontface = "bold",
               hjust = 1,
               data = subLabDF) +
-    facet_grid(variable~., scales= "free_y", labeller= facetLab) +
+    facet_wrap(~variable, scales= "free_y") +
     figTheme +
     geom_text(data = subset(statDF, predictor != ""), 
-              aes(x = as.Date("2014-1-1"), y = yval, label = predictor),
+              aes(x = as.Date("2013-12-20"), y = yval, label = predictor),
               size = 3, hjust = 1, parse = TRUE) +
     # unless remove [" "] with predictor != "", labels will be messed up due to
     # this empty level
@@ -815,3 +816,27 @@ gm_mean = function(x, na.rm=TRUE){
 }
 
 geoCI <- function(x, ...) exp(ci(log(x), ...)[c(2, 3, 4)])
+
+########################
+# Label for facet wrap #
+########################
+facet_wrap_labeller <- function(gg.plot,labels=NULL) {
+  #works with R 3.0.1 and ggplot2 0.9.3.1
+  # copied from http://stackoverflow.com/questions/19282897/
+  # how-to-add-expressions-to-labels-in-facet-wrap
+  # require(gridExtra)
+  
+  g <- ggplotGrob(gg.plot)
+  gg <- g$grobs      
+  strips <- grep("strip_t", names(gg))
+  
+  for(ii in seq_along(labels))  {
+    modgrob <- getGrob(gg[[strips[ii]]], "strip.text", 
+                       grep=TRUE, global=TRUE)
+    gg[[strips[ii]]]$children[[modgrob$name]] <- editGrob(modgrob,label=labels[ii])
+  }
+  
+  g$grobs <- gg
+  class(g) = c("arrange", "ggplot",class(g)) 
+  g
+}

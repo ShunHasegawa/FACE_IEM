@@ -61,9 +61,10 @@ Anova(Iml_post_nh)
 Iml_post_nh_2 <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
                  data = postDF)
 Anova(Iml_post_nh_2)
+Anova(Iml_post_nh_2, test.statistic = "F")
 
 # The final model is:
-Fml_post_nh <- stepLmer(Iml_post_nh_2)
+Fml_post_nh <- stepLmer(Iml_post_nh_2, alpha.fixed = 0.1)
 
 Fml_post_nh@call
 

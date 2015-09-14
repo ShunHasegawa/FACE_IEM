@@ -6,7 +6,6 @@ theme_set(theme_bw()) # graphic backgroud is white
 RngMean <- ddply(iemMlt, .(time, date, co2, ring, variable), Crt_SmryDF) 
 TrtMean <- ddply(RngMean, .(time, date, co2, variable), function(x) Crt_SmryDF(x, val = "Mean"))
 save(TrtMean, file = "output//data/FACE_IEM_CO2Mean.RData")
-subset(TrtMean, variable == "NP" & co2 == "amb")
 
 #################################
 # plot each nutrient separately #
@@ -24,21 +23,17 @@ l_ply(1:4, function(x) ggsavePP(filename = fls[x], plot = TrtFg[[x]], width = 6,
 ##################################
 # plot all nutrient in one graph #
 ##################################
-# labels for facet_grid
-ylabs <- list(
-  'no' = expression(NO[3]^"-"),
-  'nh' = expression(NH[4]^"+"),
-  'po' = expression(PO[4]^"3-"))
+# labels for facet_wrap
+ylabs <- c(expression(NO[3]^"-"*-N),expression(NH[4]^"+"*-N), 
+           expression(PO[4]^"3-"*-P), expression(log(N:P~ratios)))
 
-
-ylab_label <- function(variable, value){
-  return(ylabs[value])
-}
 
 pl <- PltMean(TrtMean) +
-  facet_grid(variable~., scales= "free_y", labeller= ylab_label)
+  facet_wrap(~ variable, scales= "free_y")
+pl2 <- facet_wrap_labeller(pl, labels = ylabs)
+pl2
 
-ggsavePP(filename = "output//figs/FACE_IEM_CO2Trt", plot = pl, width = 6, height = 6)
+ggsavePP(filename = "output//figs/FACE_IEM_CO2Trt", plot = pl, width = 6.5, height = 6)
 
 ########################
 # Plot for publication #
@@ -57,6 +52,10 @@ ymaxDF <- ddply(TrtMean, .(variable), function(x) max(x$Mean + x$SE, na.rm = TRU
 # load contrastDF to annotate stat result and combine with max values from
 # TrtMean as y position
 load("output//data/FACE_IEM_ContrastDF.RData")
+
+# not show a dagger mark
+ContrastDF$stars[!ContrastDF$stars %in% c("", "*", "**")] <- ""
+
 Antt_CntrstDF <- merge(ContrastDF, 
                        ddply(TrtMean, .(date, variable), summarise, yval = max(Mean + SE)),
                        # this return maximum values
@@ -65,11 +64,15 @@ Antt_CntrstDF$co2 <- "amb" # co2 column is required as it's used for mapping
 
 p <- WBFig(data = TrtMean, ylab = expression(IEM*-adsorbed~nutrients~(ng~cm^"-2"~d^"-1")),
            StatRes = Stat_CO2Time, 
-           StatY = ymaxDF[ , 2]*1.08) +
-  geom_text(data = Antt_CntrstDF, aes(x = date, y = yval, label = stars), vjust = 0)
+           StatY = c(ymaxDF[1, 2] - 250,  ymaxDF[2:4 , 2]*1.07)) +
+  geom_text(data = Antt_CntrstDF, aes(x = date, y = yval, label = stars), vjust = 0)+
+  theme(legend.position = c(.34, .95), 
+        legend.background = element_rect(fill="transparent", colour = NA))
+p
+p2 <- facet_wrap_labeller(p, labels = ylabs)
 
-ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM", 
-         plot = p, width = 6.65, height = 6.65)
+ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM_withNP", 
+         plot = p2, width = 6.65, height = 5.65)
 
 ########################################################
 # plot soil moist and temp for each incubation periods #

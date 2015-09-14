@@ -71,7 +71,7 @@ source("R/Stats_NPRatio.R")
 StatSmmryLst <- list("Nitrate" = list(AnvF_no, Est_no),
                      "Ammonium" = list(AnvF_nh, Est_nh),
                      "Phosphate" = list(AnvF_P, Est_P), 
-                     "NPRatio" = list(AnvF_post_NP, Est_NP))
+                     "NPRatio" = list(AnvF_NP, Est_NP))
 
 
 # save in a single excel file
@@ -90,12 +90,11 @@ saveWorkbook(wb, "Output/Table/FACE_IEM_Ancv.xlsx")
 CO2TimeStatList <- list('no' = AnvF_post_no, 
                         'nh' = AnvF_post_nh, 
                         'p' = AnvF_post_p, 
-                        'np' = AnvF_post_NP) 
+                        'logNP' = AnvF_post_np) 
 
 Stat_CO2Time <- ldply(names(CO2TimeStatList), 
                       function(x) StatTable(CO2TimeStatList[[x]], variable = x))
 save(Stat_CO2Time, file = "output//data/CO2Time_Stat.RData")
-
 
 ########################
 ## Result of contrast ##

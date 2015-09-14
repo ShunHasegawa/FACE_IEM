@@ -9,12 +9,11 @@
 # NP ratio #
 ############
 
-bxplts(value= "NP", data= subsetD(iem, post), lambda = seq(-.1, .1, length = 10))
+bxplts(value= "logNP", data= subsetD(iem, post), lambda = seq(-.1, .1, length = 10))
 # use log
 
 # The initial model is
-Iml_post_NP <- lmer(log(NP) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
-                    data = subsetD(iem, post))
+Iml_post_NP <- lmer(logNP ~ co2 * time + (1|block) + (1|ring)  + (1|id), data = subsetD(iem, post))
 summary(Iml_post_NP)
 Anova(Iml_post_NP, test.statistic = "F")
 # co2 x time interaction
@@ -40,13 +39,13 @@ tdf <- subsetD(iem, post)
 tdf$co2 <- relevel(tdf$co2, "elev")
 # tdf$time <- relevel(tdf$time, 5)
 
-lmeMod <- lme(log(NP) ~ co2 * time, random = ~1|block/ring/id, data = tdf)
+lmeMod <- lme(logNP ~ co2 * time, random = ~1|block/ring/id, data = tdf)
 
 cntrst<- contrast(lmeMod, 
                   a = list(time = levels(tdf$time), co2 = "amb"),
                   b = list(time = levels(tdf$time), co2 = "elev"))
 
-FACE_IEM_PostCO2_NP_CntrstDf <- cntrstTbl(cntrst, data = tdf, variable  = "NP", digit = 2)
+FACE_IEM_PostCO2_NP_CntrstDf <- cntrstTbl(cntrst, data = tdf, variable  = "logNP", digit = 2)
 FACE_IEM_PostCO2_NP_CntrstDf
 
 # what if I remove NH and P outliers
@@ -54,7 +53,7 @@ which(iem$p == max(iem$p))
 which(iem$nh > 800)
 ttdf <- subsetD(iem[-c(15, 17, 63), ], post)
 iem[c(15, 17, 63), ]
-tml <- lmer(log(NP) ~ co2 * time + (1|block) + (1|ring)  + (1|id), data = ttdf)
+tml <- lmer(logNP ~ co2 * time + (1|block) + (1|ring)  + (1|id), data = ttdf)
 Anova(tml, test.statistic = "F")
 Anova(Fml_post_NP, test.statistic = "F")
 ldply(list(Fml_post_NP, tml), r.squared)
@@ -70,26 +69,26 @@ ldply(list(Fml_post_NP, tml), r.squared)
 #######################
 
 # plot all variables
-scatterplotMatrix(~ log(NP) + Moist + Temp_Mean|co2, data = postDF, diag = "boxplot")
+scatterplotMatrix(~ logNP + Moist + Temp_Mean|co2, data = postDF, diag = "boxplot")
 
 # plot for each ring
-xyplot(log(NP) ~ Moist|co2, groups = ring, postDF, type = c("r", "p"))
-xyplot(log(NP) ~ Temp_Mean|co2, groups = ring, postDF, type = c("r", "p"))
+xyplot(logNP ~ Moist|co2, groups = ring, postDF, type = c("r", "p"))
+xyplot(logNP ~ Temp_Mean|co2, groups = ring, postDF, type = c("r", "p"))
 
 ############
 # Analysis #
 ############
 
 # use lmer to get confidence intervals for predicted values
-Iml_ancv_np <- lmer(log(NP) ~ co2 * (Moist + Temp_Mean) + 
+Iml_ancv_np <- lmer(logNP ~ co2 * (Moist + Temp_Mean) + 
                       (1|block) + (1|ring) + (1|id), data = postDF)
 # random factor needs to be coded separatedly as above to use "step"
 Anova(Iml_ancv_np, test.statistic = "F")
 
 # model simplification
 Fml_ancv_np <- stepLmer(Iml_ancv_np, alpha.fixed = 0.1)
-AnvF_post_NP <- Anova(Fml_ancv_np, test.statistic = "F")
-AnvF_post_NP
+AnvF_NP <- Anova(Fml_ancv_np, test.statistic = "F")
+AnvF_NP
 
 # main effects
 plot(allEffects(Fml_ancv_np))
