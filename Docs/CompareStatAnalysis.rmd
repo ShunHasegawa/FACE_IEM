@@ -1,0 +1,104 @@
+---
+title: "CompareStats"
+author: "Shun Hasegawa"
+date: "15 September 2015"
+output: pdf_document
+---
+
+```{r package_options, include = FALSE}
+knitr::opts_knit$set(root.dir=normalizePath('../'))
+```
+
+```{r, include = FALSE, message=FALSE}
+load("output/data/FACE_IEM.RData") # read data
+load("output//data/postDF.RData")
+source("R/pckg.R")
+source("R//functions.R")
+```
+
+# Analyse only post-CO2
+Here I analyse IEM-adsorbed P only using post-co2 data as the reviewer suggested.
+
+```{r, echo=TRUE, results='markup'}
+Iml_post_p <- lmer(log(p) ~ co2 * time + (1|block) + (1|ring)  + (1|id), data = postDF)
+Anova(Iml_post_p, test.statistic = "F")
+```
+There's a still significant co2:time interaction. See treatment difference for each month using contrast.
+
+```{r, echo=TRUE, results='markup'}
+lmeMod <- lme(log(p) ~ co2 * time, random = ~1|block/ring/id, data = postDF)
+
+cntrst<- contrast(lmeMod, 
+                  a = list(time = levels(postDF$time), co2 = "amb"),
+                  b = list(time = levels(postDF$time), co2 = "elev"))
+
+cntrstTbl(cntrst, data = postDF, variable  = "p", digit = 2)
+```
+
+Significance levels slightly changed compared to the model with pre-co2 measurement, but pretty much the same.
+
+# ANCOVA
+Here I perform ANCOVA with the values measured right before CO2-switched-on (August 2012) as a covariate.
+
+```{r, echo=TRUE, message=FALSE, results='markup'}
+dd <- postDF[, c("p", "time", "co2", "block", "ring", "plot", "id")]
+init <- subsetD(iem, select = c("p", "ring", "plot"), time == 4)
+names(init)[1] <- "initial"
+dd <- merge(dd, init, by = c("ring", "plot"), x.all = TRUE)
+dd$initial <- log(dd$initial)
+summary(dd)
+```
+
+
+```{r, results='markup'}
+tml <- lmer(log(p) ~ co2 * time * initial + (1|block) + (1|ring) + (1|id),  data = dd)
+Anova(tml, tetest.statistic = "F")
+
+# model simplification
+tml2 <- stepLmer(tml, alpha.fixed = .1)
+Anova(tml2, test.statistic = "F")
+```
+
+There is a marginally significant time:initial interaction and significant co2:time interaction, indicating that slopes against initial values and differences in intercepts between co2 treatments varied between months.
+Visualise the modeled values for each month.
+
+```{r, echo=FALSE, fig.height= 5.5}
+par(mfrow = c(3, 4), mar = c(2, 3, 2, .5))
+l_ply(c(5:14), function(x) {
+  visreg(tml2, xvar = "initial", by = "co2", overlay = TRUE, 
+         cond = list(time = x),legend = FALSE, 
+         line.par = list(col = c("blue", "red")),
+         points.par = list(col = c("blue", "red")),
+         ylab = "", xlab = "")
+  mtext(text = unique(postDF$date)[x-4], side = 3, cex = .7)
+  mtext(text = "log(p)", side = 2, cex = .7, line = 2)
+  mtext(text = "initial", side = 1, cex = .7, line = 2)
+  })
+plot.new()
+legend("top", legend = c("amb", "elev"), col = c("blue", "red"), lty = 1, pch = 19, bty = "n")
+```
+
+In some months there are differences in intercepts between treatments. Also slopes against initial values differ between months. See treatment differences for each month.
+
+```{r, echo=TRUE, results='markup'}
+ml <- lme(log(p) ~ co2 * time + initial + time:initial, random = ~ 1|block/ring/id, data = dd)
+median(dd$initial)
+cntrst<- contrast(ml, 
+                  a = list(time = levels(dd$time), co2 = "amb", initial = 0.63),
+                  b = list(time = levels(dd$time), co2 = "elev", initial = 0.63))
+cntrstTbl(cntrst, data = postDF, variable  = "p", digit = 2)
+```
+
+Treatment differences are slightly more significant with this analysis.
+
+# Summary
+Either way, there was no substantial difference between any of the analyses. In this particular case, ANCOVA detected treatment differences better. My concerns about using ANCOVA with the initial measurement as a covariate is that the associations with response variables (i.e. here IEM-P) highly depend on sampling months.
+
+If pre-co2 difference between treatments are seasonally-dependent, it makes sense. But also this suggests that results would be different if I use pre-co2 measurements from another month.
+
+Also although it is not very obvious in this particular case, associations between response variables and initial measurements are occasionally negative (e.g. Apr 2013). It is more pronounced for some other variables such as mineralisation. Treatment differences are estimated based on these negative associations in some months, but this doesn't make much biological sense.
+
+ANCOVA would be quite effective when there's theoretically and empirically strong associations between initial and subsequent measurements such as changes in plant biomass over time. However, in our experiments, the associations vary between months due to substantial seasonal variations in soil nutrients, and sometimes it doesn't make much sense (e.g. negative association).  
+
+# Conclusion
+I still believe that the way we did before (including pre-co2 measurement) was appropriate in order to detect seasonally-dependent co2 effects. But the way reviewer suggested wouldn't change the results substantially (although there will be still quite a bit of changes and I'll need to rewrite some of the statements), so I can re-analyse all variables as he suggested.
