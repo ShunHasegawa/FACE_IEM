@@ -41,24 +41,13 @@ qqline(resid(Fml_pre_p))
 ############
 # post-co2 #
 ############
-bxplts(value= "p", data= subsetD(iem, post))
-bxcxplts(value= "p", data= subsetD(iem, post), sval = 0.9, fval = 2)
-# adding constant value of 1.56 may improve
-
-bxplts(value= "p", ofst = 1.6, data= subsetD(iem, post))
+bxplts(value= "p", data= postDF)
 
 # The initial model is
 
-# box-cox lambda
-Iml_post_p <- lmer((p + 1.6)^(-1.1515) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
-           data = subsetD(iem, post))
-
 # log transformation
-Iml_post_p <- lmer(log(p) ~ co2 * time + (1|block) + (1|ring)  + (1|id),
-           data = subsetD(iem, post))
+Iml_post_p <- lmer(log(p) ~ co2 * time + (1|block) + (1|ring)  + (1|id), data = postDF)
 Anova(Iml_post_p)
-# not much difference between the above two tranformations. so just use log for
-# simplification purposes.
 
 # The final model is:
 Fml_post <- Iml_post_p
@@ -80,13 +69,13 @@ qqline(resid(Fml_post))
 # contrast
 
 # contrast doesn't work with lmer. so use lme
-lmeMod <- lme(log(p) ~ co2 * time, random = ~1|block/ring/id, 
-              data = subsetD(iem, post))
+lmeMod <- lme(log(p) ~ co2 * time, random = ~1|block/ring/id, data = postDF)
 
 cntrst<- contrast(lmeMod, 
-                  a = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "amb"),
-                  b = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "elev"))
-FACE_IEM_PostCO2_P_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], variable  = "p", digit = 2)
+                  a = list(time = levels(postDF$time), co2 = "amb"),
+                  b = list(time = levels(postDF$time), co2 = "elev"))
+
+FACE_IEM_PostCO2_P_CntrstDf <- cntrstTbl(cntrst, data = postDF, variable  = "p", digit = 2)
 FACE_IEM_PostCO2_P_CntrstDf
 
 ## ---- Stat_FACE_IEM_Phosphate_postCO2_withSoilVar
