@@ -47,24 +47,15 @@ qqline(resid(Fml_pre_nh))
 # Post-CO2 #
 ############
 
-bxplts(value= "nh", data= subsetD(iem, post))
+bxplts(value= "nh", data= postDF)
   # log seems better
 
 # The initial model is:
-Iml_post_nh <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
-                 data = subsetD(iem, post))
+Iml_post_nh <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), data = postDF)
 Anova(Iml_post_nh)
 
-# There isn't co2xtime interaction but may be co2 effect. re analysis with data
-# only after co2-switced-on.
-
-Iml_post_nh_2 <- lmer(log(nh) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
-                 data = postDF)
-Anova(Iml_post_nh_2)
-Anova(Iml_post_nh_2, test.statistic = "F")
-
 # The final model is:
-Fml_post_nh <- stepLmer(Iml_post_nh_2, alpha.fixed = 0.1)
+Fml_post_nh <- stepLmer(Iml_post_nh, alpha.fixed = 0.1)
 
 Fml_post_nh@call
 

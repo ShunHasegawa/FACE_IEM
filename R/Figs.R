@@ -71,7 +71,7 @@ p <- WBFig(data = TrtMean, ylab = expression(IEM*-adsorbed~nutrients~(ng~cm^"-2"
 p
 p2 <- facet_wrap_labeller(p, labels = ylabs)
 
-ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM_withNP", 
+ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM_withNP_postCO2", 
          plot = p2, width = 6.65, height = 5.65)
 
 ########################################################

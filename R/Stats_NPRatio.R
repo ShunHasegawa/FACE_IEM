@@ -1,62 +1,67 @@
-## ---- Stat_FACE_IEM_NPRatio_postCO2
-
 #############
 # N:P ratio #
 #############
 
-## ---- Stat_FACE_IEM_Analyse_NP
+## ---- Stat_FACE_IEM_NPRatio_preCO2
+###########
+# Pre-CO2 #
+###########
+
+boxplot(logNP ~ co2 * time, data = subsetD(iem, pre))
+
+Iml_pre_np <- lmer(logNP ~ co2 * time+ (1|block) + (1|ring) + (1|id), data = subsetD(iem, pre))
+
+# The starting model is:
+Iml_pre_np@call
+Anova(Iml_pre_np)
+
+# model simplification
+Fml_pre_np <- stepLmer(Iml_pre_np, alpha.fixed = .1)
+
+# The final model is:
+Fml_pre_np@call
+Anova(Fml_pre_np)
+AnvF_pre_np <- Anova(Fml_pre_np, test.statistic = "F")
+AnvF_pre_np
+
+# model diagnosis
+plot(Fml_pre_np)
+qqnorm(resid(Fml_pre_np))
+qqline(resid(Fml_pre_np))
+
+# what if I remove the lower outlier
+which(qqnorm(resid(Fml_pre_np))$y == min(qqnorm(resid(Fml_pre_np))$y))
+
+ml <- update(Iml_pre_np, subset = -17)
+Anova(ml, test.statistic = "F")
+plot(ml)
+qqnorm(resid(ml))
+qqline(resid(ml))
+# improved but pretty much same result so stay with the above
+
+## ---- Stat_FACE_IEM_NPRatio_postCO2
+
 ############
 # NP ratio #
 ############
 
-bxplts(value= "logNP", data= subsetD(iem, post), lambda = seq(-.1, .1, length = 10))
-# use log
+boxplot(logNP ~ co2 * time, data = postDF)
 
 # The initial model is
-Iml_post_NP <- lmer(logNP ~ co2 * time + (1|block) + (1|ring)  + (1|id), data = subsetD(iem, post))
-summary(Iml_post_NP)
+Iml_post_NP <- lmer(logNP ~ co2 * time + (1|block) + (1|ring)  + (1|id), data = postDF)
 Anova(Iml_post_NP, test.statistic = "F")
-# co2 x time interaction
 
 # The final model is:
-Fml_post_NP <- Iml_post_NP
+Fml_post_NP <- stepLmer(Iml_post_NP, alpha.fixed = .1)
 AnvF_post_np <- Anova(Fml_post_NP, test.statistic = "F")
 AnvF_post_np
 
-
 plot(allEffects(Fml_post_NP))
 
-## ---- Stat_FACE_IEM_Analyse_NP_plot
 # model diagnosis
 plot(Fml_post_NP)
 qqnorm(resid(Fml_post_NP))
 qqline(resid(Fml_post_NP))
-
-# contrast
-
-# contrast doesn't work with lmer. so use lme
-tdf <- subsetD(iem, post)
-tdf$co2 <- relevel(tdf$co2, "elev")
-# tdf$time <- relevel(tdf$time, 5)
-
-lmeMod <- lme(logNP ~ co2 * time, random = ~1|block/ring/id, data = tdf)
-
-cntrst<- contrast(lmeMod, 
-                  a = list(time = levels(tdf$time), co2 = "amb"),
-                  b = list(time = levels(tdf$time), co2 = "elev"))
-
-FACE_IEM_PostCO2_NP_CntrstDf <- cntrstTbl(cntrst, data = tdf, variable  = "logNP", digit = 2)
-FACE_IEM_PostCO2_NP_CntrstDf
-
-# what if I remove NH and P outliers
-which(iem$p == max(iem$p))
-which(iem$nh > 800)
-ttdf <- subsetD(iem[-c(15, 17, 63), ], post)
-iem[c(15, 17, 63), ]
-tml <- lmer(logNP ~ co2 * time + (1|block) + (1|ring)  + (1|id), data = ttdf)
-Anova(tml, test.statistic = "F")
-Anova(Fml_post_NP, test.statistic = "F")
-ldply(list(Fml_post_NP, tml), r.squared)
 
 ## ---- Stat_FACE_IEM_Phosphate_postCO2_withSoilVar
 

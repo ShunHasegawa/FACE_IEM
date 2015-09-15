@@ -41,20 +41,18 @@ qqline(resid(Fml_pre_no))
 # Post-CO2 #
 ############
 
-bxplts(value= "no", data= subsetD(iem, post))
+bxplts(value= "no", data= postDF)
 # log seems better, but remove one outlier
-NoRmOl <- subsetD(iem, post)
+NoRmOl <- postDF
 NoRmOl <- subsetD(NoRmOl, no != min(no, na.rm = TRUE))
 bxplts(value= "no", data= NoRmOl)
 
 # The initial model is:
-Iml_post_no <- lmer(log(no) ~ co2 * time + (1|block) + (1|ring) + (1|id), 
-                 data = NoRmOl)
+Iml_post_no <- lmer(log(no) ~ co2 * time + (1|block) + (1|ring) + (1|id), data = NoRmOl)
 Anova(Iml_post_no)
-# keep interaction
 
 # The final model is:
-Fml_post_no <- Iml_post_no
+Fml_post_no <- stepLmer(Iml_post_no, alpha.fixed = .1)
 Fml_post_no@call
 
 Anova(Fml_post_no)
@@ -76,9 +74,9 @@ qqline(resid(Fml_post_no))
 lmeMod <- lme(log(no) ~ co2 * time, random = ~1|block/ring/id, data = NoRmOl)
 
 cntrst<- contrast(lmeMod, 
-                  a = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "amb"),
-                  b = list(time = levels(iem$time[iem$post, drop = TRUE]), co2 = "elev"))
-FACE_IEM_PostCO2_NO_CntrstDf <- cntrstTbl(cntrst, data = iem[iem$post, ], variable = "no", digit = 2)
+                  a = list(time = levels(postDF$time), co2 = "amb"),
+                  b = list(time = levels(postDF$time), co2 = "elev"))
+FACE_IEM_PostCO2_NO_CntrstDf <- cntrstTbl(cntrst, data = postDF, variable = "no", digit = 2)
 FACE_IEM_PostCO2_NO_CntrstDf
 
 ## ---- Stat_FACE_IEM_Nitrate_postCO2_withSoilVar
