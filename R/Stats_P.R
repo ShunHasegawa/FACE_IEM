@@ -50,21 +50,21 @@ Iml_post_p <- lmer(log(p) ~ co2 * time + (1|block) + (1|ring)  + (1|id), data = 
 Anova(Iml_post_p)
 
 # The final model is:
-Fml_post <- Iml_post_p
-Fml_post@call
+Fml_post_p <- Iml_post_p
+Fml_post_p@call
 
-Anova(Fml_post)
-AnvF_post_p <- Anova(Fml_post, test.statistic = "F")
+Anova(Fml_post_p)
+AnvF_post_p <- Anova(Fml_post_p, test.statistic = "F")
 AnvF_post_p
 
-summary(Fml_post)
+summary(Fml_post_p)
 
-plot(allEffects(Fml_post))
+plot(allEffects(Fml_post_p))
 
 # model diagnosis
-plot(Fml_post)
-qqnorm(resid(Fml_post))
-qqline(resid(Fml_post))
+plot(Fml_post_p)
+qqnorm(resid(Fml_post_p))
+qqline(resid(Fml_post_p))
 
 # contrast
 
@@ -193,10 +193,10 @@ Iml_post_p@call
 Anova(Iml_post_p)
 
 # The final model is:
-Fml_post@call
+Fml_post_p@call
 
 # Chi-square
-Anova(Fml_post)
+Anova(Fml_post_p)
 
 # F-stest
 AnvF_post_p
