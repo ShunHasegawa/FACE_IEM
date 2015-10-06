@@ -57,6 +57,12 @@ load("output//data/AllObj.RData")
 \clearpage
 \Sexpr{knit_child('FACE_IEM_phosphate.Rnw')}
 
+%%%%%%%%%%%%%%
+% N:P ratios %
+%%%%%%%%%%%%%%
+\clearpage
+\Sexpr{knit_child('FACE_IEM_NPRatios.Rnw')}
+
 %%%%%%%%%%%%%%%%
 % List of figs %
 %%%%%%%%%%%%%%%%
