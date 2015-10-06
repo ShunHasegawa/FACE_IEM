@@ -145,40 +145,6 @@ Est.val_np
 # reshape Est.val and make a table
 Est_NP <- ANCV_Tbl(Est.val_np)
 
-## ---- FACE_IEM_Analyse_NP_figure
-
-# Geometric mean for each treatment----
-NP_ring <- ddply(iem, .(date, block, co2, ring), summarise, Rgeo = gm_mean(NP))
-NP_co2 <- ddply(NP_ring, .(date, co2), summarise, 
-                Mean = gm_mean(Rgeo), 
-                SE = geoCI(Rgeo)[3])
-
-theme_set(theme_bw())
-p <- ggplot(NP_co2, aes(x = date, y = log(Mean), group = co2, science_theme))
-p2 <- p + 
-  geom_vline(xintercept = as.numeric(as.Date("2012-09-18")), 
-             linetype = "dashed", col = "black") +
-  geom_line(aes(linetype = co2), position = position_dodge(20)) + 
-  geom_errorbar(aes(ymin = log(Mean) - log(SE), 
-                    ymax = log(Mean) + log(SE)),
-                width = 0,
-                position = position_dodge(20)) + 
-  geom_point(aes(fill = co2),
-             shape = 21, 
-             position = position_dodge(20),
-             size = 4) +
-  labs(x = "Month", y = expression(log(R[NP]))) +
-  scale_x_date(breaks= date_breaks("3 month"),
-               labels = date_format("%b-%y"),
-               limits = as.Date(c("2012-6-15", "2014-3-29"))) +
-  scale_fill_manual(values = c("black", "white"), 
-                    labels = c("Ambient", expression(eCO[2]))) +
-  scale_linetype_manual(values = c("solid", "dashed"), 
-                        labels = c("Ambient", expression(eCO[2]))) +
-  science_theme + 
-  theme(legend.position = c(.8, .8))
-ggsavePP(filename = "output//figs/FACE_NPRatio_CO2", plot = p2, width = 6.65, height = 3)
-
 ## ---- Stat_FACE_IEM_NPRatio_preCO2_Smmry
 # The starting model is:
 Iml_pre_np@call
