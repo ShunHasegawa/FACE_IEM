@@ -63,7 +63,7 @@ plot(Fml_post_NP)
 qqnorm(resid(Fml_post_NP))
 qqline(resid(Fml_post_NP))
 
-## ---- Stat_FACE_IEM_Phosphate_postCO2_withSoilVar
+## ---- Stat_FACE_IEM_NPRatio_postCO2_withSoilVar
 
 ############################
 # ANCOVA fit soil variable #
@@ -179,3 +179,66 @@ p2 <- p +
   theme(legend.position = c(.8, .8))
 ggsavePP(filename = "output//figs/FACE_NPRatio_CO2", plot = p2, width = 6.65, height = 3)
 
+## ---- Stat_FACE_IEM_NPRatio_preCO2_Smmry
+# The starting model is:
+Iml_pre_np@call
+Anova(Iml_pre_np)
+
+# The final model is:
+Fml_pre_np@call
+Anova(Fml_pre_np)
+
+## ---- Stat_FACE_IEM_NPRatio_postCO2_Smmry
+# The starting model is:
+Iml_post_NP@call
+Anova(Iml_post_NP)
+
+# The final model is:
+Fml_post_NP@call
+
+# Chi-square
+Anova(Fml_post_NP)
+
+# F-stest
+AnvF_post_np
+
+## ---- Stat_FACE_IEM_NPRatio_postCO2_withSoilVar_Smmry
+# The initial model
+Iml_ancv_np@call
+Anova(Iml_ancv_np)
+
+# The final model
+Fml_ancv_np@call
+
+# Chisq
+Anova(Fml_ancv_np)
+
+# F-test
+AnvF_NP
+
+# squared R
+rsquared.glmm(Fml_ancv_np)
+
+# 95% CI for estimated parameter
+Est.val_np
+
+# plot the predicted values
+par(mfrow = c(1,2))
+par(mfrow = c(1,2))
+# moist
+l_ply(c(12, 23), function(x){
+  PltPrdVal(model = Fml_ancv_np, variable = "Moist", cond = list(Temp_Mean = x),
+            ylab = paste("NP (Temp = ", x, ")", sep = ""),
+            #             ylim = c(0, 6),
+            trans = exp,
+            data = postDF)
+})
+
+# temp
+l_ply(c(.05, .25), function(x){
+  PltPrdVal(model = Fml_ancv_np, variable = "Temp_Mean", cond = list(Moist = x),
+            ylab = paste("NP (Moist = ", x, ")", sep = ""),
+            #             ylim = c(0, 6),
+            trans = exp,
+            data = postDF)
+})
