@@ -1,0 +1,116 @@
+\Sexpr{set_parent('FACE_IEM_report.Rnw')}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% source files & libraries & setup options                                  %%
+% need to be loaded here if one wants to compile this child document to PDF %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% <<setup, include=FALSE>>=
+% opts_chunk$set(concordance = TRUE, warning = FALSE, tidy = TRUE, tidy.opts = list(width.cutoff = 60))
+% opts_knit$set(root.dir=normalizePath('../'))
+% @
+% 
+% <<readFiles, include=FALSE>>=
+% .libPaths("packrat/lib/x86_64-w64-mingw32//3.1.0") 
+% #path to packrat library. knitr use local drive library as
+% #default
+% source("R/pckg.R")
+% source("R//functions.R")
+% load("output/data/FACE_IEM.RData")
+% load("output//data/postDF.RData")
+% source("R/SummaryExlTable.R")
+% source("R/Figs.R")
+% @
+
+
+\section{N:P ratios}
+
+%%% CO2 trt %%%
+\subsection{CO$_2$ treatment}
+
+\begin{figure}[!h]\label{figure:CO2IEM_NPRatio}
+
+\begin{center}
+\includegraphics{../output/figs/FACE_IEM_CO2Trt_NPratios.pdf}
+\caption{IEM-adsorbed N:P ratios at CO$_2$ treatments}
+\end{center}
+\end{figure}
+
+<<Tableco2NPRatio, echo=FALSE, results='asis'>>=
+printTbl(TrtSmmryTbl[[3]], 
+         caption = "CO2 trt mean of IEM-adsorbed N:P ratios",
+         label = "table:FACE_IEM_CO2_NPRatios")
+@
+
+%%%%%%%%%%%%%
+%%% Stats %%%
+%%%%%%%%%%%%%
+\clearpage
+\subsection{Stats}
+
+<<ReadScript_FACE_IEM_NPratios, echo=FALSE, cache=FALSE, include=FALSE>>=
+read_chunk('R/Stats_NPRatio.R')
+@
+
+
+%%%%%%%%%%%%%
+%% Summary %%
+%%%%%%%%%%%%%
+
+\subsubsection{Pre-CO$_2$}
+\noindent
+
+<<Stat_FACE_IEM_NPRatio_preCO2_Smmry, echo=TRUE, results='markup'>>=
+@
+
+\subsubsection{Post-CO$_2$}
+\noindent
+
+<<Stat_FACE_IEM_NPRatio_postCO2_Smmry, echo=TRUE, results='markup'>>=
+@
+
+\subsubsection{Post-CO$_2$ -ANCOVA with soil variables}
+\noindent
+
+<<Stat_FACE_IEM_NPRatio_postCO2_withSoilVar_Smmry, echo=TRUE, results='markup', fig.show='asis', fig.width = 6, fig.height = 4>>=
+@
+
+
+% %%%%%%%%%%%%
+% %% Detail %%
+% %%%%%%%%%%%%
+% 
+% \subsubsection{Pre-CO$_2$}
+% \noindent
+% 
+% <<Stat_FACE_IEM_NPRatio_preCO2, echo=TRUE, results='markup'>>=
+% @
+% 
+% \subsection{Stats}
+% \subsubsection{Post-CO$_2$}
+% \noindent
+% 
+% <<Stat_FACE_IEM_NPRatio_postCO2, echo=TRUE, results='markup'>>=
+% @
+% 
+% \subsubsection{Post-CO$_2$ -ANCOVA with soil variables}
+% \noindent
+% 
+% <<Stat_FACE_IEM_NPRatio_postCO2_withSoilVar, echo=TRUE, results='markup'>>=
+% @
+
+%%% Ring %%%
+\clearpage
+\subsection{Ring}
+
+\begin{figure}[!h]\label{figure:RingIEM_NPRatio}
+\includegraphics{../output/figs/FACE_IEM_Ring_NPratios.pdf}
+\caption{IEM-adsorbed N:P ratios in each ring}
+\end{figure}
+
+<<TableRingNPRatios, echo=FALSE, results='asis'>>=
+printRngTbl(RngSmmryTbl[[3]], 
+            caption = "Ring mean of IEM-adsorbed N:P ratios", 
+            label = "table:FACE_IEM_ring_NPRatios",
+            size = "small")
+@
