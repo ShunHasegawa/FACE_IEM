@@ -17,7 +17,7 @@ Anova(Iml_pre_no)
 Anova(Iml_pre_no, test.statistic = "F")
 
 # model simplification
-Fml_pre_no <- stepLmer(Iml_pre_no)
+Fml_pre_no <- stepLmer(Iml_pre_no, alpha.fixed = .1)
 
 # The final model is:
 Fml_pre_no@call
