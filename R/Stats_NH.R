@@ -164,8 +164,8 @@ Iml_post_nh@call
 Anova(Iml_post_nh)
 
 # no interaction but may be co2 effect so remove the data becore co2-swtich on
-Iml_post_nh_2@call
-Anova(Iml_post_nh_2)
+Iml_post_nh@call
+Anova(Iml_post_nh)
 
 # The final model is:
 Fml_post_nh@call
