@@ -707,13 +707,14 @@ ScatterPlot <- function(df, xval, breakn = 5, xlab, gridval){
           legend.title = element_blank(),
           legend.key = element_blank(),
           legend.key.width = unit(1.5, "lines"),
-          legend.position = c(.12, .73), 
+          legend.position = c(.95, 1.12), 
           legend.key.size = unit(.2, "inch"),
-          legend.background = element_rect(fill = alpha('white', 0)),
+          legend.background = element_rect(colour = "black"),
           axis.title = element_text(face = "plain"),
-          plot.margin=unit(c(0, 0.5, 0, 0), "lines")) +
+          plot.margin=unit(c(0, 0.5, 0, 0), "lines"),
+          strip.text.y = element_text(size = 9)) +
     facet_grid(variable ~ gridval, scales = "free_y", labeller = label_parsed) +
-    labs(x = xlab, y = expression(log(IEM*-adsorbed~nutrients~(ng~cm^"-2"~d^"-1"))))
+    labs(x = xlab, y = expression(log(IEM*-adsorbed~nutrients)))
   return(scatter)
 } 
 
