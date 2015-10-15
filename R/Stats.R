@@ -143,7 +143,9 @@ MoistLabs <- c(expression(Dry),
                expression(Wet))
 
 # labels for facet_grid
-ylabs <- c(expression(NO[3]^"-"*-N),expression(NH[4]^"+"*-N), expression(PO[4]^"3-"*-P), 
+ylabs <- c(expression(NO[3]^"-"*-N~(ng~cm^"-2"~d^"-1")),
+           expression(NH[4]^"+"*-N~(ng~cm^"-2"~d^"-1")), 
+           expression(PO[4]^"3-"*-P~(ng~cm^"-2"~d^"-1")), 
            expression(N:P~ratios))
 
 
@@ -188,9 +190,17 @@ load("output//data/ciDF_vsMoist.RData")
 
 ## scatterplot of x and y variables (nutrient against temp at given moisture)
 
-# melt postDF to plot them all together with facet_grid
-postDF_Mlt <- melt(postDF, 
-                   id = names(postDF)[which(!(names(postDF) %in% c("no", "nh", "p", "NP")))])
+# use data frame without outliers
+summary(iemRmOl)
+postDF2 <- subsetD(iemRmOl, !pre) # subset post-co2
+postDF2 <- within(postDF, { # replace logNP and NP
+  logNP <- NULL
+  np <- (no + nh)/p
+})
+
+# melt postDF2 to plot them all together with facet_grid
+postDF_Mlt <- melt(postDF2, 
+                   id = names(postDF2)[which(!(names(postDF2) %in% c("no", "nh", "p", "np")))])
 
 postDF_Mlt <- within(postDF_Mlt, {
   variable <- factor(variable, labels = ylabs)
@@ -220,15 +230,14 @@ MoistPlot <- envPlot(val = "Moist", ylab = "Given soil moisture (%)")
 TempPlot <- envPlot(val = "Temp_Mean", ylab = expression(Given~soil~temperature~(degree * C)))
 
 
-theme_set(theme_bw()) # set plot back ground as white
-
-
 # merge the plots
 Moist_pl <- arrangeGrob(TempPlot, MoistSct, ncol = 1, nrow = 2, 
                         heights = unit(c(1, 6), "inches"))
+  # don't worry about the warning messages. it's due to NA in some of the rows
 
 Temp_pl <- arrangeGrob(MoistPlot, TempSct, ncol = 1, nrow = 2, 
                         heights = unit(c(1, 6), "inches"))
+  # don't worry about the warning messages. it's due to NA in some of the rows
 
   # grid.arrange creates graphs directly on the device, while arrangeGrob makes 
   # ggplot object which can be save using ggsave. but text font looks bold for
