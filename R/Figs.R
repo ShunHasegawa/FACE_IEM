@@ -24,8 +24,10 @@ l_ply(1:4, function(x) ggsavePP(filename = fls[x], plot = TrtFg[[x]], width = 6,
 # plot all nutrient in one graph #
 ##################################
 # labels for facet_wrap
-ylabs <- c(expression(NO[3]^"-"*-N),expression(NH[4]^"+"*-N), 
-           expression(PO[4]^"3-"*-P), expression(log(N:P~ratios)))
+ylabs <- c(expression(NO[3]^"-"*-N~(ng~cm^"-2"~d^"-1")),
+           expression(NH[4]^"+"*-N~(ng~cm^"-2"~d^"-1")), 
+           expression(PO[4]^"3-"*-P~(ng~cm^"-2"~d^"-1")),
+           expression(log(N:P~ratios)))
 
 
 pl <- PltMean(TrtMean) +
@@ -62,7 +64,7 @@ Antt_CntrstDF <- merge(ContrastDF,
                        by = c("date", "variable"), all.x = TRUE)
 Antt_CntrstDF$co2 <- "amb" # co2 column is required as it's used for mapping
 
-p <- WBFig(data = TrtMean, ylab = expression(IEM*-adsorbed~nutrients~(ng~cm^"-2"~d^"-1")),
+p <- WBFig(data = TrtMean, ylab = expression(IEM*-adsorbed~nutrients),
            StatRes = Stat_CO2Time, 
            StatY = c(ymaxDF[1, 2] - 250,  ymaxDF[2:4 , 2]*1.07)) +
   geom_text(data = Antt_CntrstDF, aes(x = date, y = yval, label = stars), vjust = 0)+
