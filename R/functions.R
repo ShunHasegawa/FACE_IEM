@@ -289,7 +289,8 @@ science_theme <- theme(panel.border = element_rect(colour = "black"),
                        legend.title = element_blank(),
                        legend.key.width = unit(2.5, "lines"),
                        legend.key.height = unit(.8, "lines"),
-                       legend.key = element_blank())
+                       legend.key = element_blank(),
+                       legend.background = element_rect(fill = "transparent", colour = NA))
 
 # white-black figure
 WBFig <- function(data, ylab, facetLab = ylab_label, figTheme = science_theme, StatRes, StatY){
