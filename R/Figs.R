@@ -166,7 +166,7 @@ pp <- arrangeGrob(ap,
                                   rot = 90, vjust = 1),
                   sub = textGrob("Month", vjust = -1))
 ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM_withNP_postCO2_II", 
-         plot = ap, width = 6.65, height = 5.65)
+         plot = pp, width = 6.65, height = 5.65)
 
 ########################################################
 # plot soil moist and temp for each incubation periods #
