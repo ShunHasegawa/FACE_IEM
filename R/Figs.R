@@ -173,7 +173,7 @@ pp <- arrangeGrob(ap,
                                   gp=gpar(fontsize=15)),
                   sub = textGrob("Month", vjust = -1))
 
-pdf(file = "output//figs/FACE_manuscript/FACE_IEM_withNP_postCO2_II_temp.pdf",
+pdf(file = "output//figs/FACE_manuscript/FACE_IEM_withNP_postCO2_II.pdf",
     width = 6.65, height = 5.5)
 grid.draw(pp)
 dev.off()
