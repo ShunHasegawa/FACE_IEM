@@ -23,3 +23,6 @@ library(doSNOW)
 library(grid)
 library(quantmod) # compute % change
 library(boot)
+
+# install.packages("https://cran.r-project.org/src/contrib/Archive/gridExtra/gridExtra_0.9.tar.gz", 
+#                  repos=NULL, type="source")
