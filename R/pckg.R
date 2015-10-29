@@ -24,5 +24,10 @@ library(grid)
 library(quantmod) # compute % change
 library(boot)
 
-# install.packages("https://cran.r-project.org/src/contrib/Archive/gridExtra/gridExtra_0.9.tar.gz", 
+# install.packages("https://cran.r-project.org/src/contrib/Archive/gridExtra/gridExtra_0.9.1.tar.gz", 
 #                  repos=NULL, type="source")
+# install.packages("https://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_1.0.0.tar.gz", 
+#                  repos=NULL, type="source")
+# install.packages("https://cran.r-project.org/src/contrib/Archive/lme4/lme4_1.1-7.tar.gz", 
+#                  repos=NULL, type="source")
+devtools::session_info()
