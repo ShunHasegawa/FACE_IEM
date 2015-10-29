@@ -23,3 +23,7 @@ library(doSNOW)
 library(grid)
 library(quantmod) # compute % change
 library(boot)
+
+install.packages("devtools")
+require(devtools)
+install_github("hadley/ggplot2") 
