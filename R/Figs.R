@@ -118,9 +118,9 @@ WBFig_sub <- function(data, figTheme = science_theme, plotlabel, xlab = "", ylab
               fontface = "bold",
               hjust = 1,
               data = subset(subLabDF, variable == vars)) +
-    facet_wrap(~variable, scales= "free_y", drop = TRUE) +
     figTheme +
-    theme(legend.position = legpos) +
+    theme(legend.position = legpos,
+          axis.title.y = element_text(size = 11)) +
     geom_text(data = subset(statDF, predictor != "" & variable == vars), 
               aes(x = as.Date("2013-12-20"), y = yval, label = predictor),
               size = 3, hjust = 1, parse = TRUE) +
@@ -135,38 +135,48 @@ WBFig_sub <- function(data, figTheme = science_theme, plotlabel, xlab = "", ylab
   return(p2)
 }
 
+#####
 # top panels
-p_no <- WBFig_sub(data = subset(TrtMean, variable == "no")) +
+p_no <- WBFig_sub(data = subset(TrtMean, variable == "no"), 
+                  ylab = expression(NO[3]^'-'*-N~(ng~cm^"-2"~d^"-1"))) +
   theme(legend.position = c(.7, .89),
         axis.text.x  = element_blank(),
-        plot.margin = unit(c(1, -.2, 0, -.5), "line"))
-p_no <- facet_wrap_labeller(p_no, labels = expression(NO[3]^'-'*-N))
+        plot.margin = unit(c(1, 0.5, 0, 1), "line"))
+p_no <- ggplotGrob(p_no)
 
-p_nh <- WBFig_sub(data = subset(TrtMean, variable == "nh")) +
+p_nh <- WBFig_sub(data = subset(TrtMean, variable == "nh"),
+                  ylab = expression(NH[4]^'+'*-N~(ng~cm^"-2"~d^"-1"))) +
   theme(axis.text.x  = element_blank(),
-        plot.margin = unit(c(1, 1, 0, 0), "line"))
-p_nh <- facet_wrap_labeller(p_nh, labels = expression(NH[4]^'+'*-N))
+        plot.margin = unit(c(1, .5, 0, 0), "line"))
+p_nh <- ggplotGrob(p_nh)
 
 # bottom panels
-p_p <- WBFig_sub(data = subset(TrtMean, variable == "p")) +
-  theme(plot.margin = unit(c(-1, -.2, 0, -.5), "line"))
-p_p <- facet_wrap_labeller(p_p, labels = expression(PO[4]^'3-'*-P))
+p_p <- WBFig_sub(data = subset(TrtMean, variable == "p"),
+                 ylab = expression(PO[4]^'3-'*-P~(ng~cm^"-2"~d^"-1"))) +
+  theme(plot.margin = unit(c(-1, 0.5, 0, 1), "line"))
+p_p <- ggplotGrob(p_p)
 
-p_np <- WBFig_sub(data = subset(TrtMean, variable == "logNP"), ylab = "log(N:P ratios)") +
-  theme(plot.margin = unit(c(-1, 1, 0, 0), "line"),
-        axis.title.y = element_text(vjust = -0.5))
-p_np <- facet_wrap_labeller(p_np, labels = "N:P ratios")
+
+p_np <- WBFig_sub(data = subset(TrtMean, variable == "logNP"), 
+                  ylab = "log(N:P ratios)") +
+  theme(plot.margin = unit(c(-1, .5, 0, 0), "line"))
+p_np <- ggplotGrob(p_np)
+
 
 lp <- gtable:::rbind_gtable(p_no, p_p, "first")
 rp <- gtable:::rbind_gtable(p_nh, p_np, "first")
 ap <- gtable:::cbind_gtable(lp, rp, "first")
 
 pp <- arrangeGrob(ap,
-                  left = textGrob(expression(IEM*-adsorbed~nutrients~(ng~cm^"-2"~d^"-1")),
-                                  rot = 90, vjust = 1),
+                  left = textGrob(expression(IEM*-adsorbed~nutrients),
+                                  rot = 90, vjust = 1,
+                                  gp=gpar(fontsize=15)),
                   sub = textGrob("Month", vjust = -1))
-ggsavePP(filename = "output//figs/FACE_manuscript/FACE_IEM_withNP_postCO2_II", 
-         plot = ap, width = 6.65, height = 5.65)
+
+pdf(file = "output//figs/FACE_manuscript/FACE_IEM_withNP_postCO2_II_temp.pdf",
+    width = 6.65, height = 5.5)
+grid.draw(pp)
+dev.off()
 
 ########################################################
 # plot soil moist and temp for each incubation periods #
