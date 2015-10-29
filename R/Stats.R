@@ -217,6 +217,10 @@ postDF_Mlt <- within(postDF_Mlt, {
 MoistSct <- ScatterPlot(df = ciDF_vsMoist, xval = "Moist", breakn = 5, 
                         xlab = "Soil moisture (%)", gridval = "TempLev")
 
+MoistSct_grey <- ScatterPlot_grey(df = ciDF_vsMoist, xval = "Moist", breakn = 5, 
+                         xlab = "Soil moisture (%)", gridval = "TempLev")
+MoistSct_grey
+
 
 TempSct <-  ScatterPlot(df = ciDF_vsTemp, xval = "Temp_Mean", breakn = 5, 
                         xlab = expression(Soil~temperature~(degree * C)),
@@ -231,9 +235,21 @@ TempPlot <- envPlot(val = "Temp_Mean", ylab = expression(Given~soil~temperature~
 
 
 # merge the plots
-Moist_pl <- arrangeGrob(TempPlot, MoistSct, ncol = 1, nrow = 2, 
+Moist_pl <- arrangeGrob(ggplotGrob(TempPlot), 
+                        ggplotGrob(MoistSct), 
+                        ncol = 1, nrow = 2, 
                         heights = unit(c(1, 6), "inches"))
+Moist_pl_grey <- arrangeGrob(ggplotGrob(TempPlot), 
+                             ggplotGrob(MoistSct_grey),
+                             ncol = 1, nrow = 2,
+                             heights = unit(c(1, 6), "inches"))
   # don't worry about the warning messages. it's due to NA in some of the rows
+# grid.draw(Moist_pl_grey)
+
+pdf(file = "output//figs/FACE_manuscript/FACE_Pred_IEM_Moist_withNP_grey.pdf",
+    width = 6.65, height = 7.5)
+grid.draw(Moist_pl_grey)
+dev.off()
 
 Temp_pl <- arrangeGrob(MoistPlot, TempSct, ncol = 1, nrow = 2, 
                         heights = unit(c(1, 6), "inches"))

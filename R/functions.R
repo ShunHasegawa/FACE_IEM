@@ -745,6 +745,48 @@ envPlot <- function(val, ylab){
   return(pl)
 }
 
+ScatterPlot_grey <- function(df, xval, breakn = 5, xlab, gridval){
+  co2lab <- c("Ambient", expression(eCO[2]))
+  # breakn: spacing between xaxis ticks
+  df$Moist <- df$Moist * 100
+  postDF_Mlt$Moist <- postDF_Mlt$Moist * 100
+  df$gridval <- df[, gridval]
+  postDF_Mlt$gridval <- postDF_Mlt[, gridval]
+  
+  scatter <- ggplot(df, 
+                    aes_string(x = xval, y = "PredVal",
+                               fill = "co2", group = "co2")) +
+    
+    geom_line(aes(linetype = co2)) +
+    geom_ribbon(aes(ymin = lci, ymax = uci), 
+                alpha = .4, color = NA) +
+    # color = NA removes the ribbon edge
+    geom_point(data = postDF_Mlt, aes_string(x = xval, y = "log(value)", shape = "co2"), 
+               alpha = .8,
+               size = 2) +
+    scale_shape_manual(values = c(16, 1), labels = co2lab) +
+    scale_fill_manual(values = c("grey70", "grey30"), labels = co2lab) +
+    scale_linetype_manual(values = c("solid", "dashed"), labels = co2lab) +
+    scale_x_continuous(breaks = pretty(df[, xval], n = breakn)) +
+    theme(panel.border = element_rect(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.ticks.length = unit(-.2, "lines"),
+          axis.ticks.margin = unit(.5, "lines"),
+          legend.title = element_blank(),
+          legend.key = element_blank(),
+          legend.key.width = unit(1.5, "lines"),
+          legend.position = c(.95, 1.12), 
+          legend.key.size = unit(.2, "inch"),
+          legend.background = element_rect(colour = "black"),
+          axis.title = element_text(face = "plain"),
+          plot.margin=unit(c(0, 0.5, 0, 0), "lines"),
+          strip.text.y = element_text(size = 9)) +
+    facet_grid(variable ~ gridval, scales = "free_y", labeller = label_parsed) +
+    labs(x = xlab, y = expression(log(IEM*-adsorbed~nutrients)))
+  return(scatter)
+} 
+
 #######################
 # Compute R2 for GLMM #
 #######################
