@@ -255,16 +255,16 @@ Temp_pl <- arrangeGrob(MoistPlot, TempSct, ncol = 1, nrow = 2,
                         heights = unit(c(1, 6), "inches"))
   # don't worry about the warning messages. it's due to NA in some of the rows
 
-  # grid.arrange creates graphs directly on the device, while arrangeGrob makes 
-  # ggplot object which can be save using ggsave. but text font looks bold for
-  # some reasons..
-
 # save
-ggsavePP(plot = Moist_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Moist_withNP", 
-         width = 6, height = 7.5)
+pdf(file = "output//figs/FACE_manuscript/FACE_Pred_IEM_Moist_withNP_II",
+    width = 6.6, height = 7.5)
+grid.draw(Moist_pl)
+dev.off()
 
-ggsavePP(plot = Temp_pl, filename = "output//figs/FACE_manuscript/FACE_Pred_IEM_Temp_withNP", 
-         width = 6, height = 7.5)
+pdf(file = "output//figs/FACE_manuscript/FACE_Pred_IEM_Temp_withNP_II",
+    width = 6.6, height = 7.5)
+grid.draw(Temp_pl)
+dev.off()
 
 # Add figure caption
 
