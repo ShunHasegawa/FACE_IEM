@@ -1,19 +1,26 @@
 \Sexpr{set_parent('FACE_IEM_report.Rnw')}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% source files & libraries & setup options                                  %%
-%% need to be loaded here if one wants to compile this child document to PDF %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% source files & libraries & setup options                                  %%
+% need to be loaded here if one wants to compile this child document to PDF %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% <<setup, include=FALSE>>=
-% opts_chunk$set(concordance = TRUE, warning = FALSE, tidy = TRUE, tidy.opts = list(width.cutoff = 60))
-% opts_knit$set(root.dir=normalizePath('../'))
-% @
-% 
-% <<readFiles, include=FALSE>>=
-% source("R/pckg.R")
-% load("output//data/AllObj.RData")
-% @
+%' <<setup, include=FALSE>>=
+%' opts_chunk$set(concordance = TRUE, warning = FALSE, tidy = TRUE, tidy.opts = list(width.cutoff = 60))
+%' opts_knit$set(root.dir=normalizePath('../'))
+%' @
+%' 
+%' <<ReadScript_pckg, echo=FALSE, cache=FALSE, include=FALSE>>=
+%' .libPaths("~/.checkpoint/2015-09-30/")
+%' library(car)
+%' library(xtable)
+%' library(visreg)
+%' library(plyr)
+%' @
+%' 
+%' <<readFiles, include=FALSE>>=
+%' load("output//data/AllObj.RData")
+%' @
 
 \section{Nitrate}
 
