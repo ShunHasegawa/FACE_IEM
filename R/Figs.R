@@ -32,8 +32,8 @@ ylabs <- c(expression(NO[3]^"-"*-N~(ng~cm^"-2"~d^"-1")),
 
 pl <- PltMean(TrtMean) +
   facet_wrap(~ variable, scales= "free_y")
-pl2 <- facet_wrap_labeller(pl, labels = ylabs)
-pl2
+# pl2 <- facet_wrap_labeller(pl, labels = ylabs)
+# pl2
 
 ggsavePP(filename = "output//figs/FACE_IEM_CO2Trt", plot = pl, width = 6.5, height = 6)
 
@@ -166,12 +166,12 @@ p_np <- ggplotGrob(p_np)
 lp <- gtable:::rbind_gtable(p_no, p_p, "first")
 rp <- gtable:::rbind_gtable(p_nh, p_np, "first")
 ap <- gtable:::cbind_gtable(lp, rp, "first")
-
+grid.draw(ap)
 pp <- arrangeGrob(ap,
                   left = textGrob(expression(IEM*-adsorbed~nutrients),
                                   rot = 90, vjust = 1,
                                   gp=gpar(fontsize=15)),
-                  sub = textGrob("Month", vjust = -1))
+                  bottom = textGrob("Month", vjust = -1))
 
 pdf(file = "output//figs/FACE_manuscript/FACE_IEM_withNP_postCO2_II.pdf",
     width = 6.65, height = 5.5)
