@@ -18,6 +18,7 @@ opts_knit$set(root.dir=normalizePath('../'))
 @
 
 <<ReadScript_pckg, echo=FALSE, cache=FALSE, include=FALSE>>=
+.libPaths("~/.checkpoint/2015-09-30/")
 library(car)
 library(xtable)
 library(visreg)
