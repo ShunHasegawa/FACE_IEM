@@ -25,20 +25,9 @@ library(visreg)
 library(plyr)
 @
 
-
-%' <<ReadScript_pckg, echo=FALSE, cache=FALSE, include=FALSE>>=
-%' read_chunk('R/pckg.R')
-%' @
-
-%' <<LoadPackages, echo=TRUE, cache=FALSE, include=FALSE>>=
-%' @
-
-
 <<readFiles, include=FALSE>>=
 load("output//data/AllObj.RData")
 @
-
-
 
 \maketitle
 \clearpage
