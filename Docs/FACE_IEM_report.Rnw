@@ -11,15 +11,33 @@
 
 \begin{document}
 
+
 <<setup, include=FALSE>>=
 opts_chunk$set(concordance = TRUE, warning = FALSE, tidy = TRUE, tidy.opts = list(width.cutoff = 60))
 opts_knit$set(root.dir=normalizePath('../'))
 @
 
+<<ReadScript_pckg, echo=FALSE, cache=FALSE, include=FALSE>>=
+library(car)
+library(xtable)
+library(visreg)
+library(plyr)
+@
+
+
+%' <<ReadScript_pckg, echo=FALSE, cache=FALSE, include=FALSE>>=
+%' read_chunk('R/pckg.R')
+%' @
+
+%' <<LoadPackages, echo=TRUE, cache=FALSE, include=FALSE>>=
+%' @
+
+
 <<readFiles, include=FALSE>>=
-source("R/pckg.R")
 load("output//data/AllObj.RData")
 @
+
+
 
 \maketitle
 \clearpage
