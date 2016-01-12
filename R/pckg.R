@@ -2,7 +2,6 @@
 library(checkpoint)
 checkpoint("2015-09-30")
 
-# load packages
 library(car)
 library(gmodels)
 library(pbkrtest)
@@ -31,4 +30,3 @@ library(grid)
 library(quantmod) # compute % change
 library(boot)
 library(gtable)
-
