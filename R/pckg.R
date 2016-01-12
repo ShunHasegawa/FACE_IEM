@@ -1,5 +1,11 @@
+# restore required packages
+library(checkpoint)
+checkpoint("2015-09-30")
+
+# load packages
 library(car)
 library(gmodels)
+library(pbkrtest)
 library(lme4)
 library(lubridate)
 library(MASS)
@@ -10,6 +16,7 @@ library(reshape)
 library(xlsx)
 library(contrast)
 library(effects)
+library(grid)
 library(ggplot2)
 library(scales)
 library(xtable)
@@ -23,11 +30,5 @@ library(doSNOW)
 library(grid)
 library(quantmod) # compute % change
 library(boot)
+library(gtable)
 
-# install.packages("https://cran.r-project.org/src/contrib/Archive/gridExtra/gridExtra_0.9.1.tar.gz", 
-#                  repos=NULL, type="source")
-# install.packages("https://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_1.0.0.tar.gz", 
-#                  repos=NULL, type="source")
-# install.packages("https://cran.r-project.org/src/contrib/Archive/lme4/lme4_1.1-7.tar.gz", 
-#                  repos=NULL, type="source")
-devtools::session_info()
